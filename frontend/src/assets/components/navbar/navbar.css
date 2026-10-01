@@ -1,0 +1,110 @@
+.global-navbar {
+	align-items: center;
+	display: flex;
+	gap: 36px;
+	height: 90px;
+	justify-content: flex-start;
+	margin: 0;
+	max-width: 1920px;
+	padding: 10px 50px 10px;
+	width: 100%;
+	background: #fff;
+	position: -webkit-sticky;
+  	position: sticky;
+  	top: 0;
+  	z-index: 1000; 
+}
+
+.global-navbar__brand {
+	align-items: center;
+	display: flex;
+	flex: 0 0 135px;
+	height: 104px;
+	text-decoration: none;
+}
+
+.global-navbar__brand img {
+	display: block;
+	height: 60px;
+	object-fit: contain;
+	width: 90px;
+}
+
+.global-navbar__actions {
+	align-items: center;
+	display: flex;
+	gap: 36px;
+	margin-left: auto;
+	padding: 15px 22px;
+}
+
+.global-navbar__actions a {
+	align-items: center;
+	display: flex;
+	font-family: var(--font-sans, 'DM Sans', sans-serif);
+	font-size: 20px;
+	line-height: 31px;
+	text-decoration: none;
+}
+
+.global-navbar__signup, .global-navbar__login{
+	color: #000;
+	font-weight: 400;
+}
+
+/*color: #76ca7f;
+	font-weight: 800;
+	text-decoration: underline !important;
+	text-underline-offset: 3px;*/
+/*will use later for active page navbar text styling*/
+
+.global-navbar__actions a:hover {
+	color: #4f9e59;
+}
+
+.global-navbar a:focus-visible {
+	outline: 3px solid #76ca7f;
+	outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+	.global-navbar {
+		gap: 12px;
+		height: 96px;
+		padding: 8px 20px;
+	}
+
+	.global-navbar__brand {
+		flex-basis: 90px;
+		height: 80px;
+	}
+
+	.global-navbar__brand img {
+		height: 80px;
+		width: 90px;
+	}
+
+	.global-navbar__actions {
+		gap: 20px;
+		padding: 10px 0;
+	}
+
+	.global-navbar__actions a {
+		font-size: 20px;
+		line-height: 28px;
+	}
+}
+
+@media (max-width: 420px) {
+	.global-navbar {
+		padding-inline: 14px;
+	}
+
+	.global-navbar__actions {
+		gap: 14px;
+	}
+
+	.global-navbar__actions a {
+		font-size: 18px;
+	}
+}

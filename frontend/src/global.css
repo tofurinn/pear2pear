@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Gorditas:wght@400;700&display=swap');
+
+:root {
+  /*primary color palette*/
+  --color-green1: #76CA7F;
+  --color-green2: #A9D480;
+  --color-green3: #5b9b49;
+  --color-blue1: #AED9C6;
+  --color-blue2: #75C9C8;
+  --colour-yellow:#FFF0AC;
+  --color-surface: #f5f5f5;
+
+  --color-text: #442421;
+  --color-text-muted: #bcdba5;
+
+  --color-border: #E4E4E4;
+  --color-success: #3fac70;
+  --color-warning: #c8884f;
+  --color-error: #F36E70;
+
+  /*text settings*/
+  --font-sans: 'DM Sans', sans-serif;
+  --font-gorditas: 'Gorditas', cursive;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  --font-size-page-title: 64px;
+  --font-size-h1: 50px;
+  --font-size-h2: 40px;
+  --font-size-h3: 30px;
+  --font-size-form-title: 24px;
+  --font-size-form-answer: 20px;
+  --font-size-body: 20px;
+
+  color-scheme: light;
+  color: --color-green1;
+  background: #fbfaf5;
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1,
+.heading-1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-extrabold);
+}
+
+h2,
+.heading-2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+}
+
+h3,
+.heading-3 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+}
+
+.page-title {
+  font-size: var(--font-size-page-title);
+  font-weight: var(--font-weight-black);
+}
+
+.form-field-title {
+  font-size: var(--font-size-form-title);
+  font-weight: var(--font-weight-medium);
+}
+
+.form-field-answer {
+  font-size: var(--font-size-form-answer);
+  font-weight: var(--font-weight-medium);
+}
+
+.body-text {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+}
+
+p {
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  border: 0;
+  text-align: left;
+}
+
+a:focus-visible {
+  outline: 3px solid #d96245;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
