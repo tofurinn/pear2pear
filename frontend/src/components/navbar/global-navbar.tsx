@@ -1,5 +1,5 @@
 import './navbar.css'
-import textLogo from '../../images/text-logo.png'
+import textLogo from '../../assets/images/text-logo.png'
 
 function GlobalNavbar() {
 	return (

@@ -1,6 +1,7 @@
 import studentPear from '../../assets/images/studentpfp.png'
 import volunteerPear from '../../assets/images/volunteerpfp.png'
-import GlobalNavbar from '../../assets/components/navbar/global-navbar'
+import GlobalNavbar from '../../components/navbar/global-navbar'
+
 import '../../global.css'
 import './index.css'
 
