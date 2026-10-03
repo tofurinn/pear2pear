@@ -33,7 +33,23 @@ export interface Volunteer {
   tags: string[];
 }
 
-const VOLUNTEER_NAMES = ['Aisha Rahman', 'Daniel Lim', 'Priya Nair', 'Hafiz Ismail'];
+const VOLUNTEER_NAMES = [
+  'Aisha Rahman', 'Daniel Lim', 'Priya Nair', 'Hafiz Ismail', 'Mei Ling Tan',
+  'Arjun Menon', 'Siti Aminah', 'Jason Wong', 'Nurul Huda', 'Kevin Raj',
+];
+
+const REQUEST_DETAILS: Pick<Support_Request, 'title' | 'category'>[] = [
+  { title: 'Grass Cutting Helper', category: 'General Student Support' },
+  { title: 'Calculus Revision Buddy', category: 'Academic Support' },
+  { title: 'Laptop Setup Help', category: 'Technology Support' },
+  { title: 'Campus Tour Guide', category: 'New Student Support' },
+  { title: 'Essay Proofreading', category: 'Academic Support' },
+  { title: 'Wi-Fi Troubleshooting', category: 'Technology Support' },
+  { title: 'Moving Boxes Helper', category: 'General Student Support' },
+  { title: 'Course Registration Guide', category: 'New Student Support' },
+  { title: 'Python Debugging Session', category: 'Technology Support' },
+  { title: 'Study Group Starter', category: 'Academic Support' },
+];
 
 export const MOCK_VOLUNTEERS: Record<string, Volunteer> = Object.fromEntries(
   VOLUNTEER_NAMES.map((name, i) => [
@@ -52,11 +68,10 @@ export const MOCK_REQUESTS: Support_Request[] = VOLUNTEER_NAMES.map((_, i) => ({
   reqID: `req-${i + 1}`,
   studID: 'stud-1',
   volID: `vol-${i + 1}`,
-  title: 'Grass Cutting Helper',
-  description: 'Help cutting the grass.',
-  category: 'General Student Support',
+  ...REQUEST_DETAILS[i],
+  description: 'Mock request for testing.',
   reqStatus: 'Accepted',
-  reqTimestamp: Timestamp.fromDate(new Date('2026-10-04')),
+  reqTimestamp: Timestamp.fromDate(new Date(2026, 9, 4 + i)),
 }));
 
 // Hours the volunteer is free, per weekday (JS getDay(): 0 = Sunday ... 6 = Saturday).

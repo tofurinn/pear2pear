@@ -1,189 +1,9 @@
 /* =============================================================================
-   Support Session flow: one stylesheet for the shell and every step.
-
-   SIZING: every size is written as  calc(N * var(--u))  where N is the pixel
-   value from the Figma frame (a 1920px-wide design) and --u = 1px * --s.
-   Change --s below to scale the whole flow up or down in one place.
-   Small text has a floor (--fs-*) so it never becomes unreadable.
-
-   Sections: tokens · heading reset · shell · typography · buttons · tags & pills
-             · form fields · step 1 · step 2 · step 4 (confirmation) · responsive
+   Support Session: step-specific styles only.
+   Shared shell, buttons, fields and sizing live in components/ui/ui.css
+   (this file relies on its --u / --fs-* tokens, so it must stay inside .ui-page).
+   Sections: tags & pills · step 1 · step 2 · step 4 (confirmation) · responsive
    ============================================================================= */
-
-/* ---------- Tokens (local to the session flow) ---------- */
-.session-form-page {
-  --s: 0.5;                          /* overall scale: 1 = Figma size at 1920px wide */
-  --u: calc(1px * var(--s));
-
-  /* Type scale: big text scales, small text is floored */
-  --fs-title:   calc(var(--font-size-h1) * var(--s));
-  --fs-heading: calc(var(--font-size-h3) * var(--s));
-  --fs-label:   max(12px, calc(var(--font-size-form-title) * var(--s)));
-  --fs-body:    max(11px, calc(var(--font-size-body) * var(--s)));
-  --fs-btn:     max(12px, calc(22px * var(--s)));
-  --fs-small:   max(10px, calc(12px * var(--s)));
-
-  --color-field: #f7f4e9;
-  --color-summary-bg: #eef5f7;
-  --color-slot: #b9e4c4;
-  --color-slot-off: #f6f6f6;
-  --color-star: #ffd24d;
-  --shadow-soft: 0 2px 4px rgba(68, 36, 33, 0.2);
-
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: var(--color-text);
-}
-
-/* Larger screens get closer to the full Figma size (tune these to taste) */
-@media (min-width: 1600px) {
-  .session-form-page { --s: 0.75; }
-}
-@media (min-width: 1900px) {
-  .session-form-page { --s: 1; }
-}
-
-/* ---------- Heading reset ----------
-   Browsers give h1/h2/h3 big default margins and global.css doesn't reset them,
-   which caused the huge gaps. :where() keeps this at zero specificity so the
-   classes below can still set their own margins. */
-.session-form-page :where(h1, h2, h3) {
-  margin: 0;
-}
-
-/* ---------- Shell ---------- */
-.session-form-background {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: calc(80 * var(--u)) calc(24 * var(--u)) calc(64 * var(--u));
-  background: linear-gradient(160deg, #dde9bb 0%, #e9ecb8 25%, #c9e6bd 65%, #b8e3c0 100%);
-}
-
-.session-card {
-  width: 100%;
-  max-width: calc(1300 * var(--u));
-  min-height: calc(800 * var(--u));
-  display: flex;
-  flex-direction: column;
-  padding: calc(40 * var(--u)) calc(40 * var(--u)) calc(36 * var(--u));
-  background: #fff;
-  border-radius: calc(60 * var(--u));
-}
-
-.session-card--confirmation {
-  min-height: 0;
-  padding: calc(44 * var(--u)) calc(40 * var(--u));
-}
-
-.session-divider {
-  width: 100%;
-  margin: calc(16 * var(--u)) 0 calc(14 * var(--u));
-  border: 0;
-  border-top: 1px solid var(--color-text);
-}
-
-.step-body {
-  margin-top: calc(48 * var(--u));
-}
-
-.session-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: auto;
-  padding-top: calc(36 * var(--u));
-}
-
-.session-error {
-  margin: calc(40 * var(--u)) auto 0;
-  max-width: 360px;
-  text-align: center;
-  color: var(--color-error);
-}
-
-.session-error .btn {
-  margin-top: 16px;
-}
-
-/* ---------- Typography ---------- */
-.session-title {
-  font-size: var(--fs-title);
-  font-weight: var(--font-weight-extrabold);
-  line-height: 1.2;
-}
-
-.step-heading {
-  font-size: var(--fs-heading);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.3;
-}
-
-.accent {
-  color: var(--color-green1);
-}
-
-/* ---------- Buttons ---------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: calc(18 * var(--u));
-  padding: calc(8 * var(--u)) calc(24 * var(--u));
-  font-family: var(--font-sans);
-  font-size: var(--fs-btn);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.4;
-  border-radius: 999px;
-  box-shadow: var(--shadow-soft);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.btn svg {
-  width: 1.1em;
-  height: 1.1em;
-  flex: none;
-}
-
-.btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.btn:focus-visible,
-.request-card:focus-visible,
-.slot:focus-visible,
-.field-control:focus-visible {
-  outline: 2px solid #d96245;
-  outline-offset: 2px;
-}
-
-.btn-outline {
-  min-width: max(130px, calc(250 * var(--u)));
-  justify-content: space-between;
-  color: var(--color-text);
-  background: #fff;
-  border: 1.5px solid var(--color-text);
-}
-
-.btn-outline:hover:not(:disabled) {
-  color: #fff;
-  background: var(--color-text);
-}
-
-.btn-solid {
-  padding-inline: calc(32 * var(--u));
-  color: #fff;
-  background: var(--color-green1);
-  border: 0;
-}
-
-.btn-solid:hover:not(:disabled) {
-  background: var(--color-green3);
-}
 
 /* ---------- Tags & pills (steps 1 and 4) ---------- */
 .category-tag {
@@ -215,61 +35,6 @@
 .status-pill.scheduled { color: var(--color-blue2);   border-color: var(--color-blue2); }
 .status-pill.rejected,
 .status-pill.cancelled { color: var(--color-error);   border-color: var(--color-error); }
-
-/* ---------- Form fields (step 3) ---------- */
-.field-stack {
-  display: flex;
-  flex-direction: column;
-  gap: calc(40 * var(--u));
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: calc(14 * var(--u));
-}
-
-.field-label {
-  font-size: var(--fs-label);
-  font-weight: var(--font-weight-medium);
-}
-
-.field-control {
-  width: 100%;
-  padding: calc(15 * var(--u)) calc(22 * var(--u));
-  font-family: var(--font-sans);
-  font-size: var(--fs-body);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.5;
-  color: var(--color-text);
-  background: var(--color-field);
-  border: 0;
-  border-radius: 999px;
-}
-
-.field-control::placeholder {
-  color: rgba(68, 36, 33, 0.45);
-}
-
-.select-wrap {
-  position: relative;
-}
-
-.select-wrap select {
-  appearance: none;
-  padding-right: calc(56 * var(--u));
-  cursor: pointer;
-}
-
-.select-icon {
-  position: absolute;
-  top: 50%;
-  right: calc(24 * var(--u));
-  width: 1.2em;
-  height: 1.2em;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
 
 /* ---------- Step 1: request cards (2 x 2 per page, scrolls sideways beyond 4) ---------- */
 .request-grid {
@@ -309,6 +74,12 @@
 
 .request-card:hover {
   border-color: var(--color-blue1);
+}
+
+.request-card:focus-visible,
+.slot:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
 }
 
 .request-card.selected {
@@ -421,9 +192,15 @@
 }
 
 .slot-readout {
-  min-height: 1.5em; /* keeps the layout from jumping as the text changes */
-  margin-top: calc(20 * var(--u));
+  /* centred pill filled like the other inputs; fixed width so it doesn't jump as the text changes */
+  width: min(100%, max(320px, calc(560 * var(--u))));
+  margin: calc(20 * var(--u)) auto 0;
+  padding: calc(12 * var(--u)) calc(28 * var(--u));
   font-size: var(--fs-body);
+  line-height: 1.5;
+  text-align: center;
+  background: var(--color-field);
+  border-radius: 999px;
 }
 
 .slot-readout-label {
@@ -473,12 +250,13 @@
   flex-direction: column;
   width: 100%;
   margin-top: calc(8 * var(--u));
-  padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(16 * var(--u));
+  padding: calc(28 * var(--u)) calc(36 * var(--u)) calc(32 * var(--u));
   background: var(--color-summary-bg);
   border-radius: calc(32 * var(--u));
 }
 
 .summary-title {
+  margin: calc(14 * var(--u)) 0 calc(10 * var(--u));
   font-size: var(--fs-label);
   font-weight: var(--font-weight-bold);
   line-height: 1.3;
@@ -487,8 +265,8 @@
 .summary-details {
   display: grid;
   grid-template-columns: max(250px, calc(480 * var(--u))) 1fr;
-  gap: 4px 0;
-  margin: calc(8 * var(--u)) 0 calc(12 * var(--u));
+  gap: 8px 0;
+  margin: calc(16 * var(--u)) 0 calc(30 * var(--u));
 }
 
 .detail {
@@ -517,10 +295,10 @@
 }
 
 .volunteer-card {
-  padding: calc(8 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u));
+  padding: calc(22 * var(--u)) calc(26 * var(--u)) calc(26 * var(--u));
   background: #fff;
   border: 1px solid var(--color-border);
-  border-radius: calc(12 * var(--u));
+  border-radius: calc(16 * var(--u));
 }
 
 .volunteer-card-header {
@@ -535,32 +313,13 @@
   color: var(--color-blue2);
 }
 
-.stars {
-  display: inline-flex;
-  font-size: var(--fs-body);
-  line-height: 1;
-}
-
-.star {
-  position: relative;
-  color: var(--color-border);
-}
-
-.star-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  color: var(--color-star);
-}
-
 .rating-text {
   font-size: var(--fs-small);
 }
 
 .volunteer-tags {
-  margin-top: calc(6 * var(--u));
-  padding: calc(15 * var(--u)) calc(12 * var(--u));
+  margin-top: calc(18 * var(--u));
+  padding: calc(16 * var(--u)) calc(22 * var(--u));
   font-size: var(--fs-body);
   line-height: 1.5;
   color: #fff;
@@ -578,12 +337,6 @@
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1100px) {
-  .session-card {
-    min-height: 0;
-    padding: 24px 20px;
-    border-radius: 28px;
-  }
-
   .summary-details {
     grid-template-columns: 1fr;
   }
@@ -604,9 +357,5 @@
 }
 
 @media (max-width: 640px) {
-  .session-form-background { padding: 24px 12px; }
   .detail { grid-template-columns: 1fr; gap: 2px; }
-
-  .session-actions { flex-direction: column-reverse; gap: 12px; align-items: stretch; }
-  .btn-outline { min-width: 0; }
 }

@@ -13,6 +13,7 @@ import SessionConfirmationStep from './steps/step4.tsx';
 import { EMPTY_FORM, buildSummary } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary } from './session-utils.tsx';
 
+import '../../../components/forms-ui.css';
 import './session-form.css';
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -115,10 +116,10 @@ function MultiStepSessionForm() {
   const isConfirmed = submitMessage === 'success' && summary !== null;
 
   return (
-    <div className="session-form-page">
+    <div className="ui-page">
       <Navbar />
-      <main className="session-form-background">
-        <section className={`session-card ${isConfirmed ? 'session-card--confirmation' : ''}`}>
+      <main className="ui-page-background">
+        <section className={`ui-card ${isConfirmed ? 'ui-card--centered' : ''}`}>
           {isConfirmed ? (
             // Confirmation has its own heading, so no "Support Session" title/divider
             <SessionConfirmationStep
@@ -128,15 +129,15 @@ function MultiStepSessionForm() {
             />
           ) : (
             <>
-              <h1 className="session-title">Support Session</h1>
-              <hr className="session-divider" />
+              <h1 className="ui-card-title">Support Session</h1>
+              <hr className="ui-card-divider" />
 
               {submitMessage === 'error' ? (
-                <div className="session-error" role="alert">
+                <div className="ui-error" role="alert">
                   <p>{errorMessage}</p>
                   <button
                     type="button"
-                    className="btn btn-outline"
+                    className="ui-btn ui-btn-outline"
                     onClick={() => {
                       setSubmitMessage('');
                       setCurrentStep(totalSteps); // form data is intact, so return to the last step

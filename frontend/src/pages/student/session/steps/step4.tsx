@@ -65,10 +65,10 @@ function SessionConfirmationStep({ summary, onReturnToDashboard, onViewSession }
       </div>
 
       <div className="confirmation-actions">
-        <button type="button" className="btn btn-solid" onClick={onReturnToDashboard}>
+        <button type="button" className="ui-btn ui-btn-solid" onClick={onReturnToDashboard}>
           Return to Dashboard
         </button>
-        <button type="button" className="btn btn-outline" onClick={onViewSession}>
+        <button type="button" className="ui-btn ui-btn-outline" onClick={onViewSession}>
           View Session <ChevronRight />
         </button>
       </div>

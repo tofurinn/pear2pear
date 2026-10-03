@@ -1,0 +1,293 @@
+/* =============================================================================
+   Shared UI for the card-style pages (Support Session, Feedback, ...).
+   Everything is prefixed `ui-` so it can't collide with other pages' classes.
+
+   SIZING: every size is written as  calc(N * var(--u))  where N is the pixel
+   value from the Figma frame (a 1920px-wide design) and --u = 1px * --s.
+   Change --s below to scale every page that uses this file, in one place.
+   Small text has a floor (--fs-*) so it never becomes unreadable.
+
+   Sections: tokens · heading reset · shell · typography · buttons · form fields
+             · star rating · helpers · responsive
+   ============================================================================= */
+
+/* ---------- Tokens ---------- */
+.ui-page {
+  --s: 0.5;                          /* overall scale: 1 = Figma size at 1920px wide */
+  --u: calc(1px * var(--s));
+
+  /* Type scale: big text scales, small text is floored */
+  --fs-title:   calc(var(--font-size-h1) * var(--s));
+  --fs-heading: calc(var(--font-size-h3) * var(--s));
+  --fs-label:   max(12px, calc(var(--font-size-form-title) * var(--s)));
+  --fs-body:    max(11px, calc(var(--font-size-body) * var(--s)));
+  --fs-btn:     max(12px, calc(22px * var(--s)));
+  --fs-small:   max(10px, calc(12px * var(--s)));
+
+  --color-field: #f7f4e9;
+  --color-summary-bg: #eef5f7;
+  --color-slot: #b9e4c4;
+  --color-slot-off: #f6f6f6;
+  --color-star: #ffd24d;
+  --shadow-soft: 0 2px 4px rgba(68, 36, 33, 0.2);
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text);
+}
+
+/* Larger screens get closer to the full Figma size (tune these to taste) */
+@media (min-width: 1600px) {
+  .ui-page { --s: 0.75; }
+}
+@media (min-width: 1900px) {
+  .ui-page { --s: 1; }
+}
+
+/* ---------- Heading reset ----------
+   Browsers give h1/h2/h3 big default margins and global.css doesn't reset them.
+   :where() keeps this at zero specificity so classes can still set their own margins. */
+.ui-page :where(h1, h2, h3) {
+  margin: 0;
+}
+
+/* ---------- Shell ---------- */
+.ui-page-background {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: calc(80 * var(--u)) calc(24 * var(--u)) calc(64 * var(--u));
+  background: linear-gradient(160deg, #dde9bb 0%, #e9ecb8 25%, #c9e6bd 65%, #b8e3c0 100%);
+}
+
+.ui-card {
+  width: 100%;
+  max-width: calc(1300 * var(--u));
+  min-height: calc(800 * var(--u));
+  display: flex;
+  flex-direction: column;
+  padding: calc(40 * var(--u)) calc(40 * var(--u)) calc(36 * var(--u));
+  background: #fff;
+  border-radius: calc(60 * var(--u));
+}
+
+/* Result / confirmation screens: no title, content centred in the card */
+.ui-card--centered {
+  justify-content: center;
+  padding-block: calc(44 * var(--u));
+}
+
+.ui-card-divider {
+  width: 100%;
+  margin: calc(16 * var(--u)) 0 calc(14 * var(--u));
+  border: 0;
+  border-top: 1px solid var(--color-text);
+}
+
+.ui-card-body {
+  margin-top: calc(48 * var(--u));
+}
+
+/* Bottom button row: pushed to the bottom of the card */
+.ui-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: calc(36 * var(--u));
+}
+
+.ui-actions--end {
+  justify-content: flex-end;
+}
+
+.ui-error {
+  margin: calc(40 * var(--u)) auto 0;
+  max-width: 360px;
+  text-align: center;
+  color: var(--color-error);
+}
+
+.ui-error .ui-btn {
+  margin-top: 16px;
+}
+
+/* ---------- Typography ---------- */
+.ui-card-title {
+  font-size: var(--fs-title);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.2;
+}
+
+.ui-card-heading {
+  font-size: var(--fs-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+}
+
+.ui-accent {
+  color: var(--color-green1);
+}
+
+/* ---------- Buttons ---------- */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(18 * var(--u));
+  padding: calc(8 * var(--u)) calc(24 * var(--u));
+  font-family: var(--font-sans);
+  font-size: var(--fs-btn);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ui-btn svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+}
+
+.ui-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ui-btn:focus-visible,
+.ui-field-control:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
+}
+
+.ui-btn-outline {
+  min-width: max(130px, calc(250 * var(--u)));
+  justify-content: space-between;
+  color: var(--color-text);
+  background: #fff;
+  border: 1.5px solid var(--color-text);
+}
+
+.ui-btn-outline:hover:not(:disabled) {
+  color: #fff;
+  background: var(--color-text);
+}
+
+.ui-btn-solid {
+  padding-inline: calc(32 * var(--u));
+  color: #fff;
+  background: var(--color-green1);
+  border: 0;
+}
+
+.ui-btn-solid:hover:not(:disabled) {
+  background: var(--color-green3);
+}
+
+/* ---------- Form fields ---------- */
+.ui-field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: calc(40 * var(--u));
+}
+
+.ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--u));
+}
+
+.ui-field-label {
+  font-size: var(--fs-label);
+  font-weight: var(--font-weight-medium);
+}
+
+.ui-field-control {
+  width: 100%;
+  padding: calc(15 * var(--u)) calc(22 * var(--u));
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-field);
+  border: 0;
+  border-radius: 999px;
+}
+
+.ui-field-control::placeholder {
+  color: rgba(68, 36, 33, 0.45);
+}
+
+.ui-select-wrap {
+  position: relative;
+}
+
+.ui-select-wrap select {
+  appearance: none;
+  padding-right: calc(56 * var(--u));
+  cursor: pointer;
+}
+
+.ui-select-icon {
+  position: absolute;
+  top: 50%;
+  right: calc(24 * var(--u));
+  width: 1.2em;
+  height: 1.2em;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* ---------- Star rating (read-only, supports halves) ---------- */
+.ui-stars {
+  display: inline-flex;
+  font-size: var(--fs-body);
+  line-height: 1;
+}
+
+.ui-star {
+  position: relative;
+  color: var(--color-border);
+}
+
+.ui-star-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: var(--color-star);
+}
+
+/* ---------- Helpers ---------- */
+.ui-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .ui-card {
+    min-height: 0;
+    padding: 24px 20px;
+    border-radius: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ui-page-background { padding: 24px 12px; }
+  .ui-actions { flex-direction: column-reverse; gap: 12px; align-items: stretch; }
+  .ui-btn-outline { min-width: 0; }
+}
