@@ -36,9 +36,9 @@ function SelectRequestStep({ formData, updateFormData, onNext }: Step1Props) {
 
   return (
     <>
-      <h2 className="step-heading">Step 1: Select A Request</h2>
+      <h2 className="ui-card-heading">Step 1: Select A Request</h2>
 
-      <div className="step-body request-grid" role="radiogroup" aria-label="Select a request">
+      <div className="ui-card-body request-grid" role="radiogroup" aria-label="Select a request">
         {MOCK_REQUESTS.map((request, index) => {
           const isSelected = formData.reqID === request.reqID;
           return (

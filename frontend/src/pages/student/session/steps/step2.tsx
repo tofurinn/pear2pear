@@ -53,11 +53,11 @@ function TimeSlotStep({ formData, updateFormData, onPrevious, onNext }: Step2Pro
 
   return (
     <>
-      <h2 className="step-heading">
-        Step 2: Select <span className="accent">{volunteer?.name ?? 'Volunteer'}'s</span> Available Time Slot
+      <h2 className="ui-card-heading">
+        Step 2: Select <span className="ui-accent">{volunteer?.name ?? 'Volunteer'}'s</span> Available Time Slot
       </h2>
 
-      <div className="step-body slot-scroll">
+      <div className="ui-card-body slot-scroll">
         <div className="slot-grid" role="radiogroup" aria-label="Available time slots">
           {/* Header row */}
           <span />

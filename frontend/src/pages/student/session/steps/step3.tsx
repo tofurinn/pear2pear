@@ -18,31 +18,31 @@ function MeetupDetailsStep({ formData, updateFormData, onPrevious, onSubmit, isS
 
   return (
     <>
-      <h2 className="step-heading">Step 3: Meetup Details</h2>
+      <h2 className="ui-card-heading">Step 3: Meetup Details</h2>
 
-      <div className="step-body field-stack">
-        <div className="field">
-          <label className="field-label" htmlFor="supportMode">Support Mode</label>
-          <div className="select-wrap">
+      <div className="ui-card-body ui-field-stack">
+        <div className="ui-field">
+          <label className="ui-field-label" htmlFor="supportMode">Support Mode</label>
+          <div className="ui-select-wrap">
             <select
               id="supportMode"
-              className="field-control"
+              className="ui-field-control"
               value={formData.supportMode}
               onChange={e => updateFormData({ supportMode: e.target.value as SessionFormData['supportMode'] })}
             >
               <option value="Physical">Physical</option>
               <option value="Online">Online</option>
             </select>
-            <ChevronDown className="select-icon" />
+            <ChevronDown className="ui-select-icon" />
           </div>
         </div>
 
-        <div className="field">
-          <label className="field-label" htmlFor="meetingLocation">Meeting Location</label>
+        <div className="ui-field">
+          <label className="ui-field-label" htmlFor="meetingLocation">Meeting Location</label>
           <input
             id="meetingLocation"
             type="text"
-            className="field-control"
+            className="ui-field-control"
             value={formData.meetingLocation}
             placeholder={formData.supportMode === 'Online' ? 'Paste the meeting link' : 'e.g. Student Lounge 2 at the sofa'}
             onChange={e => updateFormData({ meetingLocation: e.target.value })}
