@@ -1,0 +1,612 @@
+/* =============================================================================
+   Support Session flow: one stylesheet for the shell and every step.
+
+   SIZING: every size is written as  calc(N * var(--u))  where N is the pixel
+   value from the Figma frame (a 1920px-wide design) and --u = 1px * --s.
+   Change --s below to scale the whole flow up or down in one place.
+   Small text has a floor (--fs-*) so it never becomes unreadable.
+
+   Sections: tokens · heading reset · shell · typography · buttons · tags & pills
+             · form fields · step 1 · step 2 · step 4 (confirmation) · responsive
+   ============================================================================= */
+
+/* ---------- Tokens (local to the session flow) ---------- */
+.session-form-page {
+  --s: 0.5;                          /* overall scale: 1 = Figma size at 1920px wide */
+  --u: calc(1px * var(--s));
+
+  /* Type scale: big text scales, small text is floored */
+  --fs-title:   calc(var(--font-size-h1) * var(--s));
+  --fs-heading: calc(var(--font-size-h3) * var(--s));
+  --fs-label:   max(12px, calc(var(--font-size-form-title) * var(--s)));
+  --fs-body:    max(11px, calc(var(--font-size-body) * var(--s)));
+  --fs-btn:     max(12px, calc(22px * var(--s)));
+  --fs-small:   max(10px, calc(12px * var(--s)));
+
+  --color-field: #f7f4e9;
+  --color-summary-bg: #eef5f7;
+  --color-slot: #b9e4c4;
+  --color-slot-off: #f6f6f6;
+  --color-star: #ffd24d;
+  --shadow-soft: 0 2px 4px rgba(68, 36, 33, 0.2);
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text);
+}
+
+/* Larger screens get closer to the full Figma size (tune these to taste) */
+@media (min-width: 1600px) {
+  .session-form-page { --s: 0.75; }
+}
+@media (min-width: 1900px) {
+  .session-form-page { --s: 1; }
+}
+
+/* ---------- Heading reset ----------
+   Browsers give h1/h2/h3 big default margins and global.css doesn't reset them,
+   which caused the huge gaps. :where() keeps this at zero specificity so the
+   classes below can still set their own margins. */
+.session-form-page :where(h1, h2, h3) {
+  margin: 0;
+}
+
+/* ---------- Shell ---------- */
+.session-form-background {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: calc(80 * var(--u)) calc(24 * var(--u)) calc(64 * var(--u));
+  background: linear-gradient(160deg, #dde9bb 0%, #e9ecb8 25%, #c9e6bd 65%, #b8e3c0 100%);
+}
+
+.session-card {
+  width: 100%;
+  max-width: calc(1300 * var(--u));
+  min-height: calc(800 * var(--u));
+  display: flex;
+  flex-direction: column;
+  padding: calc(40 * var(--u)) calc(40 * var(--u)) calc(36 * var(--u));
+  background: #fff;
+  border-radius: calc(60 * var(--u));
+}
+
+.session-card--confirmation {
+  min-height: 0;
+  padding: calc(44 * var(--u)) calc(40 * var(--u));
+}
+
+.session-divider {
+  width: 100%;
+  margin: calc(16 * var(--u)) 0 calc(14 * var(--u));
+  border: 0;
+  border-top: 1px solid var(--color-text);
+}
+
+.step-body {
+  margin-top: calc(48 * var(--u));
+}
+
+.session-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: calc(36 * var(--u));
+}
+
+.session-error {
+  margin: calc(40 * var(--u)) auto 0;
+  max-width: 360px;
+  text-align: center;
+  color: var(--color-error);
+}
+
+.session-error .btn {
+  margin-top: 16px;
+}
+
+/* ---------- Typography ---------- */
+.session-title {
+  font-size: var(--fs-title);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.2;
+}
+
+.step-heading {
+  font-size: var(--fs-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+}
+
+.accent {
+  color: var(--color-green1);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(18 * var(--u));
+  padding: calc(8 * var(--u)) calc(24 * var(--u));
+  font-family: var(--font-sans);
+  font-size: var(--fs-btn);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible,
+.request-card:focus-visible,
+.slot:focus-visible,
+.field-control:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
+}
+
+.btn-outline {
+  min-width: max(130px, calc(250 * var(--u)));
+  justify-content: space-between;
+  color: var(--color-text);
+  background: #fff;
+  border: 1.5px solid var(--color-text);
+}
+
+.btn-outline:hover:not(:disabled) {
+  color: #fff;
+  background: var(--color-text);
+}
+
+.btn-solid {
+  padding-inline: calc(32 * var(--u));
+  color: #fff;
+  background: var(--color-green1);
+  border: 0;
+}
+
+.btn-solid:hover:not(:disabled) {
+  background: var(--color-green3);
+}
+
+/* ---------- Tags & pills (steps 1 and 4) ---------- */
+.category-tag {
+  align-self: flex-start;
+  padding: 1px calc(9 * var(--u));
+  font-size: var(--fs-small);
+  color: #fff;
+  background: linear-gradient(90deg, #b5c4e8, #c4dcb8);
+  border-radius: 999px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(7 * var(--u));
+  padding: 1px calc(13 * var(--u));
+  font-size: var(--fs-small);
+  color: var(--color-green1);
+  border: 1px solid var(--color-green1);
+  border-radius: 999px;
+}
+
+.status-pill svg {
+  width: 1em;
+  height: 1em;
+}
+
+.status-pill.pending   { color: var(--color-warning); border-color: var(--color-warning); }
+.status-pill.scheduled { color: var(--color-blue2);   border-color: var(--color-blue2); }
+.status-pill.rejected,
+.status-pill.cancelled { color: var(--color-error);   border-color: var(--color-error); }
+
+/* ---------- Form fields (step 3) ---------- */
+.field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: calc(40 * var(--u));
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--u));
+}
+
+.field-label {
+  font-size: var(--fs-label);
+  font-weight: var(--font-weight-medium);
+}
+
+.field-control {
+  width: 100%;
+  padding: calc(15 * var(--u)) calc(22 * var(--u));
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-field);
+  border: 0;
+  border-radius: 999px;
+}
+
+.field-control::placeholder {
+  color: rgba(68, 36, 33, 0.45);
+}
+
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap select {
+  appearance: none;
+  padding-right: calc(56 * var(--u));
+  cursor: pointer;
+}
+
+.select-icon {
+  position: absolute;
+  top: 50%;
+  right: calc(24 * var(--u));
+  width: 1.2em;
+  height: 1.2em;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* ---------- Step 1: request cards (2 x 2 per page, scrolls sideways beyond 4) ---------- */
+.request-grid {
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: calc(393 * var(--u));
+  gap: calc(30 * var(--u)) calc(51 * var(--u));
+  margin: calc(56 * var(--u)) 0 0 calc(14 * var(--u));
+  padding: 4px 4px 12px; /* room so the scroll box doesn't clip borders and shadows */
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-blue1) transparent;
+}
+
+.request-card {
+  grid-row: var(--row);
+  grid-column: var(--col);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: calc(10 * var(--u)) calc(10 * var(--u)) calc(8 * var(--u)) calc(12 * var(--u));
+  text-align: left;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: calc(10 * var(--u));
+  box-shadow: 0 1px 4px rgba(68, 36, 33, 0.08);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.request-card:hover {
+  border-color: var(--color-blue1);
+}
+
+.request-card.selected {
+  border: 2px solid var(--color-blue2);
+  /* 1px less padding on each side so the thicker border doesn't change the size */
+  padding: calc(10 * var(--u) - 1px) calc(10 * var(--u) - 1px) calc(8 * var(--u) - 1px) calc(12 * var(--u) - 1px);
+  box-shadow: 0 2px 6px rgba(117, 201, 200, 0.45);
+}
+
+.request-title {
+  margin-top: 2px;
+  font-size: var(--fs-body);
+  line-height: 1.3;
+}
+
+.volunteer-name {
+  margin-top: calc(10 * var(--u));
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-green1);
+}
+
+.request-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.request-date {
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Step 2: time slot grid ---------- */
+.slot-scroll {
+  margin-top: calc(28 * var(--u));
+  overflow-x: auto;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: calc(140 * var(--u)) repeat(7, minmax(64px, 1fr));
+  min-width: 560px;
+}
+
+.slot-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: calc(8 * var(--u));
+  font-size: var(--fs-label);
+  line-height: 1.2;
+}
+
+.slot-day strong {
+  font-size: var(--fs-small);
+  font-weight: var(--font-weight-bold);
+}
+
+.slot-hour {
+  display: flex;
+  align-items: center;
+  padding-left: calc(22 * var(--u));
+  font-size: var(--fs-label);
+}
+
+.slot-cell {
+  display: grid;
+  place-items: center;
+  height: max(24px, calc(53 * var(--u)));
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  width: max(14px, calc(28 * var(--u)));
+  height: max(14px, calc(28 * var(--u)));
+  padding: 0;
+  color: #fff;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-slot-off);
+  box-shadow: inset 1px 1px 2px rgba(68, 36, 33, 0.1);
+}
+
+.slot svg {
+  width: 70%;
+  height: 70%;
+}
+
+.slot.available {
+  background: var(--color-slot);
+  box-shadow: 0 1px 2px rgba(68, 36, 33, 0.15);
+  cursor: pointer;
+}
+
+.slot.available:hover {
+  background: var(--color-green2);
+}
+
+.slot.selected {
+  background: var(--color-green1);
+  box-shadow: 0 1px 2px rgba(68, 36, 33, 0.25);
+  cursor: pointer;
+}
+
+.slot:disabled {
+  cursor: default;
+}
+
+.slot-readout {
+  min-height: 1.5em; /* keeps the layout from jumping as the text changes */
+  margin-top: calc(20 * var(--u));
+  font-size: var(--fs-body);
+}
+
+.slot-readout-label {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-green3);
+}
+
+/* ---------- Step 4: confirmation ---------- */
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confirmation-icon {
+  width: calc(112 * var(--u));
+  height: calc(112 * var(--u));
+  min-width: 56px;
+  min-height: 56px;
+}
+
+.confirmation-title {
+  margin-top: calc(14 * var(--u));
+  font-size: var(--fs-heading);
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}
+
+.confirmation-message {
+  max-width: calc(560 * var(--u));
+  min-width: 260px;
+  margin-top: calc(14 * var(--u));
+  font-size: var(--fs-body);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.summary-label {
+  align-self: flex-start;
+  margin-top: calc(22 * var(--u));
+  font-size: var(--fs-label);
+  font-weight: var(--font-weight-medium);
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: calc(8 * var(--u));
+  padding: calc(14 * var(--u)) calc(16 * var(--u)) calc(16 * var(--u));
+  background: var(--color-summary-bg);
+  border-radius: calc(32 * var(--u));
+}
+
+.summary-title {
+  font-size: var(--fs-label);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: max(250px, calc(480 * var(--u))) 1fr;
+  gap: 4px 0;
+  margin: calc(8 * var(--u)) 0 calc(12 * var(--u));
+}
+
+.detail {
+  display: grid;
+  grid-template-columns: max(130px, calc(210 * var(--u))) 1fr;
+  align-items: center;
+}
+
+.detail dt {
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--u));
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-bold);
+}
+
+.detail dt svg {
+  width: 1.4em;
+  height: 1.4em;
+  flex: none;
+}
+
+.detail dd {
+  margin: 0;
+  font-size: var(--fs-body);
+}
+
+.volunteer-card {
+  padding: calc(8 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u));
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: calc(12 * var(--u));
+}
+
+.volunteer-card-header {
+  display: flex;
+  align-items: center;
+  gap: calc(18 * var(--u));
+}
+
+.volunteer-card-name {
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue2);
+}
+
+.stars {
+  display: inline-flex;
+  font-size: var(--fs-body);
+  line-height: 1;
+}
+
+.star {
+  position: relative;
+  color: var(--color-border);
+}
+
+.star-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: var(--color-star);
+}
+
+.rating-text {
+  font-size: var(--fs-small);
+}
+
+.volunteer-tags {
+  margin-top: calc(6 * var(--u));
+  padding: calc(15 * var(--u)) calc(12 * var(--u));
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: #fff;
+  background: var(--color-blue2);
+  border-radius: calc(10 * var(--u));
+}
+
+.confirmation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(24 * var(--u)) calc(100 * var(--u));
+  margin-top: calc(40 * var(--u));
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .session-card {
+    min-height: 0;
+    padding: 24px 20px;
+    border-radius: 28px;
+  }
+
+  .summary-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  /* one row of cards that swipes sideways */
+  .request-grid {
+    grid-template-rows: auto;
+    grid-auto-columns: min(260px, 80%);
+    margin-left: 0;
+  }
+
+  .request-card {
+    grid-row: 1;
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .session-form-background { padding: 24px 12px; }
+  .detail { grid-template-columns: 1fr; gap: 2px; }
+
+  .session-actions { flex-direction: column-reverse; gap: 12px; align-items: stretch; }
+  .btn-outline { min-width: 0; }
+}

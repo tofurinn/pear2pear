@@ -26,6 +26,20 @@ pear2pear/
 │   │   │   └── errors.ts                       # Mapping Firebase error codes to friendly UI messages
 │   │   ├── hooks/                              # Custom React hooks (useAuth, useFirestore, etc.)
 │   │   ├── pages/                              # Routed view components (Home, Login, Dashboard)
+│   │   │   ├── index/
+│   │   │   ├── registration/
+│   │   │   ├── student/
+│   │   │   │   ├── dashboard/
+│   │   │   │   ├── feedback/
+│   │   │   │   ├── history/
+│   │   │   │   ├── request/
+│   │   │   │   └── session/                    
+│   │   │   └── volunteer/
+│   │   │       ├── dashboard/
+│   │   │       ├── feedback/
+│   │   │       ├── history/
+│   │   │       ├── request/
+│   │   │       └── session/
 │   │   ├── types/                              # Shared TypeScript interfaces and data models
 │   │   ├── App.css                             # App component styles
 │   │   ├── App.tsx                             # Root application component & client routing
