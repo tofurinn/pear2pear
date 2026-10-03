@@ -5,7 +5,7 @@ import app from "./firebase/config";
 console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.options.projectId);
 
 import IndexPage from './pages/index/index'
-import SessionForm from './pages/student/session/session-form';
+import MultiStepSessionForm from './pages/student/session/session-form';
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         <Route path="/" element={<IndexPage />} />
 
         {/* Student routes */}
-        <Route path="/session-form" element={<SessionForm/>} />
+        <Route path="/session-form" element={<MultiStepSessionForm/>} />
 
         {/* Volunteer routes */}
         
