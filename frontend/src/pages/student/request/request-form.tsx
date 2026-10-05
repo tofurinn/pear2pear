@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 //state object: isSubmitting / submitMessage / errorMessage - submission state
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
+import '../../../components/category-tag/category-tag.css';
 import SupportTypeStep from './steps/step1.tsx';
 import FilteringStep from './steps/step2.tsx';
 import AvailabilityStep from './steps/step3.tsx';

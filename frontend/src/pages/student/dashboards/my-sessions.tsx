@@ -48,7 +48,7 @@ function SessionCard({ item, onViewDetails }: SessionCardProps) {
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
-function MySessions() {
+function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
   const navigate = useNavigate();
 
   // TODO: load this student's sessions (and their requests / volunteers) from Firestore
@@ -62,10 +62,10 @@ function MySessions() {
 
   return (
     <div className="ui-page">
-      <Navbar />
+      <Navbar dashboardPath={dashboardPath} />
       <main className="dashboard-background">
         <div className="dashboard-inner">
-          <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate('/student/dashboard')}>
+          <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate(dashboardPath)}>
             <ChevronLeft /> Dashboard
           </button>
 
