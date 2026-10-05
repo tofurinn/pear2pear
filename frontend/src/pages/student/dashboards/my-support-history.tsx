@@ -53,7 +53,7 @@ function HistoryCard({ item, onViewDetails }: HistoryCardProps) {
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
-function SupportHistory() {
+function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
   const navigate = useNavigate();
 
   // TODO: load this student's finished sessions from Firestore
@@ -70,10 +70,10 @@ function SupportHistory() {
 
   return (
     <div className="ui-page">
-      <Navbar />
+      <Navbar dashboardPath={dashboardPath} />
       <main className="dashboard-background">
         <div className="dashboard-inner">
-          <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate('/student/dashboard')}>
+          <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate(dashboardPath)}>
             <ChevronLeft /> Dashboard
           </button>
 

@@ -1,0 +1,32 @@
+.rf-tag {
+  align-self: flex-start;
+  padding: 1px calc(9 * var(--u, 1px));
+  font-family: var(--font-sans);
+  font-size: var(--fs-small, 10px);
+  color: #fff;
+  background: linear-gradient(90deg, #b5c4e8, #c4dcb8);
+  border: 0;
+  border-radius: 999px;
+  opacity: 0.45;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.rf-tag:hover {
+  opacity: 0.75;
+}
+
+.rf-tag[aria-checked='true'] {
+  opacity: 1;
+}
+
+.rf-tag--static,
+.rf-tag--static:hover {
+  opacity: 1;
+  cursor: default;
+}
+
+.rf-tag:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
+}
