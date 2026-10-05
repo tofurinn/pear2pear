@@ -4,7 +4,9 @@ import type { Support_Session } from '../../../types/Support_Session';
 
 // ─── What a session card needs ─────────────────────────────────────────────────
 
-export type StatusTone = 'planned' | 'confirmed' | 'completed' | 'rated' | 'cancelled';
+export type StatusTone =
+  | 'planned' | 'to-confirm' | 'confirmed' | 'completed' | 'rated' | 'cancelled'   // sessions
+  | 'pending' | 'accepted' | 'scheduled' | 'rejected';                              // requests (cancelled is shared)
 
 // Volunteer.name lives on User and the rating count isn't stored yet, so the backend will assemble this
 export interface VolunteerSummary {
@@ -35,6 +37,15 @@ const STATUS_PILL: Record<Support_Session['sessStatus'], { label: string; tone: 
   Cancelled: { label: 'Cancelled', tone: 'cancelled' },
 };
 
+// Planned means only one side has confirmed so far. Labels are from the student's point of view.
+const getStatusPill = (session: Support_Session): { label: string; tone: StatusTone } => {
+  if (session.sessStatus === 'Planned') {
+    if (session.studConfirmed && !session.volConfirmed) return { label: 'Waiting', tone: 'planned' };      // student arranged it, volunteer hasn't responded
+    if (!session.studConfirmed && session.volConfirmed) return { label: 'To confirm', tone: 'to-confirm' };  // volunteer arranged it, student still has to confirm
+  }
+  return STATUS_PILL[session.sessStatus];
+};
+
 const formatDate = (date: Date) =>
   date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -54,7 +65,7 @@ export const toSessionItem = (
   rating: { value: volunteer.rating, count: volunteer.ratingCount },
   sessDate: session.sessDate,
   dateLabel: formatDate(session.sessDate),
-  status: STATUS_PILL[session.sessStatus],
+  status: getStatusPill(session),
 });
 
 export const buildSessionItems = (
@@ -75,6 +86,9 @@ export const MOCK_VOLUNTEERS: Record<string, VolunteerSummary> = {
   'vol-omniman':  { name: 'Omniman', rating: 4, ratingCount: 2 },
   'vol-natasha':  { name: 'Natasha Laoshi', rating: 4.5, ratingCount: 10 },
   'vol-steve':    { name: 'Steve Jobs', rating: 5, ratingCount: 3 },
+  'vol-haiqal':   { name: 'Haiqal Chan', rating: 4, ratingCount: 5 },
+  'vol-joy':      { name: 'Joy Lau Xuan', rating: 4.5, ratingCount: 8 },
+  'vol-usagi':    { name: 'Usagi bin Obama', rating: 3.5, ratingCount: 4 },
 };
 
 type SessionStatus = Support_Session['sessStatus'];
@@ -123,3 +137,73 @@ export const MOCK_SESSIONS: Support_Session[] = ROWS.map(([, , [y, m, d], sessSt
     volConfirmed,
   };
 });
+
+// ─── My Requests ───────────────────────────────────────────────────────────────
+
+export interface RequestItem {
+  reqID: string;
+  reqStatus: Support_Request['reqStatus'];
+  category: Support_Request['category'];
+  title: string;
+  personName: string;
+  dateLabel: string;
+  status: { label: string; tone: StatusTone };
+}
+
+const REQUEST_STATUS_PILL: Record<Support_Request['reqStatus'], { label: string; tone: StatusTone }> = {
+  Pending:   { label: 'Pending',   tone: 'pending' },
+  Accepted:  { label: 'Accepted',  tone: 'accepted' },
+  Scheduled: { label: 'Scheduled', tone: 'scheduled' },   // a session has been arranged from it
+  Rejected:  { label: 'Rejected',  tone: 'rejected' },
+  Cancelled: { label: 'Cancelled', tone: 'cancelled' },
+};
+
+// Pure mapping, like toSessionItem: once the data comes from Firestore only the inputs change
+export const toRequestItem = (request: Support_Request, volunteer: VolunteerSummary): RequestItem => ({
+  reqID: request.reqID,
+  reqStatus: request.reqStatus,
+  category: request.category,
+  title: request.title,
+  personName: volunteer.name,
+  dateLabel: formatDate(request.reqTimestamp.toDate()),
+  status: REQUEST_STATUS_PILL[request.reqStatus],
+});
+
+export const buildRequestItems = (
+  requests: Support_Request[],
+  volunteers: Record<string, VolunteerSummary>
+): RequestItem[] =>
+  requests.flatMap(request => {
+    const volunteer = volunteers[request.volID];
+    return volunteer ? [toRequestItem(request, volunteer)] : [];
+  });
+
+// Mock requests for the My Requests page (delete once this comes from Firestore)
+const CAT_SITTING = { title: 'Cat-sitting for a weekend!', category: 'General Student Support' } as const;
+const LOGIN = { title: 'Cybersafe Login Problem', category: 'Technology Support' } as const;
+const BIRTHDAY = { title: 'Birthday Party Helper!!!', category: 'General Student Support' } as const;
+
+const mockRequest = (
+  n: number,
+  volID: string,
+  topic: Pick<Support_Request, 'title' | 'category'>,
+  reqStatus: Support_Request['reqStatus'],
+  [y, m, d]: [number, number, number]
+): Support_Request => ({
+  reqID: `my-req-${n}`,
+  studID: 'stud-1',
+  volID,
+  title: topic.title,
+  description: 'Mock request for testing.',
+  category: topic.category,
+  reqStatus,
+  reqTimestamp: Timestamp.fromDate(new Date(y, m - 1, d)),
+});
+
+export const MOCK_MY_REQUESTS: Support_Request[] = [
+  mockRequest(1, 'vol-haiqal',   CAT_SITTING, 'Pending',   [2026, 9, 19]),
+  mockRequest(2, 'vol-joy',      LOGIN,       'Pending',   [2026, 9, 11]),
+  mockRequest(3, 'vol-chiikawa', GRASS,       'Accepted',  [2026, 10, 4]),
+  mockRequest(4, 'vol-natasha',  MATHS,       'Scheduled', [2025, 8, 11]),
+  mockRequest(5, 'vol-usagi',    BIRTHDAY,    'Rejected',  [2025, 4, 4]),
+];

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 //state object: isSubmitting / submitMessage / errorMessage - submission state
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
+import { ChevronLeft, ChevronRight } from '../../../components/icons.tsx';
 import SelectRequestStep from './steps/step1.tsx';
 import TimeSlotStep from './steps/step2.tsx';
 import MeetupDetailsStep from './steps/step3.tsx';
@@ -29,6 +30,15 @@ function MultiStepSessionForm() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const totalSteps = 3; // the confirmation page is not a numbered step
+  const isLastStep = currentStep === totalSteps;
+
+  // Whether the current step has what it needs before moving on
+  const canGoNext =
+    currentStep === 1
+      ? formData.reqID !== ''
+      : currentStep === 2
+        ? formData.sessDate !== '' && formData.sessTimeSlot !== ''
+        : formData.meetingLocation.trim() !== '' && !isSubmitting;
 
   const updateFormData = (data: Partial<SessionFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
@@ -72,16 +82,11 @@ function MultiStepSessionForm() {
     }
   };
 
+  // Each step only draws its own content; the Previous / Next row is below, in one place
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <SelectRequestStep
-            formData={{ reqID: formData.reqID }}
-            updateFormData={updateFormData}
-            onNext={handleNext}
-          />
-        );
+        return <SelectRequestStep formData={{ reqID: formData.reqID }} updateFormData={updateFormData} />;
       case 2:
         return (
           <TimeSlotStep
@@ -91,8 +96,6 @@ function MultiStepSessionForm() {
               sessTimeSlot: formData.sessTimeSlot,
             }}
             updateFormData={updateFormData}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
           />
         );
       case 3:
@@ -103,9 +106,6 @@ function MultiStepSessionForm() {
               meetingLocation: formData.meetingLocation,
             }}
             updateFormData={updateFormData}
-            onPrevious={handlePrevious}
-            onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
           />
         );
       default:
@@ -147,7 +147,48 @@ function MultiStepSessionForm() {
                   </button>
                 </div>
               ) : (
-                renderStep()
+                <>
+                  {/* Progress through the 3 steps (the confirmation page isn't counted) */}
+                  <div className="session-progress-wrap">
+                    <p className="session-progress-text" aria-hidden="true">Step {currentStep} of {totalSteps}</p>
+                    <div
+                      className="session-progress"
+                      role="progressbar"
+                      aria-label="Session booking progress"
+                      aria-valuemin={1}
+                      aria-valuemax={totalSteps}
+                      aria-valuenow={currentStep}
+                      aria-valuetext={`Step ${currentStep} of ${totalSteps}`}
+                    >
+                      <div className="session-progress-fill" style={{ width: `${(currentStep / totalSteps) * 100}%` }} />
+                    </div>
+                  </div>
+
+                  {renderStep()}
+
+                  <div className="ui-actions">
+                    {currentStep > 1 ? (
+                      <button type="button" className="ui-btn ui-btn-outline" onClick={handlePrevious}>
+                        <ChevronLeft /> Previous Page
+                      </button>
+                    ) : (
+                      <span /> /* keeps Next on the right on step 1 */
+                    )}
+
+                    <button
+                      type="button"
+                      className={`ui-btn ${isLastStep ? 'ui-btn-solid' : 'ui-btn-outline'}`}
+                      onClick={isLastStep ? handleSubmit : handleNext}
+                      disabled={!canGoNext}
+                    >
+                      {isLastStep ? (
+                        isSubmitting ? 'Arranging…' : 'Arrange Session'
+                      ) : (
+                        <>Next Page <ChevronRight /></>
+                      )}
+                    </button>
+                  </div>
+                </>
               )}
             </>
           )}
