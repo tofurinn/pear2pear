@@ -1,0 +1,266 @@
+/* =============================================================================
+   Dashboard sub-pages (My Sessions, Support History, my-requests, ...).
+   Relies on components/ui/ui.css for the --u / --fs-* sizing tokens and the
+   .ui-btn buttons, so everything must render inside .ui-page.
+   Sections: page shell · banner · board · item card · tag, pill, chip buttons · responsive
+   ============================================================================= */
+
+/* ---------- Page shell ---------- */
+.dashboard-background {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: calc(75 * var(--u)) calc(24 * var(--u));
+  background: #eff6ea;
+}
+
+.dashboard-inner {
+  width: 100%;
+  max-width: calc(1760 * var(--u));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(21 * var(--u));
+}
+
+.dashboard-card {
+  width: 100%;
+  min-height: calc(770 * var(--u));
+  padding: calc(30 * var(--u));
+  background: #fff;
+  border-radius: calc(46 * var(--u));
+}
+
+/* ---------- Banner ---------- */
+.dashboard-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(24 * var(--u));
+  min-height: calc(131 * var(--u));
+  padding: calc(20 * var(--u)) calc(33 * var(--u)) calc(20 * var(--u)) calc(30 * var(--u));
+  border-radius: 20px;
+}
+
+.dashboard-banner--green  { background: linear-gradient(180deg, #f2fbdb 0%, #b9e690 100%); }
+.dashboard-banner--yellow { background: linear-gradient(180deg, #fbfbdc 0%, #f7e08c 100%); }
+
+.dashboard-banner-title {
+  font-size: calc(var(--font-size-h2) * var(--s));
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.2;
+}
+
+.dashboard-banner-subtitle {
+  margin-top: calc(4 * var(--u));
+  font-size: var(--fs-label);
+  color: rgba(68, 36, 33, 0.6);
+}
+
+/* White pill button for banners */
+.ui-btn-white {
+  padding-inline: calc(32 * var(--u));
+  color: var(--color-green1);
+  background: #fff;
+  border: 0;
+}
+
+.ui-btn-white:hover {
+  color: var(--color-green3);
+}
+
+/* ---------- Board (titled sections side by side) ---------- */
+.dashboard-board {
+  display: grid;
+  gap: calc(40 * var(--u)) calc(73 * var(--u));
+  align-items: start;
+  margin-top: calc(48 * var(--u));
+  padding-inline: calc(19 * var(--u));
+}
+
+.dashboard-board--three   { grid-template-columns: repeat(3, minmax(0, 1fr)); }   /* My Sessions */
+.dashboard-board--single  { grid-template-columns: minmax(0, 1fr); }   /* Support History: one full-width column */
+
+.dashboard-section-title {
+  margin-bottom: calc(14 * var(--u));
+  font-size: var(--fs-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(11 * var(--u)) calc(12 * var(--u));
+}
+
+
+.dashboard-empty {
+  font-size: var(--fs-body);
+  color: rgba(68, 36, 33, 0.45);
+}
+
+/* ---------- Item card ---------- */
+.ui-item-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: calc(12 * var(--u));
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: calc(12 * var(--u));
+  box-shadow: 0 1px 4px rgba(68, 36, 33, 0.1);
+}
+
+.ui-item-card-edit {
+  position: absolute;
+  top: calc(12 * var(--u));
+  right: calc(14 * var(--u));
+  display: grid;
+  padding: 0;
+  color: #c9c9c9;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.ui-item-card-edit:hover {
+  color: var(--color-text);
+}
+
+.ui-item-card-edit svg {
+  width: max(12px, calc(20 * var(--u)));
+  height: max(12px, calc(20 * var(--u)));
+}
+
+.ui-item-card-title {
+  margin-top: calc(4 * var(--u));
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.ui-item-card-person {
+  margin-top: calc(22 * var(--u));
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-blue2);
+}
+
+.ui-item-card-rating {
+  display: flex;
+  align-items: center;
+  gap: calc(14 * var(--u));
+  margin-top: calc(2 * var(--u));
+}
+
+.ui-item-card-rating-text {
+  font-size: var(--fs-small);
+}
+
+.ui-item-card-footer {
+  display: flex;
+  flex-wrap: wrap;            /* extra buttons wrap instead of squashing the date */
+  align-items: center;
+  gap: 6px calc(10 * var(--u));
+  width: 100%;
+  margin-top: calc(6 * var(--u));
+}
+
+.ui-item-card-date {
+  margin-right: auto;
+  font-size: var(--fs-small);
+  color: #cfcfcf;
+  white-space: nowrap;
+}
+
+/* ---------- Tag, status pill, chip buttons ---------- */
+.ui-category-tag {
+  align-self: flex-start;
+  padding: 1px calc(9 * var(--u));
+  font-size: var(--fs-small);
+  color: #fff;
+  background: linear-gradient(90deg, #b5c4e8, #c4dcb8);
+  border-radius: 999px;
+}
+
+.ui-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(7 * var(--u));
+  padding: 1px calc(14 * var(--u));
+  font-size: var(--fs-small);
+  white-space: nowrap;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+
+.ui-status-pill svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+}
+
+.ui-status-pill--planned   { color: #b9b9b9; }
+.ui-status-pill--confirmed { color: var(--color-green1); }
+.ui-status-pill--completed { color: var(--color-blue2); }
+.ui-status-pill--rated     { color: #e0a92e; }
+.ui-status-pill--cancelled { color: var(--color-error); }
+
+.ui-chip-btn {
+  padding: 2px calc(16 * var(--u));
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(68, 36, 33, 0.2);
+  cursor: pointer;
+}
+
+.ui-chip-btn:hover { filter: brightness(0.95); }
+
+.ui-chip-btn:focus-visible,
+.ui-item-card-edit:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
+}
+
+.ui-chip-btn--success { background: var(--color-green1); }
+.ui-chip-btn--danger  { background: var(--color-error); }
+.ui-chip-btn--warning { background: #efc23f; }
+.ui-chip-btn--info    { background: var(--color-blue2); }
+
+/* View Details on the My Sessions cards: sits on its own row, full width,
+   so the footer never overflows the narrow 3-column cards */
+.ui-chip-btn--block {
+  flex: 1 0 100%;
+  margin-top: calc(4 * var(--u));
+  padding-block: 3px;
+  text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .dashboard-card {
+    min-height: 0;
+    padding: 20px;
+    border-radius: 28px;
+  }
+
+  .dashboard-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-board--three,
+  .dashboard-board--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-board { padding-inline: 0; }
+}
