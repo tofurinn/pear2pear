@@ -118,7 +118,7 @@ function MultiStepSessionForm() {
   return (
     <div className="ui-page">
       <Navbar />
-      <main className="ui-page-background">
+      <main className="ui-page-session-background">
         <section className={`ui-card ${isConfirmed ? 'ui-card--centered' : ''}`}>
           {isConfirmed ? (
             // Confirmation has its own heading, so no "Support Session" title/divider

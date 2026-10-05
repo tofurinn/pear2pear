@@ -1,0 +1,377 @@
+/* =============================================================================
+   Support Request: step-specific styles only.
+   Shared shell, buttons, fields and sizing live in the shared ui css
+   (this file relies on its --u / --fs-* tokens, so it must stay inside .ui-page).
+   All classes are prefixed rf- so nothing clashes with session-form.css.
+   Sections: tag · step 1 · step 2 · step 3 · step 4 · confirmation · responsive
+   ============================================================================= */
+
+/* ---------- Category tag (steps 1, 4, 5) ---------- */
+.rf-tag {
+  align-self: flex-start;
+  padding: 1px calc(9 * var(--u));
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  color: #fff;
+  background: linear-gradient(90deg, #b5c4e8, #c4dcb8);
+  border: 0;
+  border-radius: 999px;
+  opacity: 0.45;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.rf-tag:hover { opacity: 0.75; }
+.rf-tag[aria-checked='true'] { opacity: 1; }
+
+.rf-tag--static,
+.rf-tag--static:hover {
+  opacity: 1;
+  cursor: default;
+}
+
+.rf-tag:focus-visible,
+.rf-skill:focus-visible,
+.rf-slot:focus-visible,
+.rf-volunteer-card:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
+}
+
+/* ---------- Step 1: support type ---------- */
+.rf-tag-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(10 * var(--u));
+  height: auto;
+}
+
+.rf-textarea {
+  display: block;
+  width: 100%;
+  min-height: max(140px, calc(220 * var(--u)));
+  height: auto;
+  font-family: inherit;
+  font-size: 14px;
+  color: inherit;
+  line-height: 1.4;
+  resize: vertical;
+  border-radius: calc(28 * var(--u));
+}
+
+/* ---------- Step 2: filtering ---------- */
+.rf-date-range {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(12 * var(--u));
+  height: auto;
+}
+
+.rf-date-input {
+  min-width: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+}
+
+.rf-date-input:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
+}
+
+.rf-skill-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(14 * var(--u)) calc(20 * var(--u));
+  margin-top: calc(8 * var(--u));
+}
+
+.rf-skill {
+  display: flex;
+  align-items: center;
+  gap: calc(14 * var(--u));
+  padding: 4px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  color: var(--color-text);
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.rf-skill-dot {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: max(22px, calc(36 * var(--u)));
+  height: max(22px, calc(36 * var(--u)));
+  color: #fff;
+  background: var(--color-field);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(68, 36, 33, 0.2);
+  transition: background 0.15s ease;
+}
+
+.rf-skill[aria-checked='true'] .rf-skill-dot {
+  background: var(--color-green1);
+}
+
+/* ---------- Step 3: availability grid ---------- */
+.rf-slot-scroll {
+  margin-top: calc(28 * var(--u));
+  overflow-x: auto;
+}
+
+.rf-slot-grid {
+  display: grid;
+  grid-template-columns: calc(140 * var(--u)) repeat(var(--days, 7), minmax(64px, 1fr));
+  min-width: calc(80px + var(--days, 7) * 64px);
+}
+
+.rf-slot-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: calc(8 * var(--u));
+  font-size: var(--fs-label);
+  line-height: 1.2;
+}
+
+.rf-slot-day strong {
+  font-size: var(--fs-small);
+  font-weight: var(--font-weight-bold);
+}
+
+.rf-slot-hour {
+  display: flex;
+  align-items: center;
+  padding-left: calc(22 * var(--u));
+  font-size: var(--fs-label);
+}
+
+.rf-slot-cell {
+  display: grid;
+  place-items: center;
+  height: max(24px, calc(53 * var(--u)));
+}
+
+.rf-slot {
+  display: grid;
+  place-items: center;
+  width: max(14px, calc(28 * var(--u)));
+  height: max(14px, calc(28 * var(--u)));
+  padding: 0;
+  color: #fff;
+  background: var(--color-slot);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(68, 36, 33, 0.15);
+  cursor: pointer;
+}
+
+.rf-slot:hover { background: var(--color-green2); }
+
+.rf-slot.selected {
+  background: var(--color-green1);
+  box-shadow: 0 1px 2px rgba(68, 36, 33, 0.25);
+}
+
+.rf-slot svg {
+  width: 70%;
+  height: 70%;
+}
+
+.rf-slot-readout {
+  /* centred pill filled like the other inputs; fixed width so it doesn't jump as the text changes */
+  width: min(100%, max(320px, calc(560 * var(--u))));
+  margin: calc(20 * var(--u)) auto 0;
+  padding: calc(12 * var(--u)) calc(28 * var(--u));
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  text-align: center;
+  background: var(--color-field);
+  border-radius: 999px;
+}
+
+.rf-slot-readout-label {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-green3);
+}
+
+/* ---------- Step 4: volunteer match-making ---------- */
+.rf-volunteer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, calc(393 * var(--u))));
+  gap: calc(30 * var(--u)) calc(30 * var(--u));
+  margin-top: calc(40 * var(--u));
+  padding: 4px 4px 12px; /* room so the scroll box doesn't clip borders and shadows */
+}
+
+.rf-volunteer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: calc(10 * var(--u)) calc(10 * var(--u)) calc(8 * var(--u)) calc(12 * var(--u));
+  text-align: left;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: calc(10 * var(--u));
+  box-shadow: 0 1px 4px rgba(68, 36, 33, 0.08);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rf-volunteer-card:hover {
+  border-color: var(--color-blue1);
+}
+
+.rf-volunteer-card.selected {
+  border: 2px solid var(--color-blue2);
+  /* 1px less padding on each side so the thicker border doesn't change the size */
+  padding: calc(10 * var(--u) - 1px) calc(10 * var(--u) - 1px) calc(8 * var(--u) - 1px) calc(12 * var(--u) - 1px);
+  box-shadow: 0 2px 6px rgba(117, 201, 200, 0.45);
+}
+
+.rf-volunteer-name {
+  margin-top: 2px;
+  font-size: var(--fs-body);
+  line-height: 1.3;
+}
+
+.rf-volunteer-tags {
+  display: block;
+  width: 100%;
+  margin-top: calc(10 * var(--u));
+  padding: calc(10 * var(--u)) calc(12 * var(--u));
+  font-size: var(--fs-small);
+  line-height: 1.4;
+  color: #fff;
+  background: var(--color-blue2);
+  border-radius: calc(6 * var(--u));
+}
+
+.rf-volunteer-rating {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+  margin-top: calc(6 * var(--u));
+}
+
+.rf-rating-text {
+  font-size: var(--fs-small);
+}
+
+.rf-empty {
+  margin-top: calc(40 * var(--u));
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+/* ---------- Confirmation ---------- */
+.rf-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rf-confirmation-image {
+  width: 120px;
+  height: auto;
+}
+
+.rf-confirmation-icon {
+  display: grid;
+  place-items: center;
+  width: calc(112 * var(--u));
+  height: calc(112 * var(--u));
+  min-width: 72px;
+  min-height: 72px;
+  color: #fff;
+  background: linear-gradient(135deg, #5fc77a, #e3e66d);
+  border-radius: 50%;
+}
+
+.rf-confirmation-title {
+  margin-top: calc(14 * var(--u));
+  font-size: var(--fs-heading);
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}
+
+.rf-confirmation-message {
+  max-width: calc(560 * var(--u));
+  min-width: 260px;
+  margin-top: calc(14 * var(--u));
+  font-size: var(--fs-body);
+  line-height: 1.4;
+  text-align: center;
+}
+
+.rf-summary {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: calc(28 * var(--u));
+  padding: calc(28 * var(--u)) calc(36 * var(--u)) calc(32 * var(--u));
+  background: var(--color-summary-bg);
+  border-radius: calc(32 * var(--u));
+}
+
+.rf-summary-title {
+  margin: calc(14 * var(--u)) 0 calc(10 * var(--u));
+  font-size: var(--fs-label);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+}
+
+.rf-summary-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px calc(40 * var(--u));
+  margin: calc(16 * var(--u)) 0 0;
+}
+
+.rf-summary-details div {
+  display: grid;
+  grid-template-columns: max(110px, calc(180 * var(--u))) 1fr;
+  align-items: center;
+}
+
+.rf-summary-details dt {
+  font-size: var(--fs-body);
+  font-weight: var(--font-weight-bold);
+}
+
+.rf-summary-details dd {
+  margin: 0;
+  font-size: var(--fs-body);
+}
+
+.rf-confirmation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(24 * var(--u)) calc(100 * var(--u));
+  margin-top: calc(40 * var(--u));
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .rf-skill-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rf-summary-details { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .rf-skill-grid { grid-template-columns: 1fr; }
+  .rf-summary-details div { grid-template-columns: 1fr; gap: 2px; }
+}
