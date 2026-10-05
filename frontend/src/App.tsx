@@ -9,6 +9,7 @@ import IndexPage from './pages/index/index'
 // Student pages
 import MultiStepSessionForm from './pages/student/session/session-form';
 import FeedbackForm from './pages/student/feedback/feedback-form';
+import MultiStepRequestForm from './pages/student/request/request-form';
 import MySessions from './pages/student/dashboards/my-sessions';
 import MySupportHistory from './pages/student/dashboards/my-support-history';
 import MyRequests from "./pages/student/dashboards/my-requests";
@@ -22,6 +23,9 @@ function App() {
 
         {/* Student routes */}
         <Route path="/student/my-requests" element={<MyRequests />} />
+        <Route path="/request-form" element={<MultiStepRequestForm />} />
+        <Route path="/session-form" element={<MultiStepSessionForm/>} />
+        <Route path="/feedback-form" element={<FeedbackForm/>} />
         <Route path="/student/my-sessions" element={<MySessions />} />
         <Route path="/student/my-support-history" element={<MySupportHistory />} />
         <Route path="/student/session-form" element={<MultiStepSessionForm/>} />
