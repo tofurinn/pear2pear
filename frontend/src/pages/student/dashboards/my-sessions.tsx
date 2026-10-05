@@ -1,7 +1,5 @@
-import { useMemo, useState } from 'react';
-import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Support_Session } from '../../../types/Support_Session';
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../components/icons.tsx';
@@ -13,29 +11,16 @@ import '../../../components/dashboards.css';
 
 // ─── Session card (same markup in all three columns) ───────────────────────────
 
-const PencilIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M4 20l1-4L16.5 4.5a2 2 0 013 3L8 19l-4 1zM14 7l3 3" />
-  </svg>
-);
-
 interface SessionCardProps {
   item: SessionItem;
   onViewDetails: () => void;
-  onEdit?: () => void;     // shows the pencil when given
 }
 
-function SessionCard({ item, onViewDetails, onEdit }: SessionCardProps) {
+function SessionCard({ item, onViewDetails }: SessionCardProps) {
   const { tone, label } = item.status;
 
   return (
     <article className="ui-item-card">
-      {onEdit && (
-        <button type="button" className="ui-item-card-edit" aria-label={`Edit ${item.title}`} onClick={onEdit}>
-          <PencilIcon />
-        </button>
-      )}
-
       <span className="ui-category-tag">{item.category}</span>
       <h3 className="ui-item-card-title">{item.title}</h3>
       <p className="ui-item-card-person">{item.personName}</p>
@@ -45,7 +30,7 @@ function SessionCard({ item, onViewDetails, onEdit }: SessionCardProps) {
         <span className={`ui-status-pill ui-status-pill--${tone}`}>
           {tone === 'planned' ? <ClockIcon /> : tone === 'confirmed' ? <CheckIcon /> : <CalendarIcon />} {label}
         </span>
-        <button type="button" className="ui-chip-btn ui-chip-btn--info ui-chip-btn--block" onClick={onViewDetails}>
+        <button type="button" className="ui-chip-btn ui-chip-btn--info" onClick={onViewDetails}>
           View Details
         </button>
       </div>
@@ -66,7 +51,6 @@ function MySessions() {
   const toRate = items.filter(item => item.sessStatus === 'Completed'); // 'Rated' ones live in Support History
 
   const handleViewDetails = (item: SessionItem) => navigate(`/sessions/${item.sessID}`); // TODO: your details route
-  const handleEdit = (item: SessionItem) => navigate(`/sessions/${item.sessID}/edit`);   // TODO: your edit route
 
   return (
     <div className="ui-page">
@@ -96,7 +80,6 @@ function MySessions() {
                     <SessionCard
                       key={item.sessID}
                       item={item}
-                      onEdit={() => handleEdit(item)}
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}
@@ -111,7 +94,6 @@ function MySessions() {
                     <SessionCard
                       key={item.sessID}
                       item={item}
-                      onEdit={() => handleEdit(item)}
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}

@@ -64,7 +64,7 @@
 
 .ui-card {
   width: 100%;
-  max-width: calc(1300 * var(--u));
+  max-width: calc(1760 * var(--u));
   min-height: calc(800 * var(--u));
   display: flex;
   flex-direction: column;
