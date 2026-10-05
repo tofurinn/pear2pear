@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import type { Timestamp } from 'firebase/firestore';
 import { MOCK_REQUESTS, getVolunteerById } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
-import { CheckIcon, StepNav } from '../session-ui.tsx';
+import { CheckIcon } from '../../../../components/icons.tsx';
 import '../../../../global.css';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -10,7 +10,6 @@ import '../../../../global.css';
 interface Step1Props {
   formData: Pick<SessionFormData, 'reqID'>;
   updateFormData: (data: Partial<SessionFormData>) => void;
-  onNext: () => void;
 }
 
 const CARDS_PER_PAGE = 4; // a 2 x 2 block, as in the Figma frame
@@ -27,7 +26,7 @@ const gridPosition = (index: number): CSSProperties =>
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function SelectRequestStep({ formData, updateFormData, onNext }: Step1Props) {
+function SelectRequestStep({ formData, updateFormData }: Step1Props) {
   const selectRequest = (reqID: string) => {
     if (reqID === formData.reqID) return;
     // A different request means a different volunteer, so clear any chosen slot
@@ -64,8 +63,6 @@ function SelectRequestStep({ formData, updateFormData, onNext }: Step1Props) {
           );
         })}
       </div>
-
-      <StepNav onNext={onNext} nextDisabled={!formData.reqID} />
     </>
   );
 }

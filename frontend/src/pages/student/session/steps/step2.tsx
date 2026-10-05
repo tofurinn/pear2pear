@@ -14,15 +14,13 @@ import {
   toDateKey,
 } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
-import { CheckIcon, StepNav } from '../session-ui.tsx';
+import { CheckIcon } from '../../../../components/icons.tsx';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface Step2Props {
   formData: Pick<SessionFormData, 'reqID' | 'sessDate' | 'sessTimeSlot'>;
   updateFormData: (data: Partial<SessionFormData>) => void;
-  onPrevious: () => void;
-  onNext: () => void;
 }
 
 interface SlotRef {
@@ -37,7 +35,7 @@ const describeSlot = ({ date, hour }: SlotRef) =>
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function TimeSlotStep({ formData, updateFormData, onPrevious, onNext }: Step2Props) {
+function TimeSlotStep({ formData, updateFormData }: Step2Props) {
   // The 7 days after today, from the device clock (fixed when the step opens)
   const days = useMemo(() => getUpcomingDays(7), []);
   const [hovered, setHovered] = useState<SlotRef | null>(null);
@@ -115,12 +113,6 @@ function TimeSlotStep({ formData, updateFormData, onPrevious, onNext }: Step2Pro
           'Select a time slot to see the date and time here'
         )}
       </p>
-
-      <StepNav
-        onPrevious={onPrevious}
-        onNext={onNext}
-        nextDisabled={!formData.sessDate || !formData.sessTimeSlot}
-      />
     </>
   );
 }

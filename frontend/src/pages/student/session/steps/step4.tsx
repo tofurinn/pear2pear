@@ -4,10 +4,26 @@ import {
   ChevronRight,
   ClockIcon,
   PinIcon,
-  SessionArrangedIcon,
   StarRating,
   SwapIcon,
-} from '../session-ui.tsx';
+} from '../../../../components/icons.tsx';
+
+// Approximation of the Figma clipboard icon: export the real SVG from Figma and swap it in
+const SessionArrangedIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 120 120" className={className} fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="arranged-gradient" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stopColor="#5fc77a" />
+        <stop offset="1" stopColor="#e3e66d" />
+      </linearGradient>
+    </defs>
+    <g stroke="url(#arranged-gradient)" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M30 28h-4a8 8 0 00-8 8v62a8 8 0 008 8h68a8 8 0 008-8V36a8 8 0 00-8-8h-4" />
+      <path d="M40 20v16M80 20v16M52 28h16" />
+      <path d="M44 84l4-14 26-26 10 10-26 26-14 4z" />
+    </g>
+  </svg>
+);
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
