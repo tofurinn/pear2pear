@@ -2,13 +2,13 @@
 	align-items: center;
 	display: flex;
 	gap: 36px;
-	height: 90px;
+	height: 60px;
 	justify-content: flex-start;
 	margin: 0;
 	max-width: 1920px;
 	padding: 10px 50px 10px;
 	width: 100%;
-	background: #fff;
+	background: #ffffff;
 	position: -webkit-sticky;
   	position: sticky;
   	top: 0;
@@ -25,9 +25,9 @@
 
 .global-navbar__brand img {
 	display: block;
-	height: 60px;
+	height: 150px;
 	object-fit: contain;
-	width: 90px;
+	width: 200px;
 }
 
 .global-navbar__actions {
@@ -42,7 +42,7 @@
 	align-items: center;
 	display: flex;
 	font-family: var(--font-sans, 'DM Sans', sans-serif);
-	font-size: 20px;
+	font-size: 16px;
 	line-height: 31px;
 	text-decoration: none;
 }
@@ -52,11 +52,26 @@
 	font-weight: 400;
 }
 
-/*color: #76ca7f;
-	font-weight: 800;
-	text-decoration: underline !important;
-	text-underline-offset: 3px;*/
-/*will use later for active page navbar text styling*/
+.global-navbar__actions a[aria-current="page"] {
+	color: #4f9e59;
+	font-weight: 700;
+}
+
+.global-navbar__notification {
+	justify-content: center;
+	color: #000;
+}
+
+.global-navbar__notification svg {
+	display: block;
+	width: 22px;
+	height: 22px;
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 1.8;
+}
 
 .global-navbar__actions a:hover {
 	color: #4f9e59;
@@ -92,6 +107,11 @@
 	.global-navbar__actions a {
 		font-size: 20px;
 		line-height: 28px;
+	}
+
+	.global-navbar__notification svg {
+		width: 22px;
+		height: 22px;
 	}
 }
 

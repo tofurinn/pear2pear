@@ -53,7 +53,7 @@
 }
 
 /* ---------- Shell ---------- */
-.ui-page-background {
+.ui-page-session-background {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -62,9 +62,21 @@
   background: linear-gradient(160deg, #dde9bb 0%, #e9ecb8 25%, #c9e6bd 65%, #b8e3c0 100%);
 }
 
+.ui-page-background {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: calc(80 * var(--u)) calc(24 * var(--u)) calc(64 * var(--u));
+}
+
+.ui-page-request-background {
+  background: linear-gradient(160deg, #85c094bd 0%, #75c9c8e3 25%, #DDECF1 65%, #d0e3e9 100%);
+}
+
 .ui-card {
   width: 100%;
-  max-width: calc(1300 * var(--u));
+  max-width: 800px;
   min-height: calc(800 * var(--u));
   display: flex;
   flex-direction: column;
