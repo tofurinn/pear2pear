@@ -2,7 +2,11 @@ import { NavLink } from 'react-router-dom'
 import './navbar.css'
 import textLogo from '../../assets/images/text-logo.png'
 
-function MainNavbar() {
+type MainNavbarProps = {
+	dashboardPath?: string
+}
+
+function MainNavbar({ dashboardPath = '/student/dashboard' }: MainNavbarProps) {
 	return (
 		<header className="global-navbar">
 			<NavLink className="global-navbar__brand" to="/" aria-label="Pear2Pear home">
@@ -21,7 +25,7 @@ function MainNavbar() {
 						<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
 					</svg>
 				</NavLink>
-				<NavLink className="global-navbar__login" to="/dashboard">Dashboard</NavLink>
+				<NavLink className="global-navbar__login" to={dashboardPath} end>Dashboard</NavLink>
 			</nav>
 		</header>
 	)

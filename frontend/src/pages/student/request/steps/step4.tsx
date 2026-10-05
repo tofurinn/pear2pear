@@ -1,6 +1,7 @@
 import { matchVolunteers } from '../request-utils.tsx';
 import type { RequestFormData } from '../request-utils.tsx';
 import { StarRating, StepNav } from '../request-ui.tsx';
+import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -43,7 +44,7 @@ function VolunteerMatchStep({ formData, updateFormData, onPrevious, onSubmit, is
                 className={`rf-volunteer-card ${isSelected ? 'selected' : ''}`}
                 onClick={() => updateFormData({ volID: volunteer.volID })}
               >
-                <span className="rf-tag rf-tag--static">{formData.category}</span>
+                <CategoryTag>{formData.category}</CategoryTag>
                 <span className="rf-volunteer-name">{volunteer.name}</span>
                 <span className="rf-volunteer-tags">{volunteer.tags.join(' • ')}</span>
                 <span className="rf-volunteer-rating">

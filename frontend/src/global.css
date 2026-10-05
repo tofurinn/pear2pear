@@ -28,12 +28,13 @@
   --font-weight-black: 900;
 
   --font-size-page-title: 64px;
-  --font-size-h1: 50px;
-  --font-size-h2: 40px;
-  --font-size-h3: 30px;
-  --font-size-form-title: 24px;
-  --font-size-form-answer: 20px;
-  --font-size-body: 20px;
+  --font-size-h1: 40px;
+  --font-size-h2: 30px;
+  --font-size-h3: 20px;
+  --font-size-form-title: 20px;
+  --font-size-form-answer: 16px;
+  --font-size-body: 16px;
+  --font-size-caption: 16px;
 
   color-scheme: light;
   color: --color-green1;
@@ -59,6 +60,7 @@ html {
 }
 
 body {
+  margin: 0;
   color: inherit;
   font-family: var(--font-sans);
   font-size: var(--font-size-body);
