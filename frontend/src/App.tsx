@@ -11,6 +11,7 @@ import MultiStepSessionForm from './pages/student/session/session-form';
 import FeedbackForm from './pages/student/feedback/feedback-form';
 import MySessions from './pages/student/dashboards/my-sessions';
 import MySupportHistory from './pages/student/dashboards/my-support-history';
+import MyRequests from "./pages/student/dashboards/my-requests";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<IndexPage />} />
 
         {/* Student routes */}
+        <Route path="/student/my-requests" element={<MyRequests />} />
         <Route path="/student/my-sessions" element={<MySessions />} />
         <Route path="/student/my-support-history" element={<MySupportHistory />} />
         <Route path="/student/session-form" element={<MultiStepSessionForm/>} />

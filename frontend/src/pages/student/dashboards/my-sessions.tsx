@@ -3,13 +3,21 @@ import { useNavigate } from 'react-router-dom';
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../components/icons.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from './SESSION-MOCK.tsx';
-import type { SessionItem } from './SESSION-MOCK.tsx';
+import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from './dashboards-utils.tsx';
+import type { SessionItem } from './dashboards-utils.tsx';
 
 import '../../../components/forms-ui.css';
 import '../../../components/dashboards.css';
 
 // ─── Session card (same markup in all three columns) ───────────────────────────
+
+// Exclamation in a circle for the "To confirm" pill (needs the student's attention)
+const AlertIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7.5v5.5M12 16.5h.01" />
+  </svg>
+);
 
 interface SessionCardProps {
   item: SessionItem;
@@ -28,7 +36,7 @@ function SessionCard({ item, onViewDetails }: SessionCardProps) {
       <div className="ui-item-card-footer">
         <span className="ui-item-card-date">{item.dateLabel}</span>
         <span className={`ui-status-pill ui-status-pill--${tone}`}>
-          {tone === 'planned' ? <ClockIcon /> : tone === 'confirmed' ? <CheckIcon /> : <CalendarIcon />} {label}
+          {tone === 'planned' ? <ClockIcon /> : tone === 'to-confirm' ? <AlertIcon /> : tone === 'confirmed' ? <CheckIcon /> : <CalendarIcon />} {label}
         </span>
         <button type="button" className="ui-chip-btn ui-chip-btn--info" onClick={onViewDetails}>
           View Details

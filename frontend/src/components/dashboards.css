@@ -45,6 +45,7 @@
 
 .dashboard-banner--green  { background: linear-gradient(180deg, #f2fbdb 0%, #b9e690 100%); }
 .dashboard-banner--yellow { background: linear-gradient(180deg, #fbfbdc 0%, #f7e08c 100%); }
+.dashboard-banner--blue   { background: linear-gradient(180deg, #eef9fe 0%, #a7dcd9 100%); }
 
 .dashboard-banner-title {
   font-size: calc(var(--font-size-h2) * var(--s));
@@ -68,6 +69,11 @@
 
 .ui-btn-white:hover {
   color: var(--color-green3);
+}
+
+.ui-btn-white--blue,
+.ui-btn-white--blue:hover {
+  color: var(--color-blue2);
 }
 
 /* ---------- Board (titled sections side by side) ---------- */
@@ -111,27 +117,6 @@
   border: 1px solid var(--color-border);
   border-radius: calc(12 * var(--u));
   box-shadow: 0 1px 4px rgba(68, 36, 33, 0.1);
-}
-
-.ui-item-card-edit {
-  position: absolute;
-  top: calc(12 * var(--u));
-  right: calc(14 * var(--u));
-  display: grid;
-  padding: 0;
-  color: #c9c9c9;
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-.ui-item-card-edit:hover {
-  color: var(--color-text);
-}
-
-.ui-item-card-edit svg {
-  width: max(12px, calc(20 * var(--u)));
-  height: max(12px, calc(20 * var(--u)));
 }
 
 .ui-item-card-title {
@@ -204,10 +189,19 @@
 }
 
 .ui-status-pill--planned   { color: #b9b9b9; }
+.ui-status-pill--to-confirm {                      /* needs the student's action: stands out from the quiet grey pills */
+  color: var(--color-warning);
+  font-weight: var(--font-weight-bold);
+  background: rgba(200, 136, 79, 0.1);
+}
 .ui-status-pill--confirmed { color: var(--color-green1); }
 .ui-status-pill--completed { color: var(--color-blue2); }
 .ui-status-pill--rated     { color: #e0a92e; }
 .ui-status-pill--cancelled { color: var(--color-error); }
+.ui-status-pill--pending   { color: #b9b9b9; }                 /* requests */
+.ui-status-pill--accepted  { color: var(--color-green1); }
+.ui-status-pill--scheduled { color: var(--color-blue2); }
+.ui-status-pill--rejected  { color: var(--color-error); }
 
 .ui-chip-btn {
   padding: 2px calc(16 * var(--u));
@@ -224,8 +218,7 @@
 
 .ui-chip-btn:hover { filter: brightness(0.95); }
 
-.ui-chip-btn:focus-visible,
-.ui-item-card-edit:focus-visible {
+.ui-chip-btn:focus-visible {
   outline: 2px solid #d96245;
   outline-offset: 2px;
 }
@@ -235,14 +228,6 @@
 .ui-chip-btn--warning { background: #efc23f; }
 .ui-chip-btn--info    { background: var(--color-blue2); }
 
-/* View Details on the My Sessions cards: sits on its own row, full width,
-   so the footer never overflows the narrow 3-column cards */
-.ui-chip-btn--block {
-  flex: 1 0 100%;
-  margin-top: calc(4 * var(--u));
-  padding-block: 3px;
-  text-align: center;
-}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {

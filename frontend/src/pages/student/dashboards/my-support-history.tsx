@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { CalendarIcon, ChevronLeft } from '../../../components/icons.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from './SESSION-MOCK.tsx';
-import type { SessionItem } from './SESSION-MOCK.tsx';
+import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from './dashboards-utils.tsx';
+import type { SessionItem } from './dashboards-utils.tsx';
 
 import '../../../components/forms-ui.css';
 import '../../../components/dashboards.css';
