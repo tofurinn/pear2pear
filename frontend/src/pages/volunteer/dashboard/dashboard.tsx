@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 
-import "../../dashboard.css";
 import pearVolunteer from "../../../assets/images/volunteerpfp-cropped.png";
 import Navbar from "../../../components/navbar/main-navbar";
 import CategoryTag from "../../../components/category-tag/category-tag";
+
+import '../../../components/page-css/dashboard.css';
 
 type Stat = { label: string; value: number };
 

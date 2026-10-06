@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import '../../../components/category-tag/category-tag.css';
+import StepProgress from '../../../components/step-progress.tsx';
 import SupportTypeStep from './steps/step1.tsx';
 import FilteringStep from './steps/step2.tsx';
 import AvailabilityStep from './steps/step3.tsx';
@@ -15,7 +16,7 @@ import RequestSubmittedStep from './steps/step5.tsx';
 import { createEmptyForm, buildSummary } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
 
-import '../../../components/forms-ui.css';
+import '../../../components/page-css/forms-ui.css';
 import './request-form.css';
 
 // ─── Component ─────────────────────────────────────────────────────────────────
@@ -170,7 +171,15 @@ function MultiStepRequestForm() {
                   </button>
                 </div>
               ) : (
-                renderStep()
+                <>
+                  <StepProgress
+                    currentStep={currentStep}
+                    totalSteps={totalSteps}
+                    label="Support request progress"
+                    tone="blue"
+                  />
+                  {renderStep()}
+                </>
               )}
             </>
           )}

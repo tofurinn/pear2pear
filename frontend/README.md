@@ -73,3 +73,34 @@ export default defineConfig([
 ])
 
 ```
+
+## Shared components
+
+Reusable UI components and shared styles are located in `src/components`:
+
+```text
+src/components/
+├── category-tag/
+│   ├── category-tag.tsx
+│   └── category-tag.css
+├── navbar/
+│   ├── global-navbar.tsx
+│   ├── main-navbar.tsx
+│   └── navbar.css
+├── page-css/
+│   ├── dashboard.css
+│   ├── details.css
+│   ├── forms-ui.css
+│   └── subdashboards.css
+├── icons.tsx
+├── step-progress.tsx
+└── step-progress.css
+```
+
+- **Category tag** (`category-tag/`) — `CategoryTag` renders a static category label. Its optional `className` prop allows page-specific sizing alongside the shared style.
+- **Navigation** (`navbar/`) — `MainNavbar` provides app navigation with React Router links and an optional `dashboardPath`. `GlobalNavbar` provides a sign-up/login variant. Both use `navbar.css`.
+- **Icons** (`icons.tsx`) — Shared SVG icons for checks, chevrons, calendar, clock, swap, pin, and stars. `StarRating` renders a read-only rating with half-star support.
+- **Step progress** (`step-progress.tsx`) — Accessible progress bar for multi-step forms. It takes the current step, total steps, an accessible label, and either a `green` or `blue` tone.
+- **Shared page styles** (`page-css/`) — `dashboard.css` styles dashboard pages; `details.css` styles detail modals; `forms-ui.css` contains shared form controls and layout; `subdashboards.css` styles request, session, and support-history lists/cards.
+
+Import shared styles from their current `components/page-css/` location. Keep page-specific CSS alongside its page.

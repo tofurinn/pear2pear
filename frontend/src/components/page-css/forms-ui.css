@@ -82,7 +82,7 @@
   flex-direction: column;
   padding: calc(40 * var(--u)) calc(40 * var(--u)) calc(36 * var(--u));
   background: #fff;
-  border-radius: calc(60 * var(--u));
+  border-radius: 20px;
 }
 
 /* Result / confirmation screens: no title, content centred in the card */

@@ -1,0 +1,42 @@
+.step-progress-wrap {
+  margin: calc(16 * var(--u)) 0 calc(20 * var(--u));
+}
+
+.step-progress-text {
+  margin-bottom: calc(6 * var(--u));
+  font-size: var(--fs-small);
+  font-weight: var(--font-weight-medium);
+  text-align: right;
+  color: rgba(68, 36, 33, 0.6);
+}
+
+.step-progress {
+  height: max(6px, calc(12 * var(--u)));
+  overflow: hidden;
+  background: #e6f1dd;
+  border-radius: 999px;
+}
+
+.step-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.step-progress--green .step-progress-fill {
+  background: var(--color-green1);
+}
+
+.step-progress--blue {
+  background: #dceef8;
+}
+
+.step-progress--blue .step-progress-fill {
+  background: var(--color-blue2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-progress-fill {
+    transition: none;
+  }
+}

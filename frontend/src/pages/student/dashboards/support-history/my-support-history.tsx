@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Navbar from '../../../components/navbar/main-navbar.tsx';
-import { CalendarIcon, ChevronLeft } from '../../../components/icons.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from './dashboards-utils.tsx';
-import type { SessionItem } from './dashboards-utils.tsx';
+import SupportDetailsModal from './support-details.tsx';
+import Navbar from '../../../../components/navbar/main-navbar.tsx';
+import { CalendarIcon, ChevronLeft } from '../../../../components/icons.tsx';
+import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_SESSION_FEEDBACK, MOCK_VOLUNTEERS, buildSessionItems } from '../dashboards-utils.tsx';
+import type { SessionItem } from '../dashboards-utils.tsx';
 
-import '../../../components/forms-ui.css';
-import '../../../components/dashboards.css';
+import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/page-css/subdashboards.css';
 
 // ─── History card ──────────────────────────────────────────────────────────────
 
@@ -66,7 +67,8 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
     []
   );
 
-  const handleViewDetails = (item: SessionItem) => navigate(`/sessions/${item.sessID}`); // TODO: your details route
+  const [selected, setSelected] = useState<SessionItem | null>(null);
+  const handleViewDetails = (item: SessionItem) => setSelected(item);
 
   return (
     <div className="ui-page">
@@ -96,6 +98,14 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
           </section>
         </div>
       </main>
+
+      {selected && (
+        <SupportDetailsModal
+          item={selected}
+          feedback={MOCK_SESSION_FEEDBACK[selected.sessID]}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </div>
   );
 }

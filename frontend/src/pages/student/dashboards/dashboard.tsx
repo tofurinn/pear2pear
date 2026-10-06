@@ -1,9 +1,10 @@
 
 import { useNavigate } from "react-router-dom";
-import "../../dashboard.css";
 import pearStudent from "../../../assets/images/studentpfp-cropped.png";
 import Navbar from "../../../components/navbar/main-navbar";
 import CategoryTag from "../../../components/category-tag/category-tag";
+
+import '../../../components/page-css/dashboard.css';
 
 type Stat = { label: string; value: number };
 
@@ -176,7 +177,20 @@ export default function Dashboard({
 
           <div className="dash-actions">
             {/* Requests / Incoming requests card */}
-            <article className="dash-action dash-action--requests">
+            <article
+              className="dash-action dash-action--requests"
+              role="link"
+              tabIndex={0}
+              aria-label="Open my requests"
+              onClick={() => navigate("/student/my-requests")}
+              onKeyDown={event => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  navigate("/student/my-requests");
+                }
+              }}
+            >
               <div className="dash-action-head">
                 <h3 className="dash-action-title">
                   My Requests
@@ -185,7 +199,10 @@ export default function Dashboard({
                   type="button"
                   className="dash-action-arrow"
                   aria-label="Open my requests"
-                  onClick={() => navigate("/student/my-requests")}
+                  onClick={event => {
+                    event.stopPropagation();
+                    navigate("/student/my-requests");
+                  }}
                 >
                   <ChevronRight />
                 </button>
@@ -196,21 +213,58 @@ export default function Dashboard({
               <button
                 type="button"
                 className="dash-pill dash-pill--teal"
-                onClick={() => (onRequestSupport ? onRequestSupport() : navigate("/request-form"))}
+                onClick={event => {
+                  event.stopPropagation();
+                  if (onRequestSupport) {
+                    onRequestSupport();
+                  } else {
+                    navigate("/student/request-form");
+                  }
+                }}
               >
                 Request Support
               </button>
             </article>
 
             {/* Sessions card (same in both modes) */}
-            <article className="dash-action dash-action--sessions">
+            <article
+              className="dash-action dash-action--sessions"
+              role="link"
+              tabIndex={0}
+              aria-label="Open my sessions"
+              onClick={() => {
+                if (onOpenSessions) {
+                  onOpenSessions();
+                } else {
+                  navigate("/student/my-sessions");
+                }
+              }}
+              onKeyDown={event => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  if (onOpenSessions) {
+                    onOpenSessions();
+                  } else {
+                    navigate("/student/my-sessions");
+                  }
+                }
+              }}
+            >
               <div className="dash-action-head">
                 <h3 className="dash-action-title">My Sessions</h3>
                 <button
                   type="button"
                   className="dash-action-arrow"
                   aria-label="Open my sessions"
-                  onClick={() => (onOpenSessions ? onOpenSessions() : navigate("/student/my-sessions"))}
+                  onClick={event => {
+                    event.stopPropagation();
+                    if (onOpenSessions) {
+                      onOpenSessions();
+                    } else {
+                      navigate("/student/my-sessions");
+                    }
+                  }}
                 >
                   <ChevronRight />
                 </button>
@@ -219,7 +273,14 @@ export default function Dashboard({
               <button
                 type="button"
                 className="dash-pill dash-pill--green"
-                onClick={() => (onScheduleSession ? onScheduleSession() : navigate("/session-form"))}
+                onClick={event => {
+                  event.stopPropagation();
+                  if (onScheduleSession) {
+                    onScheduleSession();
+                  } else {
+                    navigate("/student/session-form");
+                  }
+                }}
               >
                 Schedule Session
               </button>
