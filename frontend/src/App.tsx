@@ -4,17 +4,24 @@ import './App.css';
 import app from "./firebase/config";
 console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.options.projectId);
 
+// WHATEVER PAGES-----------------------------------------------------------------------------
 import IndexPage from './pages/index/index'
 
-// Student pages
+//STUDENT PAGES -----------------------------------------------------------------------------
+
+import MyDashboard from "./pages/student/dashboards/dashboard";
+
+import MyRequests from "./pages/student/dashboards/requests/my-requests";
+import MySessions from './pages/student/dashboards/sessions/my-sessions';
+import MySupportHistory from './pages/student/dashboards/support-history/my-support-history';
+
+import MultiStepRequestForm from './pages/student/request/request-form';
 import MultiStepSessionForm from './pages/student/session/session-form';
 import FeedbackForm from './pages/student/feedback/feedback-form';
-import MultiStepRequestForm from './pages/student/request/request-form';
-import MySessions from './pages/student/dashboards/my-sessions';
-import MySupportHistory from './pages/student/dashboards/my-support-history';
-import MyRequests from "./pages/student/dashboards/my-requests";
-import MyDashboard from "./pages/student/dashboards/dashboard";
+
+//VOLUNTEER PAGES -----------------------------------------------------------------------------
 import VolunteerDashboard from "./pages/volunteer/dashboard/dashboard";
+
 
 function App() {
   return (
@@ -24,20 +31,19 @@ function App() {
         <Route path="/" element={<IndexPage />} />
 
         {/* - - - STUDENT ROUTES - - - */}
+        {/* Dashboard Forms */}
         <Route path="/student/dashboard" element={<MyDashboard />} />
         <Route path="/student/my-requests" element={<MyRequests />} />
         <Route path="/student/my-sessions" element={<MySessions />} />
         <Route path="/student/my-support-history" element={<MySupportHistory />} />
 
         {/* Student Forms */}
-        <Route path="/request-form" element={<MultiStepRequestForm />} />
-        <Route path="/session-form" element={<MultiStepSessionForm/>} />
-        <Route path="/feedback-form" element={<FeedbackForm/>} />
-
+        <Route path="/student/request-form" element={<MultiStepRequestForm />} />
         <Route path="/student/session-form" element={<MultiStepSessionForm/>} />
         <Route path="/student/feedback-form" element={<FeedbackForm/>} />
+        <Route path="/student/feedback-form/:sessID" element={<FeedbackForm/>} />
 
-        {/* Volunteer routes */}
+        {/* - - - VOLUNTEER ROUTES - - -*/}
         <Route path="/volunteer/dashboard" element={<VolunteerDashboard />} />
         <Route path="/volunteer/sessions" element={<MySessions dashboardPath="/volunteer/dashboard" />} />
         <Route path="/volunteer/history" element={<MySupportHistory dashboardPath="/volunteer/dashboard" />} />

@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Navbar from '../../../components/navbar/main-navbar.tsx';
-import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../components/icons.tsx';
-import { MOCK_MY_REQUESTS, MOCK_VOLUNTEERS, buildRequestItems } from './dashboards-utils.tsx';
-import type { RequestItem } from './dashboards-utils.tsx';
+import RequestDetailsModal from './request-details.tsx';
+import Navbar from '../../../../components/navbar/main-navbar.tsx';
+import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../components/icons.tsx';
+import { MOCK_MY_REQUESTS, MOCK_VOLUNTEERS, buildRequestItems } from '../dashboards-utils.tsx';
+import type { RequestItem } from '../dashboards-utils.tsx';
 
-import '../../../components/forms-ui.css';
-import '../../../components/dashboards.css';
+import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/page-css/subdashboards.css';
 
 // ─── Request card (same markup in all three columns) ───────────────────────────
 
@@ -57,7 +58,8 @@ function MyRequests() {
   // Inactive = no longer waiting on anything: already turned into a session, rejected, or cancelled
   const inactive = items.filter(item => ['Scheduled', 'Rejected', 'Cancelled'].includes(item.reqStatus));
 
-  const handleViewDetails = (item: RequestItem) => navigate(`/requests/${item.reqID}`); // TODO: your details route
+  const [selected, setSelected] = useState<RequestItem | null>(null);
+  const handleViewDetails = (item: RequestItem) => setSelected(item);
 
   return (
     <div className="ui-page">
@@ -74,7 +76,7 @@ function MyRequests() {
                 <h1 className="dashboard-banner-title">My Requests</h1>
                 <p className="dashboard-banner-subtitle">Don’t be afraid to receive aid!</p>
               </div>
-              <button type="button" className="ui-btn ui-btn-white ui-btn-white--blue" onClick={() => navigate('/request-form')}>
+              <button type="button" className="ui-btn ui-btn-white ui-btn-white--blue" onClick={() => navigate('/student/request-form')}>
                 Request Support
               </button>
             </header>
@@ -113,6 +115,13 @@ function MyRequests() {
           </section>
         </div>
       </main>
+
+      {selected && (
+        <RequestDetailsModal
+          item={selected}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </div>
   );
 }

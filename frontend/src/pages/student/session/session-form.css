@@ -359,30 +359,3 @@
 @media (max-width: 640px) {
   .detail { grid-template-columns: 1fr; gap: 2px; }
 }
-
-/* ---------- Progress bar (above the step heading) ---------- */
-.session-progress-wrap {
-  margin: calc(16 * var(--u)) 0 calc(20 * var(--u));
-}
-
-.session-progress-text {
-  margin-bottom: calc(6 * var(--u));
-  font-size: var(--fs-small);
-  font-weight: var(--font-weight-medium);
-  text-align: right;
-  color: rgba(68, 36, 33, 0.6);
-}
-
-.session-progress {
-  height: max(6px, calc(12 * var(--u)));
-  overflow: hidden;
-  background: #e6f1dd;
-  border-radius: 999px;
-}
-
-.session-progress-fill {
-  height: 100%;
-  background: var(--color-green1);
-  border-radius: 999px;
-  transition: width 0.3s ease;
-}
