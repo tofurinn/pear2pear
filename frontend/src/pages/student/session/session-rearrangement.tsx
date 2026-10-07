@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 //state object: summary - the saved arrangement, shown on the confirmation page
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
+import StepProgress from '../../../components/step-progress.tsx';
 import { ChevronLeft, ChevronRight } from '../../../components/icons.tsx';
 import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 import TimeSlotStep from './steps/step2.tsx';
@@ -21,7 +22,7 @@ import {
 } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary } from './session-utils.tsx';
 
-import '../../../components/forms-ui.css';
+import '../../../components/page-css/forms-ui.css';
 import './session-form.css';
 
 // Same numbering as the booking form, so the step headings ("Step 2: ...", "Step 3: ...") still match
@@ -139,20 +140,12 @@ function SessionRearrangement() {
           <h1 className="ui-card-title">Rearrange Session</h1>
           <hr className="ui-card-divider" />
 
-          <div className="session-progress-wrap">
-            <p className="session-progress-text" aria-hidden="true">Step {currentStep} of {totalSteps}</p>
-            <div
-              className="session-progress"
-              role="progressbar"
-              aria-label="Session rearrangement progress"
-              aria-valuemin={1}
-              aria-valuemax={totalSteps}
-              aria-valuenow={currentStep}
-              aria-valuetext={`Step ${currentStep} of ${totalSteps}`}
-            >
-              <div className="session-progress-fill" style={{ width: `${(currentStep / totalSteps) * 100}%` }} />
-            </div>
-          </div>
+          <StepProgress
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            label="Session booking progress"
+            tone="green"
+          />
 
           {isLastStep ? (
             <MeetupDetailsStep
