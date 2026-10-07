@@ -216,31 +216,31 @@
 }
 
 .confirmation-icon {
-  width: calc(112 * var(--u));
-  height: calc(112 * var(--u));
+  width: calc(200 * var(--u));
+  height: calc(200 * var(--u));
   min-width: 56px;
   min-height: 56px;
 }
 
 .confirmation-title {
-  margin-top: calc(14 * var(--u));
-  font-size: var(--fs-heading);
-  font-weight: var(--font-weight-bold);
+  margin-top: calc(30 * var(--u));
+  font-size: max(22px, calc(56 * var(--u)));
+  font-weight: var(--font-weight-bold); 
   text-align: center;
 }
 
 .confirmation-message {
-  max-width: calc(560 * var(--u));
+  max-width: calc(760 * var(--u));
   min-width: 260px;
-  margin-top: calc(14 * var(--u));
-  font-size: var(--fs-body);
+  margin-top: calc(22 * var(--u));
+  font-size: max(15px, calc(30 * var(--u)));
   line-height: 1.4;
   text-align: center;
 }
 
 .summary-label {
   align-self: flex-start;
-  margin-top: calc(22 * var(--u));
+  margin-top: calc(30 * var(--u));
   font-size: var(--fs-label);
   font-weight: var(--font-weight-medium);
 }

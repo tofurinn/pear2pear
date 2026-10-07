@@ -11,11 +11,14 @@ import SelectRequestStep from './steps/step1.tsx';
 import TimeSlotStep from './steps/step2.tsx';
 import MeetupDetailsStep from './steps/step3.tsx';
 import SessionConfirmationStep from './steps/step4.tsx';
-import { EMPTY_FORM, buildSummary } from './session-utils.tsx';
+import { EMPTY_FORM, buildSummary, isStepValid } from './session-utils.tsx';
+import type { SessionStepKey } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary } from './session-utils.tsx';
 
 import '../../../components/forms-ui.css';
 import './session-form.css';
+
+const STEP_KEYS: SessionStepKey[] = ['request', 'timeSlot', 'meetup'];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
@@ -33,12 +36,7 @@ function MultiStepSessionForm() {
   const isLastStep = currentStep === totalSteps;
 
   // Whether the current step has what it needs before moving on
-  const canGoNext =
-    currentStep === 1
-      ? formData.reqID !== ''
-      : currentStep === 2
-        ? formData.sessDate !== '' && formData.sessTimeSlot !== ''
-        : formData.meetingLocation.trim() !== '' && !isSubmitting;
+  const canGoNext = isStepValid(STEP_KEYS[currentStep - 1], formData) && !isSubmitting;
 
   const updateFormData = (data: Partial<SessionFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));

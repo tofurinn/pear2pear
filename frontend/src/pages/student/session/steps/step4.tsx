@@ -29,22 +29,28 @@ const SessionArrangedIcon = ({ className }: { className?: string }) => (
 
 interface Step4Props {
   summary: SessionSummary;
+  title?: string;      // defaults to the "arranged" wording used by the booking form
+  message?: string;
   onReturnToDashboard: () => void;
   onViewSession: () => void;
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function SessionConfirmationStep({ summary, onReturnToDashboard, onViewSession }: Step4Props) {
+function SessionConfirmationStep({
+  summary,
+  title = 'Your Support Session Has Been Arranged!',
+  message = 'Sit tight, you will receive a notification once your matched Volunteer confirms the session',
+  onReturnToDashboard,
+  onViewSession,
+}: Step4Props) {
   const { volunteer } = summary;
 
   return (
     <div className="confirmation">
       <SessionArrangedIcon className="confirmation-icon" />
-      <h1 className="confirmation-title">Your Support Session Has Been Arranged!</h1>
-      <p className="confirmation-message">
-        Sit tight, you will receive a notification once your matched Volunteer confirms the session
-      </p>
+      <h1 className="confirmation-title">{title}</h1>
+      <p className="confirmation-message">{message}</p>
 
       <h2 className="summary-label">Session Booking Summary</h2>
       <div className="summary">

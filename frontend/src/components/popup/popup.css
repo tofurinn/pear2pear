@@ -1,0 +1,49 @@
+/* =============================================================================
+   Popups (components/popup). Uses the --u / --fs-* tokens from forms-ui.css,
+   so it must render inside .ui-page.
+   ============================================================================= */
+
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(68, 36, 33, 0.45);
+}
+
+.popup-card {
+  width: min(100%, max(340px, calc(640 * var(--u))));
+  padding: max(20px, calc(40 * var(--u))) max(22px, calc(44 * var(--u)));
+  background: #fff;
+  border-radius: max(24px, calc(40 * var(--u)));
+  box-shadow: 0 8px 24px rgba(68, 36, 33, 0.25);
+  text-align: center;
+}
+
+.popup-title {
+  font-size: max(18px, calc(var(--font-size-h2) * var(--s)));   /* the global h2 size, scaled like the rest of the page */
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+}
+
+.popup-message {
+  margin-top: calc(14 * var(--u));
+  font-size: max(14px, calc(var(--font-size-form-title) * var(--s)));
+  line-height: 1.4;
+}
+
+.popup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px calc(20 * var(--u));
+  margin-top: calc(32 * var(--u));
+}
+
+/* Both buttons the same width, text centred (the default outline button is wide and left-aligned) */
+.popup-actions .ui-btn {
+  min-width: max(110px, calc(200 * var(--u)));
+  justify-content: center;
+}

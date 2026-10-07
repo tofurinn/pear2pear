@@ -62,26 +62,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: calc(80 * var(--u));
+  margin-bottom: calc(80 * var(--u));
 }
 
 .feedback-thanks-icon {
-  width: max(60px, calc(121 * var(--u)));
+  width: calc(200 * var(--u));
   height: auto;
+  min-width: 56px;
+  min-height: auto;
 }
 
 .feedback-thanks-title {
-  margin-top: calc(22 * var(--u));
-  font-size: var(--fs-heading);
+  margin-top: calc(30 * var(--u));
+  font-size: max(22px, calc(56 * var(--u)));
   font-weight: var(--font-weight-bold);
   text-align: center;
 }
 
 .feedback-thanks-message {
-  max-width: calc(600 * var(--u));
-  min-width: 240px;
+  max-width: calc(760 * var(--u));
+  min-width: 260px;
   margin-top: calc(22 * var(--u));
-  font-size: var(--fs-body);
-  line-height: 1.3;
+  font-size: max(15px, calc(30 * var(--u)));
+  line-height: 1.4;
   text-align: center;
 }
 
