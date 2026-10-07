@@ -13,6 +13,7 @@ export interface VolunteerSummary {
   name: string;
   rating: number;
   ratingCount: number;
+  skills?: string[];
 }
 
 export interface SessionItem {
@@ -27,6 +28,17 @@ export interface SessionItem {
   sessDate: Date;           // for sorting
   dateLabel: string;
   status: { label: string; tone: StatusTone };
+  description?: string;
+  supportMode?: Support_Session['supportMode'];
+  timeslot?: string;
+  location?: string;
+  volunteer?: {
+    name: string;
+    rating: number;
+    reviewCount: number;
+    skills?: string[];
+    requestStatusLabel?: string;
+  };
 }
 
 const STATUS_PILL: Record<Support_Session['sessStatus'], { label: string; tone: StatusTone }> = {
@@ -66,7 +78,26 @@ export const toSessionItem = (
   sessDate: session.sessDate,
   dateLabel: formatDate(session.sessDate),
   status: getStatusPill(session),
+  description: request.description,
+  supportMode: session.supportMode,
+  timeslot: formatTimeslot(session.sessTimeSlot.toDate()),
+  location: session.meetingLocation,
+  volunteer: {
+    name: volunteer.name,
+    rating: volunteer.rating,
+    reviewCount: volunteer.ratingCount,
+    skills: volunteer.skills,
+    requestStatusLabel: request.reqStatus,
+  },
 });
+
+const formatTimeslot = (start: Date) => {
+  const formatHour = (date: Date) => {
+    const hour = date.getHours();
+    return `${hour % 12 || 12}${hour < 12 ? 'AM' : 'PM'}`;
+  };
+  return `${formatHour(start)} – ${formatHour(new Date(start.getTime() + 60 * 60 * 1000))}`;
+};
 
 export const buildSessionItems = (
   sessions: Support_Session[],
@@ -82,13 +113,13 @@ export const buildSessionItems = (
 // ─── Mock data (delete once this comes from Firestore) ─────────────────────────
 
 export const MOCK_VOLUNTEERS: Record<string, VolunteerSummary> = {
-  'vol-chiikawa': { name: 'Chiikawa', rating: 4.5, ratingCount: 10 },
-  'vol-omniman':  { name: 'Omniman', rating: 4, ratingCount: 2 },
-  'vol-natasha':  { name: 'Natasha Laoshi', rating: 4.5, ratingCount: 10 },
-  'vol-steve':    { name: 'Steve Jobs', rating: 5, ratingCount: 3 },
-  'vol-haiqal':   { name: 'Haiqal Chan', rating: 4, ratingCount: 5 },
-  'vol-joy':      { name: 'Joy Lau Xuan', rating: 4.5, ratingCount: 8 },
-  'vol-usagi':    { name: 'Usagi bin Obama', rating: 3.5, ratingCount: 4 },
+  'vol-chiikawa': { name: 'Chiikawa', rating: 4.5, ratingCount: 10, skills: ['Gardening', 'Lawn care'] },
+  'vol-omniman':  { name: 'Omniman', rating: 4, ratingCount: 2, skills: ['Computer repair', 'IT troubleshooting'] },
+  'vol-natasha':  { name: 'Natasha Laoshi', rating: 4.5, ratingCount: 10, skills: ['Mathematics', 'Study support'] },
+  'vol-steve':    { name: 'Steve Jobs', rating: 5, ratingCount: 3, skills: ['Web development', 'Design'] },
+  'vol-haiqal':   { name: 'Haiqal Chan', rating: 4, ratingCount: 5, skills: ['English', 'Writing'] },
+  'vol-joy':      { name: 'Joy Lau Xuan', rating: 4.5, ratingCount: 8, skills: ['Presentation skills', 'Public speaking'] },
+  'vol-usagi':    { name: 'Usagi bin Obama', rating: 3.5, ratingCount: 4, skills: ['Event planning', 'Organisation'] },
 };
 
 type SessionStatus = Support_Session['sessStatus'];
@@ -124,11 +155,13 @@ export const MOCK_REQUESTS: Support_Request[] = ROWS.map(([volID, topic, [y, m, 
 
 export const MOCK_SESSIONS: Support_Session[] = ROWS.map(([, , [y, m, d], sessStatus, studConfirmed, volConfirmed], i) => {
   const date = new Date(y, m - 1, d);
+  const timeSlot = new Date(date);
+  timeSlot.setHours(15, 0, 0, 0);
   return {
     sessID: `sess-${i + 1}`,
     reqID: `req-${i + 1}`,
     sessDate: date,
-    sessTimeSlot: Timestamp.fromDate(date),
+    sessTimeSlot: Timestamp.fromDate(timeSlot),
     supportMode: 'Physical',
     meetingLocation: 'Student Lounge 2 at the sofa',
     sessStatus,
@@ -137,6 +170,21 @@ export const MOCK_SESSIONS: Support_Session[] = ROWS.map(([, , [y, m, d], sessSt
     volConfirmed,
   };
 });
+
+export const MOCK_SESSION_FEEDBACK: Record<string, { rating: number; comments: string }> = {
+  'sess-5': {
+    rating: 4.5,
+    comments: 'Loved her way of teaching! I went from a baka to a genius overnight. I think I was blessed by the presence of Einstein actually. Would recommend requesting her again. The test was GG FURKIN EZZZZZ',
+  },
+  'sess-6': {
+    rating: 5,
+    comments: 'Very patient and helpful. The examples made the difficult topics much easier to understand.',
+  },
+  'sess-7': {
+    rating: 4.5,
+    comments: 'Great session with clear explanations. I feel much more confident about the subject now.',
+  },
+};
 
 // ─── My Requests ───────────────────────────────────────────────────────────────
 
@@ -148,6 +196,14 @@ export interface RequestItem {
   personName: string;
   dateLabel: string;
   status: { label: string; tone: StatusTone };
+  description: string;
+  volunteer: {
+    name: string;
+    rating: number;
+    reviewCount: number;
+    skills?: string[];
+    requestStatusLabel: string;
+  };
 }
 
 const REQUEST_STATUS_PILL: Record<Support_Request['reqStatus'], { label: string; tone: StatusTone }> = {
@@ -167,6 +223,14 @@ export const toRequestItem = (request: Support_Request, volunteer: VolunteerSumm
   personName: volunteer.name,
   dateLabel: formatDate(request.reqTimestamp.toDate()),
   status: REQUEST_STATUS_PILL[request.reqStatus],
+  description: request.description,
+  volunteer: {
+    name: volunteer.name,
+    rating: volunteer.rating,
+    reviewCount: volunteer.ratingCount,
+    skills: volunteer.skills,
+    requestStatusLabel: request.reqStatus,
+  },
 });
 
 export const buildRequestItems = (

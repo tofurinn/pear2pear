@@ -17,7 +17,7 @@
   --dash-page-bg: #f0f6ea;
   --dash-toggle-off: rgba(255, 255, 255, 0.35);
 
-  min-height: 100vh;
+  min-height: 120vh;
   background: var(--dash-page-bg);
   color: var(--dash-ink);
   box-sizing: border-box;
@@ -55,28 +55,29 @@
   list-style: none;
 }
 
-/* ---------------- Hero ---------------- */
+/* ---------------- HEADERRRR ---------------- */
 
 .dash-hero {
   background:
     radial-gradient(circle at 4% 0%, var(--dash-hero-glow-1) 0, transparent 32%),
     radial-gradient(circle at 24% 100%, var(--dash-hero-glow-2) 0, transparent 30%),
     var(--dash-hero-base);
-  padding: 34px 24px;
+  height: auto;
+  padding: 20px 20px;
 }
 
 .dash-hero-inner {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 50px;
   max-width: 1056px;
   margin: 0 auto;
 }
 
 .dash-avatar {
   flex: none;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
   background: #fff;
@@ -132,7 +133,7 @@
 
 .dash-toggle-btn {
   width: 150px;
-  padding: 7px 0;
+  padding: 4px 0;
   border: none;
   border-radius: 999px;
   background: var(--dash-toggle-off);
@@ -187,6 +188,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .dash-action {

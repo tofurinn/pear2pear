@@ -12,7 +12,7 @@ import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { StarIcon } from '../../../components/icons.tsx';
 import FeedbackThanks from './feedback-thanks.tsx';
 
-import '../../../components/forms-ui.css';
+import '../../../components/page-css/forms-ui.css';
 import './feedback-form.css';
 
 const MAX_RATING = 5;

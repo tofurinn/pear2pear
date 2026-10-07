@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SessionDetailsModal from './session-details.tsx';
 
-import Navbar from '../../../components/navbar/main-navbar.tsx';
-import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../components/icons.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from './dashboards-utils.tsx';
-import type { SessionItem } from './dashboards-utils.tsx';
+import Navbar from '../../../../components/navbar/main-navbar.tsx';
+import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../components/icons.tsx';
+import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from '../dashboards-utils.tsx';
+import type { SessionItem } from '../dashboards-utils.tsx';
 
-import '../../../components/forms-ui.css';
-import '../../../components/dashboards.css';
+import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/page-css/subdashboards.css';
 
 // ─── Session card (same markup in all three columns) ───────────────────────────
 
@@ -58,7 +59,8 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
   const confirmed = items.filter(item => item.sessStatus === 'Confirmed');
   const toRate = items.filter(item => item.sessStatus === 'Completed'); // 'Rated' ones live in Support History
 
-  const handleViewDetails = (item: SessionItem) => navigate(`/sessions/${item.sessID}`); // TODO: your details route
+  const [selected, setSelected] = useState<SessionItem | null>(null);
+  const handleViewDetails = (item: SessionItem) => setSelected(item);
 
   return (
     <div className="ui-page">
@@ -75,7 +77,7 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
                 <h1 className="dashboard-banner-title">My Sessions</h1>
                 <p className="dashboard-banner-subtitle">Track your sessions!</p>
               </div>
-              <button type="button" className="ui-btn ui-btn-white" onClick={() => navigate('/session-form')}>
+              <button type="button" className="ui-btn ui-btn-white" onClick={() => navigate('/student/session-form')}>
                 Schedule Session
               </button>
             </header>
@@ -126,6 +128,14 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
           </section>
         </div>
       </main>
+
+      {selected && (
+        <SessionDetailsModal
+          item={selected}
+          onClose={() => setSelected(null)}
+          onSubmitFeedback={item => navigate(`/student/feedback-form/${item.sessID}`)}
+        />
+      )}
     </div>
   );
 }

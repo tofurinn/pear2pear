@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft, ChevronRight } from '../../../components/icons.tsx';
+import StepProgress from '../../../components/step-progress.tsx';
 import SelectRequestStep from './steps/step1.tsx';
 import TimeSlotStep from './steps/step2.tsx';
 import MeetupDetailsStep from './steps/step3.tsx';
@@ -15,7 +16,7 @@ import { EMPTY_FORM, buildSummary, isStepValid } from './session-utils.tsx';
 import type { SessionStepKey } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary } from './session-utils.tsx';
 
-import '../../../components/forms-ui.css';
+import '../../../components/page-css/forms-ui.css';
 import './session-form.css';
 
 const STEP_KEYS: SessionStepKey[] = ['request', 'timeSlot', 'meetup'];
@@ -146,21 +147,12 @@ function MultiStepSessionForm() {
                 </div>
               ) : (
                 <>
-                  {/* Progress through the 3 steps (the confirmation page isn't counted) */}
-                  <div className="session-progress-wrap">
-                    <p className="session-progress-text" aria-hidden="true">Step {currentStep} of {totalSteps}</p>
-                    <div
-                      className="session-progress"
-                      role="progressbar"
-                      aria-label="Session booking progress"
-                      aria-valuemin={1}
-                      aria-valuemax={totalSteps}
-                      aria-valuenow={currentStep}
-                      aria-valuetext={`Step ${currentStep} of ${totalSteps}`}
-                    >
-                      <div className="session-progress-fill" style={{ width: `${(currentStep / totalSteps) * 100}%` }} />
-                    </div>
-                  </div>
+                  <StepProgress
+                    currentStep={currentStep}
+                    totalSteps={totalSteps}
+                    label="Session booking progress"
+                    tone="green"
+                  />
 
                   {renderStep()}
 
