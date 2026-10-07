@@ -31,30 +31,38 @@
   height: 1em;
 }
 
-.status-pill.pending   { color: var(--color-warning); border-color: var(--color-warning); }
-.status-pill.scheduled { color: var(--color-blue2);   border-color: var(--color-blue2); }
+.status-pill.pending {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.status-pill.scheduled {
+  color: var(--color-blue2);
+  border-color: var(--color-blue2);
+}
+
 .status-pill.rejected,
-.status-pill.cancelled { color: var(--color-error);   border-color: var(--color-error); }
+.status-pill.cancelled {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
 
 /* ---------- Step 1: request cards (2 x 2 per page, scrolls sideways beyond 4) ---------- */
 .request-grid {
   display: grid;
-  grid-template-rows: repeat(2, auto);
-  grid-auto-flow: column;
-  grid-auto-columns: calc(393 * var(--u));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: calc(30 * var(--u)) calc(51 * var(--u));
-  margin: calc(56 * var(--u)) 0 0 calc(14 * var(--u));
-  padding: 4px 4px 12px; /* room so the scroll box doesn't clip borders and shadows */
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
+  padding: 4px 4px 12px;
+  /* room so the scroll box doesn't clip borders and shadows */
+  max-height: calc(600 * var(--u));
+  /* about 2½ rows, so it's clear there is more to scroll to */
+  overflow-x: hidden;
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--color-blue1) transparent;
 }
 
 .request-card {
-  grid-row: var(--row);
-  grid-column: var(--col);
-  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -225,7 +233,7 @@
 .confirmation-title {
   margin-top: calc(30 * var(--u));
   font-size: max(22px, calc(56 * var(--u)));
-  font-weight: var(--font-weight-bold); 
+  font-weight: var(--font-weight-bold);
   text-align: center;
 }
 
@@ -343,11 +351,10 @@
 }
 
 @media (max-width: 900px) {
+
   /* one row of cards that swipes sideways */
   .request-grid {
-    grid-template-rows: auto;
-    grid-auto-columns: min(260px, 80%);
-    margin-left: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .request-card {
@@ -357,7 +364,14 @@
 }
 
 @media (max-width: 640px) {
-  .detail { grid-template-columns: 1fr; gap: 2px; }
+  .request-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detail {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
 }
 
 /* ---------- Progress bar (above the step heading) ---------- */
