@@ -67,7 +67,7 @@ function FeedbackForm() {
   return (
     <div className="ui-page">
       <Navbar />
-      <main className="ui-page-background">
+      <main className="ui-page-session-background">
         <section className={`ui-card ${submitted ? 'ui-card--centered' : ''}`}>
           {submitted ? (
             <FeedbackThanks

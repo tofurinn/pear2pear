@@ -1,5 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 import type { Support_Request } from '../../../types/Support_Request';
+import type { Support_Session } from '../../../types/Support_Session';
 
 // ─── Form types ────────────────────────────────────────────────────────────────
 
@@ -139,3 +140,72 @@ export const buildSummary = (data: SessionFormData): SessionSummary | null => {
     volunteer,
   };
 };
+
+// ─── Step rules (shared by the booking form and the rearrangement page) ───────
+
+export type SessionStepKey = 'request' | 'timeSlot' | 'meetup';
+
+// Whether a step has what it needs before the student can move on
+export const isStepValid = (step: SessionStepKey, data: SessionFormData): boolean => {
+  switch (step) {
+    case 'request':  return data.reqID !== '';
+    case 'timeSlot': return data.sessDate !== '' && data.sessTimeSlot !== '';
+    case 'meetup':   return data.meetingLocation.trim() !== '';
+  }
+};
+
+// ─── Rearranging an existing session ───────────────────────────────────────────
+
+// Starts the form from the session's current arrangement, so its slot is preselected in step 2
+export const sessionToFormData = (session: Support_Session): SessionFormData => ({
+  reqID: session.reqID,
+  sessDate: toDateKey(session.sessDate),
+  sessTimeSlot: hourToSlot(session.sessTimeSlot.toDate().getHours()),
+  supportMode: session.supportMode,
+  meetingLocation: session.meetingLocation,
+});
+
+// Only Planned or Confirmed sessions can be changed, and only before the day of the session
+// (the time-slot grid starts tomorrow)
+export const canEditSession = (session: Support_Session): boolean =>
+  (session.sessStatus === 'Planned' || session.sessStatus === 'Confirmed') &&
+  session.sessDate >= getUpcomingDays(1)[0];
+
+// Mock sessions for the rearrangement page (delete once this comes from Firestore).
+// IDs match the My Sessions mock; dates are relative to today so they always sit inside the 7-day grid.
+const mockSession = (
+  sessID: string,
+  reqID: string,
+  daysAhead: number,           // 0 = tomorrow
+  sessStatus: Support_Session['sessStatus'],
+  studConfirmed: boolean,
+  volConfirmed: boolean,
+  supportMode: Support_Session['supportMode'],
+  meetingLocation: string
+): Support_Session => {
+  const sessDate = getUpcomingDays(7)[daysAhead];
+  const slot = new Date(sessDate);
+  slot.setHours(11, 0, 0, 0);  // 11am is free on every weekday in the mock availability
+
+  return {
+    sessID,
+    reqID,
+    sessDate,
+    sessTimeSlot: Timestamp.fromDate(slot),
+    supportMode,
+    meetingLocation,
+    sessStatus,
+    sessTimestamp: Timestamp.fromDate(slot),
+    studConfirmed,
+    volConfirmed,
+  };
+};
+
+export const MOCK_EDITABLE_SESSIONS: Support_Session[] = [
+  mockSession('sess-1', 'req-1', 1, 'Planned',   true,  false, 'Physical', 'Student Lounge 2 at the sofa'),
+  mockSession('sess-2', 'req-2', 3, 'Planned',   false, true,  'Online',   'Paste the meeting link here'),
+  mockSession('sess-3', 'req-3', 2, 'Confirmed', true,  true,  'Physical', 'Library entrance'),
+  mockSession('sess-4', 'req-4', 0, 'Completed', true,  true,  'Physical', 'Student Lounge 2 at the sofa'),  // not editable
+];
+
+export const getSessionById = (sessID: string) => MOCK_EDITABLE_SESSIONS.find(s => s.sessID === sessID);
