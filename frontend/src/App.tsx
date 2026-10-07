@@ -4,8 +4,13 @@ import './App.css';
 import app from "./firebase/config";
 console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.options.projectId);
 
-// WHATEVER PAGES-----------------------------------------------------------------------------
+// PUBLIC PAGES-----------------------------------------------------------------------------
 import IndexPage from './pages/index/index'
+import UserRegisterPage from "./pages/registration/user-register/user-register";
+import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-steps/step1";
+import EmailVerificationPage from "./pages/registration/email-validation/email-validation";
+import UserLoginPage from "./pages/login/login";
+import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
 
 //STUDENT PAGES -----------------------------------------------------------------------------
 
@@ -22,11 +27,6 @@ import FeedbackForm from './pages/student/feedback/feedback-form';
 
 //VOLUNTEER PAGES -----------------------------------------------------------------------------
 import VolunteerDashboard from "./pages/volunteer/dashboard/dashboard";
-import UserRegisterPage from "./pages/registration/user-register/user-register";
-import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-steps/step1";
-import EmailVerificationPage from "./pages/login/2FA/2fa";
-import UserLoginPage from "./pages/login/login";
-import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
 
 
 function App() {
