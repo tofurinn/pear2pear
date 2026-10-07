@@ -1,16 +1,15 @@
-import { NavLink } from 'react-router-dom'
 import './navbar.css'
 import textLogo from '../../assets/images/text-logo.png'
 
 function GlobalNavbar() {
 	return (
 		<header className="global-navbar">
-			<NavLink className="global-navbar__brand" to="/" aria-label="Pear2Pear home">
+			<a className="global-navbar__brand" href="#home" aria-label="Pear2Pear home">
 				<img src={textLogo} alt="Pear2Pear" />
-			</NavLink>
+			</a>
 			<nav className="global-navbar__actions" aria-label="Account navigation">
-				<NavLink className="global-navbar__signup" to="/user-registration">Sign Up</NavLink>
-				<NavLink className="global-navbar__login" to="/login">Login</NavLink>
+				<a className="global-navbar__signup" href="/signup">Sign Up</a>
+				<a className="global-navbar__login" href="/login">Login</a>
 			</nav>
 		</header>
 	)
