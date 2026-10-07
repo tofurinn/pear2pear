@@ -22,7 +22,6 @@ interface LocationState {
 const EmailVerificationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = (location.state as LocationState | null)?.stepOne?.email ?? "";
 
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
