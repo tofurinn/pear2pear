@@ -10,14 +10,7 @@ const ROUTES = {
 
 const CODE_LENGTH = 6;
 
-// Step 1 passes { stepOne: { name, email, studentID } } through router state
-interface LocationState {
-  stepOne?: {
-    name: string;
-    email: string;
-    studentID: string;
-  };
-}
+
 
 const EmailVerificationPage: React.FC = () => {
   const navigate = useNavigate();
