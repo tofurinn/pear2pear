@@ -7,7 +7,7 @@ import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../com
 import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from '../dashboards-utils.tsx';
 import type { SessionItem } from '../dashboards-utils.tsx';
 
-import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
 // ─── Session card (same markup in all three columns) ───────────────────────────

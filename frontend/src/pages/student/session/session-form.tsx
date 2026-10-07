@@ -16,8 +16,8 @@ import { EMPTY_FORM, buildSummary, isStepValid } from './session-utils.tsx';
 import type { SessionStepKey } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary } from './session-utils.tsx';
 
-import '../../../components/page-css/forms-ui.css';
-import './session-form.css';
+import '../../../components/ui.css';
+import './../../../components/page-css/session-form.css';
 
 const STEP_KEYS: SessionStepKey[] = ['request', 'timeSlot', 'meetup'];
 

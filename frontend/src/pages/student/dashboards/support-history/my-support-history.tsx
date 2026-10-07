@@ -7,7 +7,7 @@ import { CalendarIcon, ChevronLeft } from '../../../../components/icons.tsx';
 import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_SESSION_FEEDBACK, MOCK_VOLUNTEERS, buildSessionItems } from '../dashboards-utils.tsx';
 import type { SessionItem } from '../dashboards-utils.tsx';
 
-import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
 // ─── History card ──────────────────────────────────────────────────────────────

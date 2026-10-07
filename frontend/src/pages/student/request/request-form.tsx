@@ -16,8 +16,8 @@ import RequestSubmittedStep from './steps/step5.tsx';
 import { createEmptyForm, buildSummary } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
 
-import '../../../components/page-css/forms-ui.css';
-import './request-form.css';
+import '../../../components/ui.css';
+import '../../../components/page-css/request-form.css';
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
