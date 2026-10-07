@@ -10,19 +10,11 @@ const ROUTES = {
 
 const CODE_LENGTH = 6;
 
-// Step 1 passes { stepOne: { name, email, studentID } } through router state
-interface LocationState {
-  stepOne?: {
-    name: string;
-    email: string;
-    studentID: string;
-  };
-}
+
 
 const EmailVerificationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const email = (location.state as LocationState | null)?.stepOne?.email ?? "";
 
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
