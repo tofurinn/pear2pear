@@ -22,29 +22,14 @@ import FeedbackForm from './pages/student/feedback/feedback-form';
 
 //VOLUNTEER PAGES -----------------------------------------------------------------------------
 import VolunteerDashboard from "./pages/volunteer/dashboard/dashboard";
-import UserRegisterPage from "./pages/registration/user-register/user-register";
-import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-steps/step1";
-import EmailVerificationPage from "./pages/login/2FA/2fa";
-import UserLoginPage from "./pages/login/login";
-import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
 
 
 function App() {
-
   return (
     <div className="page-background bg-default">
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<IndexPage />} />
-
-        {/* Registration routes */}
-        <Route path="/user-registration" element={<UserRegisterPage />} />
-        <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
-        <Route path="/email-validation" element={<EmailVerificationPage />} />
-
-        {/* Login routes */}
-        <Route path="/login" element={<UserLoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/* - - - STUDENT ROUTES - - - */}
         {/* Dashboard Forms */}
