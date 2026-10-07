@@ -1,0 +1,230 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+
+.verify-page {
+  --color-heading: #3f2020;
+  --color-text: #3f2020;
+  --color-box-bg: #f0f6ea;
+  --color-green: #74c880;
+  --color-green-dark: #5db46a;
+  --color-link: #0b7bdc;
+  --color-error: #c0392b;
+  --color-gradient-top: #e3f1f8;
+  --color-gradient-bottom: #a9d8c4;
+
+  /* TODO: set this to your global navbar's height so the page fills the rest of the screen */
+  --navbar-height: 8rem;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--color-text);
+  background: linear-gradient(
+    to bottom,
+    var(--color-gradient-top),
+    var(--color-gradient-bottom)
+  );
+  box-sizing: border-box;
+}
+
+.verify-page *,
+.verify-page *::before,
+.verify-page *::after {
+  box-sizing: inherit;
+}
+
+/* ---------- Main + card ---------- */
+
+.verify-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.verify-card {
+  width: 90%;
+  max-width: 60rem;
+  padding: 2.4rem 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 1.2rem;
+}
+
+.verify-card__title {
+  margin: 0 0 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.verify-card__subtitle {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.verify-card__resend-text {
+  margin: 0.6rem 0 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.verify-card__resend-btn {
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  color: var(--color-link);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.verify-card__resend-btn:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.verify-card__resend-btn:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.verify-card__resend-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Code boxes ---------- */
+
+.verify-form {
+  width: 100%;
+  margin-top: 2.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.verify-code {
+  width: 70%;
+  height: 5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.verify-code__input {
+  flex: 0 1 5rem;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  font-family: inherit;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-heading);
+  background: var(--color-box-bg);
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  outline: none;
+  caret-color: var(--color-green);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.verify-code__input:focus-visible {
+  border-color: var(--color-green);
+  background: #ffffff;
+}
+
+.verify-code__input--error {
+  border-color: var(--color-error);
+}
+
+/* ---------- Message line + button ---------- */
+
+.verify-form__message {
+  min-height: 1.4rem;
+  margin: 0.8rem 0 1.4rem;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.verify-form__message--error {
+  color: var(--color-error);
+}
+
+.verify-btn {
+  width: 20rem;
+  max-width: 100%;
+  height: 2rem;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  background: var(--color-green);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.verify-btn:hover:not(:disabled) {
+  background: var(--color-green-dark);
+  transform: translateY(-1px);
+}
+
+.verify-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.verify-btn:focus-visible {
+  outline: 3px solid var(--color-heading);
+  outline-offset: 3px;
+}
+
+.verify-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .verify-card {
+    padding: 1.6rem 1.2rem 2rem;
+  }
+
+  .verify-card__title {
+    font-size: 1.9rem;
+  }
+
+  .verify-card__subtitle {
+    font-size: 1.25rem;
+  }
+
+  .verify-card__resend-text {
+    font-size: 1.1rem;
+  }
+
+  .verify-code {
+    gap: 0.5rem;
+  }
+
+  .verify-code__input {
+    font-size: 1.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verify-btn,
+  .verify-code__input {
+    transition: none;
+  }
+}
