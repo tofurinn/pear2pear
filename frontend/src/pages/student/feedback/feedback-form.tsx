@@ -12,8 +12,8 @@ import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { StarIcon } from '../../../components/icons.tsx';
 import FeedbackThanks from './feedback-thanks.tsx';
 
-import '../../../components/page-css/forms-ui.css';
-import './feedback-form.css';
+import '../../../components/ui.css';
+import '../../../components/page-css/feedback-form.css';
 
 const MAX_RATING = 5;
 const STAR_VALUES = Array.from({ length: MAX_RATING }, (_, i) => i + 1);
