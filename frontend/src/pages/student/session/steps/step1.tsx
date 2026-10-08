@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import type { Timestamp } from 'firebase/firestore';
 import { MOCK_REQUESTS, getVolunteerById } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
@@ -12,17 +11,8 @@ interface Step1Props {
   updateFormData: (data: Partial<SessionFormData>) => void;
 }
 
-const CARDS_PER_PAGE = 4; // a 2 x 2 block, as in the Figma frame
-
 const formatDate = (ts: Timestamp) =>
   ts.toDate().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-// Cards 1-4 fill a 2x2 block (left to right, top to bottom); card 5 starts the next block to the right
-const gridPosition = (index: number): CSSProperties =>
-  ({
-    '--row': Math.floor((index % CARDS_PER_PAGE) / 2) + 1,
-    '--col': (index % 2) + 2 * Math.floor(index / CARDS_PER_PAGE) + 1,
-  }) as CSSProperties;
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
@@ -38,7 +28,7 @@ function SelectRequestStep({ formData, updateFormData }: Step1Props) {
       <h2 className="ui-card-heading">Step 1: Select A Request</h2>
 
       <div className="ui-card-body request-grid" role="radiogroup" aria-label="Select a request">
-        {MOCK_REQUESTS.map((request, index) => {
+        {MOCK_REQUESTS.map((request) => {
           const isSelected = formData.reqID === request.reqID;
           return (
             <button
@@ -47,7 +37,6 @@ function SelectRequestStep({ formData, updateFormData }: Step1Props) {
               role="radio"
               aria-checked={isSelected}
               className={`request-card ${isSelected ? 'selected' : ''}`}
-              style={gridPosition(index)}
               onClick={() => selectRequest(request.reqID)}
             >
               <span className="category-tag">{request.category}</span>
