@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Navbar from "../../components/navbar/main-navbar";
 
-import '../../components/page-css/forms-ui.css';
+import '../../components/ui.css';
 import './notifications.css';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
