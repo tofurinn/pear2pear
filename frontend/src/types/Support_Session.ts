@@ -5,7 +5,7 @@ export interface Support_Session {
     reqID: string;
     sessDate: Date;
     sessTimeSlot: Timestamp;
-    supportMode: "Physical" | "Online";
+    supportMode: "Physical" | "Virtual";
     meetingLocation: string;
     sessStatus: "Planned" | "Confirmed" | "Completed" | "Rated" | "Cancelled";
     sessTimestamp:  Timestamp;

@@ -26,7 +26,7 @@ function MeetupDetailsStep({ formData, updateFormData }: Step3Props) {
               onChange={e => updateFormData({ supportMode: e.target.value as SessionFormData['supportMode'] })}
             >
               <option value="Physical">Physical</option>
-              <option value="Online">Online</option>
+              <option value="Virtual">Virtual</option>
             </select>
             <ChevronDown className="ui-select-icon" />
           </div>
@@ -39,7 +39,7 @@ function MeetupDetailsStep({ formData, updateFormData }: Step3Props) {
             type="text"
             className="ui-field-control"
             value={formData.meetingLocation}
-            placeholder={formData.supportMode === 'Online' ? 'Paste the meeting link' : 'e.g. Student Lounge 2 at the sofa'}
+            placeholder={formData.supportMode === 'Virtual' ? 'Paste the meeting link' : 'e.g. Student Lounge 2 at the sofa'}
             onChange={e => updateFormData({ meetingLocation: e.target.value })}
           />
         </div>

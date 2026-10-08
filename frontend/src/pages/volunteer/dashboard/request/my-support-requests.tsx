@@ -4,13 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import RequestDetailsModal from './request-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
-import {
-  BoardSection,
-  ItemCard,
-  StatusPill,
-} from '../volunteer-shared.tsx';
-import { MOCK_INCOMING_REQUESTS, requestPatch } from '../volunteer-utils.ts';
-import type { VolunteerRequestItem } from '../volunteer-utils.ts';
+import { BoardSection, ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
+import { MOCK_INCOMING_REQUESTS, requestPatch } from '../../volunteer-utils.ts';
+import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';

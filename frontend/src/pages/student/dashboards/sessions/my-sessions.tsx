@@ -3,42 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import SessionDetailsModal from './session-details.tsx';
 
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
-import { AlertIcon, CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../components/icons.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from '../dashboards-utils.tsx';
-import type { SessionItem } from '../dashboards-utils.tsx';
-import { hourToSlot, toDateKey } from '../../session/session-utils.tsx';
+import { ChevronLeft } from '../../../../components/icons.tsx';
+import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
+import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from '../../student-utils.tsx';
+import type { SessionItem } from '../../student-utils.tsx';
+import { hourToSlot, toDateKey } from '../../student-utils.tsx';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
-
-// ─── Session card (same markup in all three columns) ───────────────────────────
-
-interface SessionCardProps {
-  item: SessionItem;
-  onViewDetails: () => void;
-}
-
-function SessionCard({ item, onViewDetails }: SessionCardProps) {
-  const { tone, label } = item.status;
-
-  return (
-    <article className="ui-item-card">
-      <span className="ui-category-tag">{item.category}</span>
-      <h3 className="ui-item-card-title">{item.title}</h3>
-      <p className="ui-item-card-person">{item.personName}</p>
-
-      <div className="ui-item-card-footer">
-        <span className="ui-item-card-date">{item.dateLabel}</span>
-        <span className={`ui-status-pill ui-status-pill--${tone}`}>
-          {tone === 'planned' ? <ClockIcon /> : tone === 'to-confirm' ? <AlertIcon /> : tone === 'confirmed' ? <CheckIcon /> : <CalendarIcon />} {label}
-        </span>
-        <button type="button" className="ui-chip-btn ui-chip-btn--info" onClick={onViewDetails}>
-          View Details
-        </button>
-      </div>
-    </article>
-  );
-}
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
@@ -122,9 +94,13 @@ function MySessions() {
                 <h2 className="dashboard-section-title">Planned</h2>
                 <div className="dashboard-cards dashboard-cards--scroll">
                   {planned.map(item => (
-                    <SessionCard
+                    <ItemCard
                       key={item.sessID}
-                      item={item}
+                      category={item.category}
+                      title={item.title}
+                      personName={item.personName}
+                      dateLabel={item.dateLabel}
+                      pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}
@@ -136,9 +112,13 @@ function MySessions() {
                 <h2 className="dashboard-section-title">Confirmed</h2>
                 <div className="dashboard-cards dashboard-cards--scroll">
                   {confirmed.map(item => (
-                    <SessionCard
+                    <ItemCard
                       key={item.sessID}
-                      item={item}
+                      category={item.category}
+                      title={item.title}
+                      personName={item.personName}
+                      dateLabel={item.dateLabel}
+                      pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}
@@ -150,9 +130,13 @@ function MySessions() {
                 <h2 className="dashboard-section-title">To Rate</h2>
                 <div className="dashboard-cards dashboard-cards--scroll">
                   {toRate.map(item => (
-                    <SessionCard
+                    <ItemCard
                       key={item.sessID}
-                      item={item}
+                      category={item.category}
+                      title={item.title}
+                      personName={item.personName}
+                      dateLabel={item.dateLabel}
+                      pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}

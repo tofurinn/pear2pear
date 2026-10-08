@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 
 import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
-import type { SessionItem } from '../dashboards-utils.tsx';
+import type { SessionItem } from '../../student-utils.tsx';
 
 import '../../../../components/page-css/details.css';
 

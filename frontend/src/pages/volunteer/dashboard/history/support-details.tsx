@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom';
 
 import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
-import { StatusPill } from '../volunteer-shared.tsx';
-import type { VolunteerSessionItem } from '../volunteer-utils.ts';
+import { StatusPill } from '../../../../components/dashboard-components.tsx';
+import type { VolunteerSessionItem } from '../../volunteer-utils.ts';
 
 import '../../../../components/page-css/details.css';
 

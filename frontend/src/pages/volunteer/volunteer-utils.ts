@@ -1,11 +1,13 @@
-import type { RequestItem, SessionItem, StatusTone } from '../../student/dashboards/dashboards-utils.tsx';
+import type {
+  DashboardRequestItem,
+  DashboardSessionItem,
+  DashboardStatusTone,
+} from '../../types/Dashboard';
+import type { Support_Request } from '../../types/Support_Request';
 
-export type VolunteerRequestItem = Pick<
-  RequestItem,
-  'reqID' | 'reqStatus' | 'category' | 'title' | 'personName' | 'dateLabel' | 'status' | 'description'
->;
+export type VolunteerRequestItem = DashboardRequestItem;
 
-export type VolunteerSessionItem = SessionItem & {
+export type VolunteerSessionItem = DashboardSessionItem & {
   reqID: string;
   sessTimeSlot: Date;
   volunteerRating?: number;
@@ -28,14 +30,14 @@ export const getVolunteerSessionStatus = (item: VolunteerSessionItem, now = new 
 };
 
 export const requestPatch = (
-  reqStatus: RequestItem['reqStatus'],
-  tone: StatusTone,
+  reqStatus: Support_Request['reqStatus'],
+  tone: DashboardStatusTone,
   label: string,
-): Pick<RequestItem, 'reqStatus' | 'status'> => ({ reqStatus, status: { tone, label } });
+): Pick<DashboardRequestItem, 'reqStatus' | 'status'> => ({ reqStatus, status: { tone, label } });
 
 export const sessionPatch = (
-  sessStatus: SessionItem['sessStatus'],
-  tone: StatusTone,
+  sessStatus: VolunteerSessionItem['sessStatus'],
+  tone: DashboardStatusTone,
   label: string,
 ): Pick<VolunteerSessionItem, 'sessStatus' | 'status'> => ({ sessStatus, status: { tone, label } });
 
@@ -50,12 +52,12 @@ export const MOCK_INCOMING_REQUESTS: VolunteerRequestItem[] = [
 function mockSession(
   sessID: string,
   reqID: string,
-  sessStatus: SessionItem['sessStatus'],
-  category: SessionItem['category'],
+  sessStatus: VolunteerSessionItem['sessStatus'],
+  category: VolunteerSessionItem['category'],
   title: string,
   personName: string,
   dateLabel: string,
-  tone: StatusTone,
+  tone: DashboardStatusTone,
   label: string,
   options: Partial<Pick<
     VolunteerSessionItem,
@@ -91,7 +93,7 @@ function mockSession(
 
 export const MOCK_VOLUNTEER_SESSIONS: VolunteerSessionItem[] = [
   mockSession('sess-1', 'req-1', 'Planned', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '4 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', volConfirmed: true }),
-  mockSession('sess-2', 'req-2', 'Planned', 'Technology Support', 'Help Fix My Laptop!!', 'Omniman', '6 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', studConfirmed: true, supportMode: 'Online', location: 'Video call link shared with the student' }),
+  mockSession('sess-2', 'req-2', 'Planned', 'Technology Support', 'Help Fix My Laptop!!', 'Omniman', '6 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', studConfirmed: true, supportMode: 'Virtual', location: 'Video call link shared with the student' }),
   mockSession('sess-3', 'req-1', 'Confirmed', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '12 Oct 2026', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
   mockSession('sess-4', 'req-4', 'Confirmed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
   mockSession('sess-5', 'req-4', 'Completed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),

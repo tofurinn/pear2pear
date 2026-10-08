@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import { CalendarIcon, CloseIcon } from '../../../../components/icons.tsx';
-import type { VolunteerRequestItem } from '../volunteer-utils.ts';
+import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
 
 import '../../../../components/page-css/details.css';
 
