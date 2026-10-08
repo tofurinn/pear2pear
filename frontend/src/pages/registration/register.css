@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
 
-.register-page {
+.register-page, .pass-page {
   --color-heading: #3f2020;
   --color-text: #111111;
   --color-input-bg: #f7f5e9;

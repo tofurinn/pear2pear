@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
 
-.verify-page {
+.valid-page {
   --color-heading: #3f2020;
   --color-text: #3f2020;
   --color-box-bg: #f0f6ea;
@@ -27,15 +27,15 @@
   box-sizing: border-box;
 }
 
-.verify-page *,
-.verify-page *::before,
-.verify-page *::after {
+.valid-page *,
+.valid-page *::before,
+.valid-page *::after {
   box-sizing: inherit;
 }
 
 /* ---------- Main + card ---------- */
 
-.verify-main {
+.valid-main {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -43,7 +43,7 @@
   padding: 3rem;
 }
 
-.verify-card {
+.valid-card {
   width: 90%;
   max-width: 60rem;
   padding: 2.4rem 2.5rem 2.5rem;
@@ -55,27 +55,27 @@
   border-radius: 1.2rem;
 }
 
-.verify-card__title {
+.valid-card__title {
   margin: 0 0 1.5rem;
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--color-heading);
 }
 
-.verify-card__subtitle {
+.valid-card__subtitle {
   margin: 0;
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-heading);
 }
 
-.verify-card__resend-text {
+.valid-card__resend-text {
   margin: 0.6rem 0 0;
   font-size: 1rem;
   color: var(--color-text);
 }
 
-.verify-card__resend-btn {
+.valid-card__resend-btn {
   padding: 0;
   font-family: inherit;
   font-size: inherit;
@@ -86,24 +86,24 @@
   cursor: pointer;
 }
 
-.verify-card__resend-btn:hover:not(:disabled) {
+.valid-card__resend-btn:hover:not(:disabled) {
   text-decoration: underline;
 }
 
-.verify-card__resend-btn:focus-visible {
+.valid-card__resend-btn:focus-visible {
   outline: 2px solid var(--color-link);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-.verify-card__resend-btn:disabled {
+.valid-card__resend-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* ---------- Code boxes ---------- */
 
-.verify-form {
+.valid-form {
   width: 100%;
   margin-top: 2.6rem;
   display: flex;
@@ -111,7 +111,7 @@
   align-items: center;
 }
 
-.verify-code {
+.valid-code {
   width: 55%;
   height: 4.2rem;
   display: flex;
@@ -119,7 +119,7 @@
   justify-content: center;
 }
 
-.verify-code__input {
+.valid-code__input {
   flex: 0 1 5rem;
   min-width: 0;
   aspect-ratio: 1 / 1;
@@ -137,29 +137,29 @@
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.verify-code__input:focus-visible {
+.valid-code__input:focus-visible {
   border-color: var(--color-green);
   background: #ffffff;
 }
 
-.verify-code__input--error {
+.valid-code__input--error {
   border-color: var(--color-error);
 }
 
 /* ---------- Message line + button ---------- */
 
-.verify-form__message {
+.valid-form__message {
   min-height: 1.4rem;
   margin: 0.8rem 0 1.4rem;
   font-size: 0.95rem;
   color: var(--color-text);
 }
 
-.verify-form__message--error {
+.valid-form__message--error {
   color: var(--color-error);
 }
 
-.verify-btn {
+.valid-btn {
   width: 20rem;
   max-width: 100%;
   height: 2rem;
@@ -176,21 +176,21 @@
   transition: background 0.15s ease, transform 0.1s ease;
 }
 
-.verify-btn:hover:not(:disabled) {
+.valid-btn:hover:not(:disabled) {
   background: var(--color-green-dark);
   transform: translateY(-1px);
 }
 
-.verify-btn:active:not(:disabled) {
+.valid-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.verify-btn:focus-visible {
+.valid-btn:focus-visible {
   outline: 3px solid var(--color-heading);
   outline-offset: 3px;
 }
 
-.verify-btn:disabled {
+.valid-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -198,34 +198,34 @@
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
-  .verify-card {
+  .valid-card {
     padding: 1.6rem 1.2rem 2rem;
   }
 
-  .verify-card__title {
+  .valid-card__title {
     font-size: 1.9rem;
   }
 
-  .verify-card__subtitle {
+  .valid-card__subtitle {
     font-size: 1.25rem;
   }
 
-  .verify-card__resend-text {
+  .valid-card__resend-text {
     font-size: 1.1rem;
   }
 
-  .verify-code {
+  .valid-code {
     gap: 0.5rem;
   }
 
-  .verify-code__input {
+  .valid-code__input {
     font-size: 1.6rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .verify-btn,
-  .verify-code__input {
+  .valid-btn,
+  .valid-code__input {
     transition: none;
   }
 }
