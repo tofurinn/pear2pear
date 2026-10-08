@@ -12,7 +12,7 @@ export interface SessionFormData {
   sessDate: string;      // 'YYYY-MM-DD' -> convert to Date on submit
   sessTimeSlot: string;  // 'HH:00' (start of the hour) -> convert to Timestamp on submit
   // Step 3
-  supportMode: 'Physical' | 'Online';
+  supportMode: 'Physical' | 'Virtual';
   meetingLocation: string;
 }
 
@@ -203,7 +203,7 @@ const mockSession = (
 
 export const MOCK_EDITABLE_SESSIONS: Support_Session[] = [
   mockSession('sess-1', 'req-1', 1, 'Planned',   true,  false, 'Physical', 'Student Lounge 2 at the sofa'),
-  mockSession('sess-2', 'req-2', 3, 'Planned',   false, true,  'Online',   'Paste the meeting link here'),
+  mockSession('sess-2', 'req-2', 3, 'Planned',   false, true,  'Virtual',   'Paste the meeting link here'),
   mockSession('sess-3', 'req-3', 2, 'Confirmed', true,  true,  'Physical', 'Library entrance'),
   mockSession('sess-4', 'req-4', 0, 'Completed', true,  true,  'Physical', 'Student Lounge 2 at the sofa'),  // not editable
 ];
