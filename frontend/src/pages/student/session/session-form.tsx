@@ -4,10 +4,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 //state object: formData - holds all form input values across steps
 //state object: summary - snapshot of the booked session, shown on the confirmation page
 //state object: isSubmitting / submitMessage / errorMessage - submission state
+//state object: showConfirm - whether the "Arrange this session?" popup is open
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft, ChevronRight } from '../../../components/icons.tsx';
 import StepProgress from '../../../components/step-progress.tsx';
+import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 import SelectRequestStep from './steps/step1.tsx';
 import TimeSlotStep from './steps/step2.tsx';
 import MeetupDetailsStep from './steps/step3.tsx';
@@ -41,6 +43,7 @@ function MultiStepSessionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const totalSteps = 3; // the confirmation page is not a numbered step
   const isLastStep = currentStep === totalSteps;
@@ -87,6 +90,7 @@ function MultiStepSessionForm() {
       setSubmitMessage('error');
     } finally {
       setIsSubmitting(false);
+      setShowConfirm(false); // close the popup whether it worked or not, so it never covers the next screen
     }
   };
 
@@ -177,7 +181,7 @@ function MultiStepSessionForm() {
                     <button
                       type="button"
                       className={`ui-btn ${isLastStep ? 'ui-btn-solid' : 'ui-btn-outline'}`}
-                      onClick={isLastStep ? handleSubmit : handleNext}
+                      onClick={isLastStep ? () => setShowConfirm(true) : handleNext}
                       disabled={!canGoNext}
                     >
                       {isLastStep ? (
@@ -193,6 +197,17 @@ function MultiStepSessionForm() {
           )}
         </section>
       </main>
+
+      <ConfirmPopup
+        open={showConfirm}
+        title="Arrange this session?"
+        message="Your volunteer will be asked to confirm the session."
+        confirmLabel="Arrange Session"
+        busy={isSubmitting}
+        busyLabel="Arranging…"
+        onConfirm={handleSubmit}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 }

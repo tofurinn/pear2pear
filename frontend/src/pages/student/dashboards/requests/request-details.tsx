@@ -1,44 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, CheckIcon, ClockIcon } from '../../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, StarRating } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import type { RequestItem } from '../dashboards-utils.tsx';
 
 import '../../../../components/page-css/details.css';
-
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" aria-hidden="true" focusable="false">
-    <path d="M5 5l14 14M19 5L5 19" />
-  </svg>
-);
-
-const AlertIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7.5v5.5M12 16.5h.01" />
-  </svg>
-);
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <span className="session-modal-stars" role="img" aria-label={`${rating} out of 5 stars`}>
-      {[0, 1, 2, 3, 4].map(i => {
-        const fill = Math.max(0, Math.min(1, rating - i)) * 100;
-        return (
-          <span
-            key={i}
-            className="session-modal-star"
-            style={{ ['--fill' as string]: `${fill}%` }}
-            aria-hidden="true"
-          >
-            ★
-          </span>
-        );
-      })}
-    </span>
-  );
-}
 
 interface RequestDetailsModalProps {
   item: RequestItem;
@@ -127,7 +94,7 @@ function RequestDetailsModal({ item, onClose }: RequestDetailsModalProps) {
         <section className="session-modal-volunteer" aria-label="Matched volunteer">
           <div className="session-modal-volunteer-head">
             <span className="session-modal-volunteer-name">{volunteer.name}</span>
-            <Stars rating={volunteer.rating} />
+            <StarRating rating={volunteer.rating} className="session-modal-stars" />
             <span className="session-modal-volunteer-rating">
               {volunteer.rating} ({volunteer.reviewCount})
             </span>

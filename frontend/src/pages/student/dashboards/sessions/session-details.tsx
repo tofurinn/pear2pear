@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, CheckIcon, ClockIcon } from '../../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import type { SessionItem } from '../dashboards-utils.tsx';
 
@@ -35,32 +35,6 @@ export type SessionDetailsItem = SessionItem & SessionDetailsExtras;
 
 // ─── Small icons (swap for ones in icons.tsx if you already have them) ─────────
 
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" aria-hidden="true" focusable="false">
-    <path d="M5 5l14 14M19 5L5 19" />
-  </svg>
-);
-
-const SwapIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M7 3l-4 4 4 4M3 7h12a4 4 0 014 4M17 21l4-4-4-4M21 17H9a4 4 0 01-4-4" />
-  </svg>
-);
-
-const PinIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M12 21s-6-5.3-6-10a6 6 0 1112 0c0 4.7-6 10-6 10z" />
-    <circle cx="12" cy="11" r="2.2" />
-  </svg>
-);
-
-const AlertIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7.5v5.5M12 16.5h.01" />
-  </svg>
-);
-
 function Stars({ rating }: { rating: number }) {
   return (
     <span className="session-modal-stars" role="img" aria-label={`${rating} out of 5 stars`}>
@@ -87,18 +61,31 @@ interface SessionDetailsModalProps {
   item: SessionDetailsItem;
   onClose: () => void;
   onSubmitFeedback?: (item: SessionDetailsItem) => void;
+  onCancelSession?: (item: SessionDetailsItem) => void;
+  onRearrange?: (item: SessionDetailsItem) => void;
+  onConfirmArrangement?: (item: SessionDetailsItem) => void;
   footerActions?: ReactNode;
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-function SessionDetailsModal({ item, onClose, onSubmitFeedback, footerActions }: SessionDetailsModalProps) {
+function SessionDetailsModal({
+  item,
+  onClose,
+  onSubmitFeedback,
+  onCancelSession,
+  onRearrange,
+  onConfirmArrangement,
+  footerActions,
+}: SessionDetailsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const { tone, label } = item.status;
   const volunteer = item.volunteer;
   const student = item.studentDetails;
   const canGiveFeedback = item.sessStatus === 'Completed' && !!onSubmitFeedback;
+  const canChangeArrangement = item.sessStatus === 'Planned' || item.sessStatus === 'Confirmed';
+  const needsStudentConfirmation = item.sessStatus === 'Planned' && !item.studConfirmed && item.volConfirmed;
 
   // Escape to close, Tab stays inside the dialog, page behind doesn't scroll,
   // and focus returns to the "View Details" button afterwards.
@@ -237,6 +224,25 @@ function SessionDetailsModal({ item, onClose, onSubmitFeedback, footerActions }:
           <span className={`ui-status-pill ui-status-pill--${tone}`}>
             {tone === 'planned' ? <ClockIcon /> : tone === 'to-confirm' ? <AlertIcon /> : tone === 'confirmed' ? <CheckIcon /> : <CalendarIcon />} {label}
           </span>
+          {canChangeArrangement && (
+            <div className="session-modal-actions">
+              {onCancelSession && (
+                <button type="button" className="ui-chip-btn ui-chip-btn--danger session-modal-action" onClick={() => onCancelSession(item)}>
+                  Cancel
+                </button>
+              )}
+              {onRearrange && (
+                <button type="button" className="ui-chip-btn ui-chip-btn--info session-modal-action" onClick={() => onRearrange(item)}>
+                  Rearrange
+                </button>
+              )}
+              {needsStudentConfirmation && onConfirmArrangement && (
+                <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={() => onConfirmArrangement(item)}>
+                  Confirm Arrangement
+                </button>
+              )}
+            </div>
+          )}
           {footerActions}
           {canGiveFeedback && (
             <button

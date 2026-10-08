@@ -43,24 +43,17 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<IndexPage />} />
 
-        {/* Notifications */}
-        <Route path="/notifications" element={<NotificationsPage />} />
-        
-        {/* Registration routes */}
-        <Route path="/user-registration" element={<UserRegisterPage />} />
-        <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
-        <Route path="/email-validation" element={<EmailVerificationPage />} />
+          {/* Notifications */}
+          <Route path="/notifications" element={<NotificationsPage />} />
 
-        {/* Login routes */}
-        <Route path="/login" element={<UserLoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          {/* Registration routes */}
+          <Route path="/user-registration" element={<UserRegisterPage />} />
+          <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
+          <Route path="/email-validation" element={<EmailVerificationPage />} />
 
-        {/* - - - STUDENT ROUTES - - - */}
-        {/* Dashboard Forms */}
-        <Route path="/student/dashboard" element={<MyDashboard />} />
-        <Route path="/student/my-requests" element={<MyRequests />} />
-        <Route path="/student/my-sessions" element={<MySessions />} />
-        <Route path="/student/my-support-history" element={<MySupportHistory />} />
+          {/* Login routes */}
+          <Route path="/login" element={<UserLoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           {/* - - - STUDENT ROUTES - - - */}
           {/* Dashboard Forms */}
@@ -73,15 +66,17 @@ function App() {
           <Route path="/student/request-form" element={<MultiStepRequestForm />} />
           <Route path="/student/session-form" element={<MultiStepSessionForm />} />
           <Route path="/student/feedback-form/:sessID" element={<FeedbackForm />} />
-          <Route path="/student/session/:sessID/edit" element={<SessionRearrangement />} />
+          <Route path="/student/session-edit/:sessID" element={<SessionRearrangement />} />
 
           {/* - - - VOLUNTEER ROUTES - - - */}
           <Route path="/volunteer/dashboard" element={<VolunteerDashboard />} />
-          <Route path="/volunteer/requests" element={<VolunteerRequests />} />
-          <Route path="/volunteer/sessions" element={<VolunteerSessions />} />
-          <Route path="/volunteer/history" element={<VolunteerHistory />} />
+          <Route path="/volunteer/my-requests" element={<VolunteerRequests />} />
+          <Route path="/volunteer/my-sessions" element={<VolunteerSessions />} />
+          <Route path="/volunteer/my-support-history" element={<VolunteerHistory />} />
+
+          {/* Volunteer Forms */}
           <Route path="/volunteer/session-form" element={<MultiStepSessionForm />} />
-          <Route path="/volunteer/session/:sessID/edit" element={<SessionRearrangement />} />
+          <Route path="/volunteer/session-edit/:sessID" element={<SessionRearrangement />} />
         </Routes>
       </div>
     </div>

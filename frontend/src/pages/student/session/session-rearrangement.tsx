@@ -30,12 +30,17 @@ const FIRST_STEP = 2;
 const LAST_STEP = 3;
 const totalSteps = 3;
 
+interface SessionRearrangementLocationState {
+  formData?: SessionFormData;
+}
+
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 function SessionRearrangement() {
   const { sessID = '' } = useParams<{ sessID: string }>(); // route e.g. /sessions/:sessID/edit
   const navigate = useNavigate();
   const location = useLocation();
+  const navigationState = location.state as SessionRearrangementLocationState | null;
   const isVolunteerRoute = location.pathname.startsWith('/volunteer/');
   const dashboardPath = isVolunteerRoute ? '/volunteer/dashboard' : '/student/dashboard';
   const sessionsPath = isVolunteerRoute ? '/volunteer/sessions' : '/student/my-sessions';
@@ -46,7 +51,7 @@ function SessionRearrangement() {
   const [currentStep, setCurrentStep] = useState(FIRST_STEP);
   // Starting from the current arrangement means the booked slot is already selected in step 2
   const [formData, setFormData] = useState<SessionFormData>(() =>
-    session ? sessionToFormData(session) : EMPTY_FORM
+    navigationState?.formData ?? (session ? sessionToFormData(session) : EMPTY_FORM)
   );
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

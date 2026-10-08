@@ -79,7 +79,7 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
             <ChevronLeft /> Dashboard
           </button>
 
-          <section className="dashboard-card">
+          <section className="dashboard-card dashboard-card--scroll-columns">
             <header className="dashboard-banner dashboard-banner--yellow">
               <div>
                 <h1 className="dashboard-banner-title">Support History</h1>
@@ -87,8 +87,8 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
               </div>
             </header>
 
-            <div className="dashboard-board dashboard-board--single">
-              <div className="dashboard-cards">
+            <div className="dashboard-board dashboard-board--single dashboard-board--scroll-columns">
+              <div className="dashboard-cards dashboard-cards--scroll">
                 {history.map(item => (
                   <HistoryCard key={item.sessID} item={item} onViewDetails={() => handleViewDetails(item)} />
                 ))}

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 //state object: comments - optional written feedback
 //state object: isSubmitting / errorMessage - submission state
 //state object: submitted - the saved Feedback; when set, the thank-you screen is shown
+//state object: showConfirm - whether the "Submit feedback?" popup is open
 
 import { Timestamp } from 'firebase/firestore';
 import type { Feedback } from '../../../types/Feedback';
@@ -11,6 +12,7 @@ import type { Feedback } from '../../../types/Feedback';
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import { StarIcon } from '../../../components/icons.tsx';
 import FeedbackThanks from './feedback-thanks.tsx';
+import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 
 import '../../../components/ui.css';
 import '../../../components/page-css/feedback-form.css';
@@ -32,6 +34,7 @@ function FeedbackForm() {
   const [comments, setComments] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
   const [submitted, setSubmitted] = useState<Feedback | null>(null);
 
   const volunteer = MOCK_VOLUNTEER;
@@ -61,6 +64,7 @@ function FeedbackForm() {
       setErrorMessage('Could not submit your feedback. Please try again.');
     } finally {
       setIsSubmitting(false);
+      setShowConfirm(false); // close the popup whether it worked or not, so it never covers the next screen
     }
   };
 
@@ -74,7 +78,7 @@ function FeedbackForm() {
               feedback={submitted}
               volunteerName={volunteer.name}
               avatarUrl={volunteer.avatarUrl}
-              onReturnToDashboard={() => navigate('/dashboard')}
+              onReturnToDashboard={() => navigate('/student/dashboard')}
             />
           ) : (
             <>
@@ -128,7 +132,7 @@ function FeedbackForm() {
                 <button
                   type="button"
                   className="ui-btn ui-btn-solid"
-                  onClick={handleSubmit}
+                  onClick={() => setShowConfirm(true)}
                   disabled={rating < 1 || isSubmitting}
                 >
                   {isSubmitting ? 'Submitting…' : 'Submit Feedback'}
@@ -138,6 +142,18 @@ function FeedbackForm() {
           )}
         </section>
       </main>
+
+      <ConfirmPopup
+        open={showConfirm}
+        title="Submit feedback?"
+        message="Are you sure you want to submit this feedback?"
+        confirmLabel="Submit Feedback"
+        busy={isSubmitting}
+        busyLabel="Arranging…"
+        onConfirm={handleSubmit}
+        onCancel={() => setShowConfirm(false)}
+      />
+
     </div>
   );
 }

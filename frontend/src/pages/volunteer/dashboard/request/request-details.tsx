@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
-import { CalendarIcon } from '../../../../components/icons.tsx';
+import { CalendarIcon, CloseIcon } from '../../../../components/icons.tsx';
 import type { VolunteerRequestItem } from '../volunteer-utils.ts';
 
 import '../../../../components/page-css/details.css';
@@ -77,9 +77,7 @@ function RequestDetailsModal({ item, onClose, onAccept, onReject, onSchedule, on
           aria-label="Close request details"
           onClick={onClose}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-            <path d="M5 5l14 14M19 5L5 19" />
-          </svg>
+          <CloseIcon />
         </button>
 
         <h2 id="volunteer-request-modal-title" className="session-modal-title">{item.title}</h2>

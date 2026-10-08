@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, ClockIcon } from '../../../../components/icons.tsx';
+import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import type { SessionItem } from '../dashboards-utils.tsx';
 
@@ -19,25 +19,6 @@ interface SupportDetailsModalProps {
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" aria-hidden="true" focusable="false">
-    <path d="M5 5l14 14M19 5L5 19" />
-  </svg>
-);
-
-const SwapIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M7 3l-4 4 4 4M3 7h12a4 4 0 014 4M17 21l4-4-4-4M21 17H9a4 4 0 01-4-4" />
-  </svg>
-);
-
-const PinIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M12 21s-6-5.3-6-10a6 6 0 1112 0c0 4.7-6 10-6 10z" />
-    <circle cx="12" cy="11" r="2.2" />
-  </svg>
-);
 
 function Stars({ rating, className = '' }: { rating: number; className?: string }) {
   return (

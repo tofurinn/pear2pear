@@ -52,7 +52,7 @@ const STATUS_PILL: Record<Support_Session['sessStatus'], { label: string; tone: 
 // Planned means only one side has confirmed so far. Labels are from the student's point of view.
 const getStatusPill = (session: Support_Session): { label: string; tone: StatusTone } => {
   if (session.sessStatus === 'Planned') {
-    if (session.studConfirmed && !session.volConfirmed) return { label: 'Waiting', tone: 'planned' };      // student arranged it, volunteer hasn't responded
+    if (session.studConfirmed && !session.volConfirmed) return { label: 'Waiting', tone: 'planned' }; // student arranged it, volunteer hasn't responded
     if (!session.studConfirmed && session.volConfirmed) return { label: 'To confirm', tone: 'to-confirm' };  // volunteer arranged it, student still has to confirm
   }
   return STATUS_PILL[session.sessStatus];

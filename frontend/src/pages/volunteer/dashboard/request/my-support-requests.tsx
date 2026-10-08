@@ -60,7 +60,7 @@ function VolunteerRequests() {
             <ChevronLeft /> Dashboard
           </button>
 
-          <section className="dashboard-card">
+          <section className="dashboard-card dashboard-card--scroll-columns">
             <header className="dashboard-banner dashboard-banner--blue">
               <div>
                 <h1 className="dashboard-banner-title">Incoming Requests</h1>
@@ -68,16 +68,16 @@ function VolunteerRequests() {
               </div>
             </header>
 
-            <div className="dashboard-board dashboard-board--three">
-              <BoardSection title="Pending" count={pending.length} emptyText="No pending requests">
+            <div className="dashboard-board dashboard-board--three dashboard-board--scroll-columns">
+              <BoardSection title="Pending" count={pending.length} emptyText="No pending requests" cardsClassName="dashboard-cards--scroll">
                 {pending.map(renderCard)}
               </BoardSection>
 
-              <BoardSection title="Accepted" count={accepted.length} emptyText="No accepted requests">
+              <BoardSection title="Accepted" count={accepted.length} emptyText="No accepted requests" cardsClassName="dashboard-cards--scroll">
                 {accepted.map(renderCard)}
               </BoardSection>
 
-              <BoardSection title="Inactive" count={inactive.length} emptyText="No inactive requests">
+              <BoardSection title="Inactive" count={inactive.length} emptyText="No inactive requests" cardsClassName="dashboard-cards--scroll">
                 {inactive.map(renderCard)}
               </BoardSection>
             </div>
