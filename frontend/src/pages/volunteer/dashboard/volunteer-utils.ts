@@ -91,7 +91,7 @@ function mockSession(
 
 export const MOCK_VOLUNTEER_SESSIONS: VolunteerSessionItem[] = [
   mockSession('sess-1', 'req-1', 'Planned', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '4 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', volConfirmed: true }),
-  mockSession('sess-2', 'req-2', 'Planned', 'Technology Support', 'Help Fix My Laptop!!', 'Omniman', '6 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', studConfirmed: true, supportMode: 'Online', location: 'Video call link shared with the student' }),
+  mockSession('sess-2', 'req-2', 'Planned', 'Technology Support', 'Help Fix My Laptop!!', 'Omniman', '6 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', studConfirmed: true, supportMode: 'Virtual', location: 'Video call link shared with the student' }),
   mockSession('sess-3', 'req-1', 'Confirmed', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '12 Oct 2026', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
   mockSession('sess-4', 'req-4', 'Confirmed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
   mockSession('sess-5', 'req-4', 'Completed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
