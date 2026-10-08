@@ -121,14 +121,16 @@ export default function VolunteerDashboard({
           <div className="dash-identity">
             <div className="dash-name-row">
               <h1 className="dash-name">{userName}</h1>
-              <button
-                type="button"
-                className="dash-settings"
-                aria-label="Account settings"
-                onClick={onOpenSettings}
-              >
-                <GearIcon />
-              </button>
+              {onOpenSettings && (
+                <button
+                  type="button"
+                  className="dash-settings"
+                  aria-label="Account settings"
+                  onClick={onOpenSettings}
+                >
+                  <GearIcon />
+                </button>
+              )}
             </div>
 
             <div className="dash-rating">
@@ -174,7 +176,7 @@ export default function VolunteerDashboard({
                   type="button"
                   className="dash-action-arrow"
                   aria-label="Open incoming requests"
-                  onClick={onOpenRequests}
+                  onClick={onOpenRequests ?? (() => navigate('/volunteer/requests'))}
                 >
                   <ChevronRight />
                 </button>
@@ -197,7 +199,7 @@ export default function VolunteerDashboard({
               <button
                 type="button"
                 className="dash-pill dash-pill--green"
-                onClick={() => navigate("/session-form")}
+                onClick={() => navigate("/volunteer/session-form")}
               >
                 Schedule Session
               </button>

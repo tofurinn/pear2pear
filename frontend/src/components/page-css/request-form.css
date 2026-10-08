@@ -7,7 +7,6 @@
    ============================================================================= */
 
 .rf-skill:focus-visible,
-.rf-slot:focus-visible,
 .rf-volunteer-card:focus-visible {
   outline: 2px solid #d96245;
   outline-offset: 2px;
@@ -36,29 +35,6 @@
 }
 
 /* ---------- Step 2: filtering ---------- */
-.rf-date-range {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: calc(12 * var(--u));
-  height: auto;
-}
-
-.rf-date-input {
-  min-width: 0;
-  padding: 0;
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-  background: transparent;
-  border: 0;
-}
-
-.rf-date-input:focus-visible {
-  outline: 2px solid #d96245;
-  outline-offset: 2px;
-}
-
 .rf-skill-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -95,88 +71,6 @@
 
 .rf-skill[aria-checked='true'] .rf-skill-dot {
   background: var(--color-green1);
-}
-
-/* ---------- Step 3: availability grid ---------- */
-.rf-slot-scroll {
-  margin-top: calc(28 * var(--u));
-  overflow-x: auto;
-}
-
-.rf-slot-grid {
-  display: grid;
-  grid-template-columns: calc(140 * var(--u)) repeat(var(--days, 7), minmax(64px, 1fr));
-  min-width: calc(80px + var(--days, 7) * 64px);
-}
-
-.rf-slot-day {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-bottom: calc(8 * var(--u));
-  font-size: var(--fs-label);
-  line-height: 1.2;
-}
-
-.rf-slot-day strong {
-  font-size: var(--fs-small);
-  font-weight: var(--font-weight-bold);
-}
-
-.rf-slot-hour {
-  display: flex;
-  align-items: center;
-  padding-left: calc(22 * var(--u));
-  font-size: var(--fs-label);
-}
-
-.rf-slot-cell {
-  display: grid;
-  place-items: center;
-  height: max(24px, calc(53 * var(--u)));
-}
-
-.rf-slot {
-  display: grid;
-  place-items: center;
-  width: max(14px, calc(28 * var(--u)));
-  height: max(14px, calc(28 * var(--u)));
-  padding: 0;
-  color: #fff;
-  background: var(--color-slot);
-  border: 0;
-  border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(68, 36, 33, 0.15);
-  cursor: pointer;
-}
-
-.rf-slot:hover { background: var(--color-green2); }
-
-.rf-slot.selected {
-  background: var(--color-green1);
-  box-shadow: 0 1px 2px rgba(68, 36, 33, 0.25);
-}
-
-.rf-slot svg {
-  width: 70%;
-  height: 70%;
-}
-
-.rf-slot-readout {
-  /* centred pill filled like the other inputs; fixed width so it doesn't jump as the text changes */
-  width: min(100%, max(320px, calc(560 * var(--u))));
-  margin: calc(20 * var(--u)) auto 0;
-  padding: calc(12 * var(--u)) calc(28 * var(--u));
-  font-size: var(--fs-body);
-  line-height: 1.5;
-  text-align: center;
-  background: var(--color-field);
-  border-radius: 999px;
-}
-
-.rf-slot-readout-label {
-  font-weight: var(--font-weight-bold);
-  color: var(--color-green3);
 }
 
 /* ---------- Step 4: volunteer match-making ---------- */

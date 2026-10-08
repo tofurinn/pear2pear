@@ -198,6 +198,11 @@
   min-height: 188px;
   padding: 14px 14px 16px;
   border-radius: 10px;
+  transition: box-shadow 0.15s ease;
+}
+
+.dash-action:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dash-action--requests {
@@ -273,6 +278,11 @@
   min-height: 127px;
   padding: 10px 10px 8px;
   border-radius: 10px;
+  transition: box-shadow 0.15s ease;
+}
+
+.dash-stat:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dash-stat--1 { background: #edf5f6; }
@@ -324,6 +334,11 @@
   background: #fff;
   border-radius: 10px;
   gap:5px;
+  transition: box-shadow 0.15s ease;
+}
+
+.dash-history-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dash-history-title {
@@ -419,7 +434,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dash-toggle-btn {
+  .dash-toggle-btn,
+  .dash-action,
+  .dash-stat,
+  .dash-history-item {
     transition: none;
   }
 }

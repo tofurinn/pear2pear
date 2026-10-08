@@ -11,74 +11,41 @@ export interface RequestFormData {
   title: string;
   description: string;
   // Step 2: Filtering
-  prefStart: string;          // 'YYYY-MM-DD'
-  prefEnd: string;            // 'YYYY-MM-DD' (at most 6 days after prefStart, so the grid is max 7 days)
   supportMode: SupportMode;
   requiredSkills: string[];
   // Step 3: Availability Filtering
-  availability: string[];     // slot keys: 'YYYY-MM-DDTHH:00'
+  availability: string[];     // recurring weekday slot keys: 'weekday:HH:00'
   // Step 4: Volunteer Match-making
   volID: string;
 }
 
 // ─── Date / time helpers ───────────────────────────────────────────────────────
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-
 // Indexed by Date.getDay() (Sunday first)
 export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-export const formatDayMonth = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
-export const formatLongDate = (d: Date) => `${formatDayMonth(d)} ${d.getFullYear()}`;
 export const formatHour = (h: number) => `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
-
-export const toDateKey = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-export const parseDateKey = (key: string) => new Date(`${key}T00:00:00`);
 
 export const hourToSlot = (h: number) => `${String(h).padStart(2, '0')}:00`;
 export const slotToHour = (slot: string) => parseInt(slot, 10);
 
-// A slot key combines the date and the hour: '2026-10-06T13:00'
-export const slotKey = (dateKey: string, hour: number) => `${dateKey}T${hourToSlot(hour)}`;
-export const parseSlotKey = (key: string) => {
-  const [dateKey, time] = key.split('T');
-  return { date: parseDateKey(dateKey), hour: slotToHour(time) };
+export const weekdaySlotKey = (weekday: number, hour: number) => `${weekday}:${hourToSlot(hour)}`;
+export const parseWeekdaySlotKey = (key: string) => {
+  const separator = key.indexOf(':');
+  return {
+    weekday: Number(key.slice(0, separator)),
+    hour: slotToHour(key.slice(separator + 1)),
+  };
 };
-
-export const addDays = (dateKey: string, n: number) => {
-  const d = parseDateKey(dateKey);
-  d.setDate(d.getDate() + n);
-  return toDateKey(d);
-};
-
-// Earliest selectable date: tomorrow (same rule as the session form, no same-day or past dates)
-export const getTomorrowKey = (from: Date = new Date()) =>
-  toDateKey(new Date(from.getFullYear(), from.getMonth(), from.getDate() + 1));
-
-export const getDaysInRange = (startKey: string, endKey: string): Date[] => {
-  const days: Date[] = [];
-  const end = parseDateKey(endKey);
-  for (let d = parseDateKey(startKey); d <= end; d.setDate(d.getDate() + 1)) {
-    days.push(new Date(d));
-  }
-  return days;
-};
-
-export const formatDateRange = (startKey: string, endKey: string) =>
-  `${formatLongDate(parseDateKey(startKey))} – ${formatLongDate(parseDateKey(endKey))}`;
 
 // ─── Form defaults ─────────────────────────────────────────────────────────────
 
 // A function (not a constant) so the default dates are fresh each time the form starts over
 export const createEmptyForm = (): RequestFormData => {
-  const start = getTomorrowKey();
   return {
     category: '',
     title: '',
     description: '',
-    prefStart: start,
-    prefEnd: addDays(start, 6),
     supportMode: 'Physical',
     requiredSkills: [],
     availability: [],
@@ -148,8 +115,8 @@ export const matchVolunteers = (criteria: MatchCriteria): VolunteerMatch[] =>
     .map(v => {
       const free = getAvailability(v.volID);
       const overlap = criteria.availability.filter(key => {
-        const { date, hour } = parseSlotKey(key);
-        return free[date.getDay()]?.includes(hour);
+        const { weekday, hour } = parseWeekdaySlotKey(key);
+        return free[weekday]?.includes(hour);
       }).length;
       return { ...v, overlap };
     })
@@ -162,7 +129,6 @@ export interface RequestSummary {
   category: Support_Request['category'];
   title: string;
   description: string;
-  dateRangeLabel: string;
   supportMode: SupportMode;
   slotCount: number;
   volunteer: Volunteer;
@@ -176,7 +142,6 @@ export const buildSummary = (data: RequestFormData): RequestSummary | null => {
     category: data.category,
     title: data.title,
     description: data.description,
-    dateRangeLabel: formatDateRange(data.prefStart, data.prefEnd),
     supportMode: data.supportMode,
     slotCount: data.availability.length,
     volunteer,

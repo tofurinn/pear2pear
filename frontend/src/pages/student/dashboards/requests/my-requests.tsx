@@ -64,7 +64,7 @@ function MyRequests() {
   return (
     <div className="ui-page">
       <Navbar />
-      <main className="dashboard-background">
+      <main className="student-dashboard-background">
         <div className="dashboard-inner">
           <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate('/student/dashboard')}>
             <ChevronLeft /> Dashboard

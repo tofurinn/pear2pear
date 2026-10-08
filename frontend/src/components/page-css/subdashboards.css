@@ -2,17 +2,26 @@
    Dashboard sub-pages (My Sessions, Support History, my-requests, ...).
    Relies on components/ui/ui.css for the --u / --fs-* sizing tokens and the
    .ui-btn buttons, so everything must render inside .ui-page.
-   Sections: page shell · banner · board · item card · tag, pill, chip buttons · responsive
+   Sections: page shell · banner · board · item card · tag, pill, chip buttons · volunteer pages · responsive
    ============================================================================= */
 
 /* ---------- Page shell ---------- */
-.dashboard-background {
+.student-dashboard-background {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: calc(75 * var(--u)) calc(24 * var(--u));
   background: #eff6ea;
+}
+
+.volunteer-dashboard-background {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: calc(75 * var(--u)) calc(24 * var(--u));
+  background: #ebf3f5;
 }
 
 .dashboard-inner {
@@ -30,6 +39,18 @@
   padding: calc(30 * var(--u));
   background: #fff;
   border-radius: calc(46 * var(--u));
+}
+
+.dashboard-card--volunteer-sessions {
+  box-sizing: border-box;
+  display: flex;
+  height: min(calc(770 * var(--u)), calc(100vh - 190px));
+  min-height: 0;
+  flex-direction: column;
+}
+
+.dashboard-card--volunteer-sessions > .dashboard-banner {
+  flex: none;
 }
 
 /* ---------- Banner ---------- */
@@ -88,6 +109,29 @@
 .dashboard-board--three   { grid-template-columns: repeat(3, minmax(0, 1fr)); }   /* My Sessions */
 .dashboard-board--single  { grid-template-columns: minmax(0, 1fr); }   /* Support History: one full-width column */
 
+.dashboard-board--scroll-columns {
+  flex: 1;
+  align-items: stretch;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.dashboard-board--scroll-columns > section {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dashboard-board--scroll-columns .dashboard-cards--scroll {
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+}
+
 .dashboard-section-title {
   margin-bottom: calc(14 * var(--u));
   font-size: var(--fs-heading);
@@ -117,6 +161,12 @@
   border: 1px solid var(--color-border);
   border-radius: calc(12 * var(--u));
   box-shadow: 0 1px 4px rgba(68, 36, 33, 0.1);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.ui-item-card:hover {
+  border-color: #cfd6d6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .ui-item-card-title {
@@ -229,6 +279,74 @@
 .ui-chip-btn--info    { background: var(--color-blue2); }
 
 
+/* ---------- Volunteer pages (incoming requests, volunteer sessions, history) ---------- */
+/* Volunteers see student names in green (as in the designs) */
+.volunteer-dashboard-background .ui-item-card-person {
+  color: var(--color-green1);
+}
+
+/* ---------- Support History board: wide left column (2 cards per row) + narrow right ---------- */
+.dashboard-board--history {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+
+.dashboard-cards--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ---------- Card footer: status pill + action chips (+ View Details) ---------- */
+.vol-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px calc(10 * var(--u));
+  margin-left: auto;
+}
+
+/* Chip buttons with a leading icon (Accept / Reject) */
+.vol-chip-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(6 * var(--u));
+}
+
+.vol-chip-icon svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+}
+
+/* "Awaiting Feedback" pill */
+.ui-status-pill--awaiting {
+  color: var(--color-green1);
+}
+
+/* ---------- Stars (half stars via --fill) ---------- */
+.vol-stars {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.vol-star {
+  font-size: calc(24 * var(--u));
+  line-height: 1;
+  background: linear-gradient(90deg, #fbc02d var(--fill), #e3e3e3 var(--fill));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* volunteer pages: small screens */
+@media (max-width: 900px) {
+  .dashboard-board--history,
+  .dashboard-cards--two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .dashboard-card {
@@ -248,4 +366,29 @@
   }
 
   .dashboard-board { padding-inline: 0; }
+
+  .dashboard-card--volunteer-sessions {
+    height: auto;
+    min-height: 0;
+  }
+
+  .dashboard-board--scroll-columns {
+    flex: none;
+    grid-template-rows: none;
+  }
+
+  .dashboard-board--scroll-columns > section {
+    min-height: 280px;
+  }
+
+  .dashboard-board--scroll-columns .dashboard-cards--scroll {
+    flex: none;
+    max-height: 240px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-item-card {
+    transition: none;
+  }
 }

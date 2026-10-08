@@ -6,7 +6,7 @@ import type { Support_Session } from '../../../types/Support_Session';
 
 export type StatusTone =
   | 'planned' | 'to-confirm' | 'confirmed' | 'completed' | 'rated' | 'cancelled'   // sessions
-  | 'pending' | 'accepted' | 'scheduled' | 'rejected';                              // requests (cancelled is shared)
+  | 'pending' | 'accepted' | 'scheduled' | 'rejected' | 'awaiting';                  // requests (cancelled is shared)
 
 // Volunteer.name lives on User and the rating count isn't stored yet, so the backend will assemble this
 export interface VolunteerSummary {
