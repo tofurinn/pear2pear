@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { CalendarIcon, CheckIcon, ClockIcon } from '../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon } from '../../../components/icons.tsx';
 
 // ─── Icons ─────────────────────────────────────────────────────────────────────
 
@@ -38,6 +38,8 @@ function pillIcon(tone: string) {
     case 'accepted':
     case 'confirmed':
       return <CheckIcon />;
+    case 'to-confirm':
+      return <AlertIcon />;
     case 'scheduled':
     case 'completed':
     case 'rated':

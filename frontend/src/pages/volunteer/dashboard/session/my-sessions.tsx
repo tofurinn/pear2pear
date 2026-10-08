@@ -9,8 +9,9 @@ import {
   ItemCard,
   StatusPill,
 } from '../volunteer-shared.tsx';
-import { MOCK_VOLUNTEER_SESSIONS, sessionPatch } from '../volunteer-utils.ts';
+import { getVolunteerSessionStatus, MOCK_VOLUNTEER_SESSIONS, sessionPatch } from '../volunteer-utils.ts';
 import type { VolunteerSessionItem } from '../volunteer-utils.ts';
+import { hourToSlot, toDateKey } from '../../../student/session/session-utils.tsx';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
@@ -32,11 +33,31 @@ function VolunteerSessions() {
     setItems(prev => prev.map(item => (item.sessID === id ? { ...item, ...patch } : item)));
 
   const handleConfirm = (item: VolunteerSessionItem) =>
-    updateSession(item.sessID, { ...sessionPatch('Confirmed', 'confirmed', 'Confirmed'), awaitingMyConfirmation: false });
-  const handleCancel = (item: VolunteerSessionItem) =>
+    updateSession(item.sessID, {
+      ...sessionPatch('Confirmed', 'confirmed', 'Confirmed'),
+      studConfirmed: true,
+      volConfirmed: true,
+    });
+  const handleCancel = (item: VolunteerSessionItem) => {
     updateSession(item.sessID, sessionPatch('Cancelled', 'cancelled', 'Cancelled'));
+    setSelectedID(null);
+  };
   const handleMarkComplete = (item: VolunteerSessionItem) =>
-    updateSession(item.sessID, sessionPatch('Completed', 'awaiting', 'Awaiting Feedback'));
+    updateSession(item.sessID, sessionPatch('Completed', 'completed', 'Completed'));
+
+  const handleRearrange = (item: VolunteerSessionItem) => {
+    navigate(`/volunteer/session/${item.sessID}/edit`, {
+      state: {
+        formData: {
+          reqID: item.reqID,
+          sessDate: toDateKey(item.sessDate),
+          sessTimeSlot: hourToSlot(item.sessTimeSlot.getHours()),
+          supportMode: item.supportMode ?? 'Physical',
+          meetingLocation: item.location ?? '',
+        },
+      },
+    });
+  };
 
   return (
     <div className="ui-page">
@@ -65,17 +86,20 @@ function VolunteerSessions() {
                 emptyText="No planned sessions"
                 cardsClassName="dashboard-cards--scroll"
               >
-                {planned.map(item => (
+                {planned.map(item => {
+                  const status = getVolunteerSessionStatus(item);
+                  return (
                   <ItemCard
                     key={item.sessID}
                     category={item.category}
                     title={item.title}
                     personName={item.personName}
                     dateLabel={item.dateLabel}
-                    pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                    pill={<StatusPill tone={status.tone} label={status.label} />}
                     onViewDetails={() => setSelectedID(item.sessID)}
                   />
-                ))}
+                  );
+                })}
               </BoardSection>
 
               <BoardSection
@@ -84,21 +108,24 @@ function VolunteerSessions() {
                 emptyText="No confirmed sessions"
                 cardsClassName="dashboard-cards--scroll"
               >
-                {confirmed.map(item => (
+                {confirmed.map(item => {
+                  const status = getVolunteerSessionStatus(item);
+                  return (
                   <ItemCard
                     key={item.sessID}
                     category={item.category}
                     title={item.title}
                     personName={item.personName}
                     dateLabel={item.dateLabel}
-                    pill={item.canMarkComplete ? undefined : <StatusPill tone={item.status.tone} label={item.status.label} />}
+                    pill={<StatusPill tone={status.tone} label={status.label} />}
                     onViewDetails={() => setSelectedID(item.sessID)}
                   />
-                ))}
+                  );
+                })}
               </BoardSection>
 
               <BoardSection
-                title="To Rate"
+                title="Pending Feedback"
                 count={pendingFeedback.length}
                 emptyText="No sessions to rate"
                 cardsClassName="dashboard-cards--scroll"
@@ -110,7 +137,7 @@ function VolunteerSessions() {
                     title={item.title}
                     personName={item.personName}
                     dateLabel={item.dateLabel}
-                    pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                    pill={<StatusPill tone="completed" label="Completed" />}
                     onViewDetails={() => setSelectedID(item.sessID)}
                   />
                 ))}
@@ -127,6 +154,7 @@ function VolunteerSessions() {
           onConfirm={() => handleConfirm(selected)}
           onCancelSession={() => handleCancel(selected)}
           onMarkComplete={() => handleMarkComplete(selected)}
+          onRearrange={() => handleRearrange(selected)}
         />
       )}
     </div>

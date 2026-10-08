@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import SupportDetailsModal from './support-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
-import { BoardSection, ItemCard, StatusPill } from '../volunteer-shared.tsx';
+import { ItemCard, StatusPill } from '../volunteer-shared.tsx';
 import { MOCK_VOLUNTEER_HISTORY } from '../volunteer-utils.ts';
 import type { VolunteerSessionItem } from '../volunteer-utils.ts';
 
@@ -15,11 +15,8 @@ function VolunteerHistory() {
   const navigate = useNavigate();
 
   // TODO: load this volunteer's finished sessions (rated or cancelled) from Firestore
-  const items = MOCK_VOLUNTEER_HISTORY;
+  const history = [...MOCK_VOLUNTEER_HISTORY].sort((a, b) => b.sessDate.getTime() - a.sessDate.getTime());
   const [selected, setSelected] = useState<VolunteerSessionItem | null>(null);
-
-  const completed = items.filter(item => item.sessStatus === 'Rated');
-  const inactive = items.filter(item => item.sessStatus === 'Cancelled');
 
   const renderCard = (item: VolunteerSessionItem) => (
     <ItemCard
@@ -43,7 +40,7 @@ function VolunteerHistory() {
             <ChevronLeft /> Dashboard
           </button>
 
-          <section className="dashboard-card">
+          <section className="dashboard-card dashboard-card--scroll-columns">
             <header className="dashboard-banner dashboard-banner--yellow">
               <div>
                 <h1 className="dashboard-banner-title">Support History</h1>
@@ -51,20 +48,11 @@ function VolunteerHistory() {
               </div>
             </header>
 
-            {/* Wide left column with two cards per row, narrow right column */}
-            <div className="dashboard-board dashboard-board--history">
-              <BoardSection
-                title="Completed"
-                count={completed.length}
-                emptyText="No completed sessions"
-                cardsClassName="dashboard-cards--two"
-              >
-                {completed.map(renderCard)}
-              </BoardSection>
-
-              <BoardSection title="Inactive" count={inactive.length} emptyText="No cancelled sessions">
-                {inactive.map(renderCard)}
-              </BoardSection>
+            <div className="dashboard-board dashboard-board--single dashboard-board--scroll-columns">
+              <div className="dashboard-cards dashboard-cards--scroll">
+                {history.map(renderCard)}
+                {history.length === 0 && <p className="dashboard-empty">No past sessions yet</p>}
+              </div>
             </div>
           </section>
         </div>

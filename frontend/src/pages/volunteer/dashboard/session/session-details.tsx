@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, ClockIcon } from '../../../../components/icons.tsx';
+import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
+import { getVolunteerSessionStatus } from '../volunteer-utils.ts';
 import { StatusPill } from '../volunteer-shared.tsx';
 import type { VolunteerSessionItem } from '../volunteer-utils.ts';
 
@@ -14,28 +15,10 @@ interface SessionDetailsProps {
   onConfirm: () => void;
   onCancelSession: () => void;
   onMarkComplete: () => void;
+  onRearrange: () => void;
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" aria-hidden="true" focusable="false">
-    <path d="M5 5l14 14M19 5L5 19" />
-  </svg>
-);
-
-const SwapIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M7 3l-4 4 4 4M3 7h12a4 4 0 014 4M17 21l4-4-4-4M21 17H9a4 4 0 01-4-4" />
-  </svg>
-);
-
-const PinIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M12 21s-6-5.3-6-10a6 6 0 1112 0c0 4.7-6 10-6 10z" />
-    <circle cx="12" cy="11" r="2.2" />
-  </svg>
-);
 
 function SessionDetailsModal({
   item,
@@ -43,6 +26,7 @@ function SessionDetailsModal({
   onConfirm,
   onCancelSession,
   onMarkComplete,
+  onRearrange,
 }: SessionDetailsProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -82,9 +66,14 @@ function SessionDetailsModal({
   }, [onClose]);
 
   const dateLabel = item.dateLabel;
-  const canConfirm = item.awaitingMyConfirmation;
-  const canMarkComplete = item.sessStatus === 'Confirmed' && item.canMarkComplete;
-  const canCancel = item.sessStatus === 'Confirmed' && !item.canMarkComplete;
+  const status = getVolunteerSessionStatus(item);
+  const isPlanned = item.sessStatus === 'Planned';
+  const isConfirmed = item.sessStatus === 'Confirmed';
+  const isElapsed = isConfirmed && status.label === 'Elapsed';
+  const needsVolunteerConfirmation = isPlanned && item.studConfirmed && !item.volConfirmed;
+  const canCancel = isPlanned || isConfirmed;
+  const canRearrange = isPlanned || (isConfirmed && !isElapsed);
+  const canMarkComplete = isElapsed;
 
   return createPortal(
     <div
@@ -146,20 +135,25 @@ function SessionDetailsModal({
         </section>
 
         <footer className="session-modal-footer">
-          <StatusPill tone={item.status.tone} label={item.status.label} />
-          {canConfirm && (
+          <StatusPill tone={status.tone} label={status.label} />
+          {canCancel && (
+            <button type="button" className="ui-chip-btn ui-chip-btn--danger session-modal-action" onClick={onCancelSession}>
+              Cancel
+            </button>
+          )}
+          {canRearrange && (
+            <button type="button" className="ui-chip-btn ui-chip-btn--info session-modal-action" onClick={onRearrange}>
+              Rearrange
+            </button>
+          )}
+          {needsVolunteerConfirmation && (
             <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={onConfirm}>
-              Confirm Session
+              Confirm Arrangement
             </button>
           )}
           {canMarkComplete && (
             <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={onMarkComplete}>
-              Mark Completion
-            </button>
-          )}
-          {canCancel && (
-            <button type="button" className="ui-chip-btn ui-chip-btn--danger session-modal-action" onClick={onCancelSession}>
-              Cancel Session
+              Mark Complete
             </button>
           )}
         </footer>

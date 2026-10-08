@@ -70,7 +70,7 @@ function MyRequests() {
             <ChevronLeft /> Dashboard
           </button>
 
-          <section className="dashboard-card">
+          <section className="dashboard-card dashboard-card--scroll-columns">
             <header className="dashboard-banner dashboard-banner--blue">
               <div>
                 <h1 className="dashboard-banner-title">My Requests</h1>
@@ -81,10 +81,10 @@ function MyRequests() {
               </button>
             </header>
 
-            <div className="dashboard-board dashboard-board--three">
+            <div className="dashboard-board dashboard-board--three dashboard-board--scroll-columns">
               <section>
                 <h2 className="dashboard-section-title">Pending</h2>
-                <div className="dashboard-cards">
+                <div className="dashboard-cards dashboard-cards--scroll">
                   {pending.map(item => (
                     <RequestCard key={item.reqID} item={item} onViewDetails={() => handleViewDetails(item)} />
                   ))}
@@ -94,7 +94,7 @@ function MyRequests() {
 
               <section>
                 <h2 className="dashboard-section-title">Accepted</h2>
-                <div className="dashboard-cards">
+                <div className="dashboard-cards dashboard-cards--scroll">
                   {accepted.map(item => (
                     <RequestCard key={item.reqID} item={item} onViewDetails={() => handleViewDetails(item)} />
                   ))}
@@ -104,7 +104,7 @@ function MyRequests() {
 
               <section>
                 <h2 className="dashboard-section-title">Inactive</h2>
-                <div className="dashboard-cards">
+                <div className="dashboard-cards dashboard-cards--scroll">
                   {inactive.map(item => (
                     <RequestCard key={item.reqID} item={item} onViewDetails={() => handleViewDetails(item)} />
                   ))}

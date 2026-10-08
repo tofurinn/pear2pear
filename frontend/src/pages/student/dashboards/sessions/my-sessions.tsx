@@ -1,24 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SessionDetailsModal from './session-details.tsx';
 
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
-import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../components/icons.tsx';
 import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from '../dashboards-utils.tsx';
 import type { SessionItem } from '../dashboards-utils.tsx';
+import { hourToSlot, toDateKey } from '../../session/session-utils.tsx';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
 // ─── Session card (same markup in all three columns) ───────────────────────────
-
-// Exclamation in a circle for the "To confirm" pill (needs the student's attention)
-const AlertIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7.5v5.5M12 16.5h.01" />
-  </svg>
-);
 
 interface SessionCardProps {
   item: SessionItem;
@@ -49,11 +42,13 @@ function SessionCard({ item, onViewDetails }: SessionCardProps) {
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
-function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
+function MySessions() {
   const navigate = useNavigate();
 
   // TODO: load this student's sessions (and their requests / volunteers) from Firestore
-  const items = useMemo(() => buildSessionItems(MOCK_SESSIONS, MOCK_REQUESTS, MOCK_VOLUNTEERS), []);
+  const [items, setItems] = useState<SessionItem[]>(() =>
+    buildSessionItems(MOCK_SESSIONS, MOCK_REQUESTS, MOCK_VOLUNTEERS)
+  );
 
   const planned = items.filter(item => item.sessStatus === 'Planned');
   const confirmed = items.filter(item => item.sessStatus === 'Confirmed');
@@ -61,17 +56,57 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
 
   const [selected, setSelected] = useState<SessionItem | null>(null);
   const handleViewDetails = (item: SessionItem) => setSelected(item);
+  const handleFeedback = (item: SessionItem) => navigate(`/student/feedback-form/${item.sessID}`);
+
+  const handleCancelSession = (item: SessionItem) => {
+    setItems(previous => previous.map(session => session.sessID === item.sessID
+      ? { ...session, sessStatus: 'Cancelled', status: { label: 'Cancelled', tone: 'cancelled' } }
+      : session
+    ));
+    setSelected(null);
+  };
+
+  const handleConfirmArrangement = (item: SessionItem) => {
+    setItems(previous => previous.map(session => session.sessID === item.sessID
+      ? {
+          ...session,
+          sessStatus: 'Confirmed',
+          studConfirmed: true,
+          volConfirmed: true,
+          status: { label: 'Confirmed', tone: 'confirmed' },
+        }
+      : session
+    ));
+    setSelected(null);
+  };
+
+  const handleRearrange = (item: SessionItem) => {
+    const session = MOCK_SESSIONS.find(candidate => candidate.sessID === item.sessID);
+    if (!session) return;
+
+    navigate(`/student/my-sessions/${item.sessID}/edit`, {
+      state: {
+        formData: {
+          reqID: session.reqID,
+          sessDate: toDateKey(session.sessDate),
+          sessTimeSlot: hourToSlot(session.sessTimeSlot.toDate().getHours()),
+          supportMode: session.supportMode,
+          meetingLocation: session.meetingLocation,
+        },
+      },
+    });
+  };
 
   return (
     <div className="ui-page">
-      <Navbar dashboardPath={dashboardPath} />
+      <Navbar dashboardPath="/student/dashboard" />
       <main className="student-dashboard-background">
         <div className="dashboard-inner">
-          <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate(dashboardPath)}>
+          <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate('/student/dashboard')}>
             <ChevronLeft /> Dashboard
           </button>
 
-          <section className="dashboard-card">
+          <section className="dashboard-card dashboard-card--scroll-columns">
             <header className="dashboard-banner dashboard-banner--green">
               <div>
                 <h1 className="dashboard-banner-title">My Sessions</h1>
@@ -82,10 +117,10 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
               </button>
             </header>
 
-            <div className="dashboard-board dashboard-board--three">
+            <div className="dashboard-board dashboard-board--three dashboard-board--scroll-columns">
               <section>
                 <h2 className="dashboard-section-title">Planned</h2>
-                <div className="dashboard-cards">
+                <div className="dashboard-cards dashboard-cards--scroll">
                   {planned.map(item => (
                     <SessionCard
                       key={item.sessID}
@@ -99,7 +134,7 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
 
               <section>
                 <h2 className="dashboard-section-title">Confirmed</h2>
-                <div className="dashboard-cards">
+                <div className="dashboard-cards dashboard-cards--scroll">
                   {confirmed.map(item => (
                     <SessionCard
                       key={item.sessID}
@@ -113,7 +148,7 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
 
               <section>
                 <h2 className="dashboard-section-title">To Rate</h2>
-                <div className="dashboard-cards">
+                <div className="dashboard-cards dashboard-cards--scroll">
                   {toRate.map(item => (
                     <SessionCard
                       key={item.sessID}
@@ -133,7 +168,10 @@ function MySessions({ dashboardPath = '/student/dashboard' }: { dashboardPath?: 
         <SessionDetailsModal
           item={selected}
           onClose={() => setSelected(null)}
-          onSubmitFeedback={item => navigate(`/student/feedback-form/${item.sessID}`)}
+          onSubmitFeedback={handleFeedback}
+          onCancelSession={handleCancelSession}
+          onRearrange={handleRearrange}
+          onConfirmArrangement={handleConfirmArrangement}
         />
       )}
     </div>
