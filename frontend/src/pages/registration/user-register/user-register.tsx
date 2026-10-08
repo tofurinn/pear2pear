@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../../components/navbar/global-navbar";
-import "./user-register.css";
+import "../register.css";
 
 // TODO: fill in your route paths
 const ROUTES = {
-  home: "",
-  signUp: "",
-  login: "",
-  volunteerRegister: "",
-  nextStep: "", // step 2 of the student registration (e.g. password)
+  login: "/login",
+  volunteerRegister: "/volunteer-register",
+  nextStep: "/email-validation", // step 2 of the student registration (e.g. password)
 };
 
 // Max lengths mirror the USER table (name 255, email 255, studentID 15)

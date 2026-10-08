@@ -8,8 +8,8 @@
   --color-green-dark: #5db46a;
   --color-link: #0b7bdc;
   --color-error: #c0392b;
-  --color-gradient-top: #e3f1f8;
-  --color-gradient-bottom: #a9d8c4;
+  --color-gradient-top: #f4edb9;
+  --color-gradient-bottom: #a9d680;
 
   /* TODO: set this to your global navbar's height so the page fills the rest of the screen */
   --navbar-height: 8rem;

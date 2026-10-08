@@ -7,8 +7,8 @@ import "../login.css";
 
 // TODO: fill in your route paths
 const ROUTES = {
-  login: "",
-  verifyCode: "", // the page where they enter the 6-digit code
+  login: "/login",
+  verifyCode: "/verify-code", // the page where they enter the 6-digit code
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
