@@ -6,11 +6,25 @@ export type VolunteerRequestItem = Pick<
 >;
 
 export type VolunteerSessionItem = SessionItem & {
-  awaitingMyConfirmation?: boolean;
-  canMarkComplete?: boolean;
+  reqID: string;
+  sessTimeSlot: Date;
   volunteerRating?: number;
   requesterStatus?: string;
   studentFeedback?: { rating: number; comments: string };
+};
+
+export const getVolunteerSessionStatus = (item: VolunteerSessionItem, now = new Date()) => {
+  if (item.sessStatus === 'Planned') {
+    if (item.studConfirmed && !item.volConfirmed) return { label: 'To Confirm', tone: 'to-confirm' as const };
+    if (!item.studConfirmed && item.volConfirmed) return { label: 'Waiting', tone: 'planned' as const };
+  }
+
+  const sessionElapsed = item.sessTimeSlot.getTime() + 60 * 60 * 1000 <= now.getTime();
+  if (item.sessStatus === 'Confirmed' && sessionElapsed) {
+    return { label: 'Elapsed', tone: 'to-confirm' as const };
+  }
+
+  return item.status;
 };
 
 export const requestPatch = (
@@ -35,6 +49,7 @@ export const MOCK_INCOMING_REQUESTS: VolunteerRequestItem[] = [
 
 function mockSession(
   sessID: string,
+  reqID: string,
   sessStatus: SessionItem['sessStatus'],
   category: SessionItem['category'],
   title: string,
@@ -42,22 +57,28 @@ function mockSession(
   dateLabel: string,
   tone: StatusTone,
   label: string,
-  options: Pick<
+  options: Partial<Pick<
     VolunteerSessionItem,
-    'awaitingMyConfirmation' | 'canMarkComplete' | 'volunteerRating' |
-    'requesterStatus' | 'studentFeedback' | 'supportMode' | 'timeslot' | 'location' | 'description'
-  > = {},
+    'studConfirmed' | 'volConfirmed' | 'volunteerRating' | 'requesterStatus' |
+    'studentFeedback' | 'supportMode' | 'timeslot' | 'location' | 'description'
+  >> = {},
 ): VolunteerSessionItem {
+  const sessDate = new Date(dateLabel);
+  const sessTimeSlot = new Date(sessDate);
+  sessTimeSlot.setHours(11, 0, 0, 0);
+
   return {
     sessID,
+    reqID,
     sessStatus,
+    sessDate,
+    sessTimeSlot,
     studConfirmed: false,
     volConfirmed: false,
     category,
     title,
     personName,
     rating: { value: 0, count: 0 },
-    sessDate: new Date(dateLabel),
     dateLabel,
     status: { tone, label },
     supportMode: 'Physical',
@@ -69,17 +90,17 @@ function mockSession(
 }
 
 export const MOCK_VOLUNTEER_SESSIONS: VolunteerSessionItem[] = [
-  mockSession('sess-1', 'Planned', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '4 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted' }),
-  mockSession('sess-2', 'Planned', 'Technology Support', 'Help Fix My Laptop!!', 'Omniman', '6 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', awaitingMyConfirmation: true, supportMode: 'Online', location: 'Video call link shared with the student' }),
-  mockSession('sess-3', 'Confirmed', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '4 Oct 2026', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted' }),
-  mockSession('sess-4', 'Confirmed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted', canMarkComplete: true }),
-  mockSession('sess-5', 'Completed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'awaiting', 'Awaiting Feedback', { requesterStatus: 'Accepted' }),
+  mockSession('sess-1', 'req-1', 'Planned', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '4 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', volConfirmed: true }),
+  mockSession('sess-2', 'req-2', 'Planned', 'Technology Support', 'Help Fix My Laptop!!', 'Omniman', '6 Oct 2026', 'planned', 'Planned', { requesterStatus: 'Accepted', studConfirmed: true, supportMode: 'Online', location: 'Video call link shared with the student' }),
+  mockSession('sess-3', 'req-1', 'Confirmed', 'General Student Support', 'Grass Cutting Helper', 'Chiikawa', '12 Oct 2026', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
+  mockSession('sess-4', 'req-4', 'Confirmed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'confirmed', 'Confirmed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
+  mockSession('sess-5', 'req-4', 'Completed', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Natasha Laoshi', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', studConfirmed: true, volConfirmed: true }),
 ];
 
 export const MOCK_VOLUNTEER_HISTORY: VolunteerSessionItem[] = [
-  mockSession('h1', 'Rated', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Student Name', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', volunteerRating: 4.5, studentFeedback: { rating: 4.5, comments: 'Great session with clear explanations. I feel much more confident now.' } }),
-  mockSession('h2', 'Rated', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Student Name', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', volunteerRating: 4.5, studentFeedback: { rating: 5, comments: 'Very patient and helpful. The examples made difficult topics easier to understand.' } }),
-  mockSession('h3', 'Rated', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Student Name', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', volunteerRating: 4.5, studentFeedback: { rating: 4.5, comments: 'Loved the clear explanations and supportive teaching.' } }),
-  mockSession('h4', 'Cancelled', 'Academic Support', 'Code Website for my Event', 'Steve Jobs', '11 Aug 2025', 'cancelled', 'Cancelled', { requesterStatus: 'Cancelled' }),
-  mockSession('h5', 'Cancelled', 'Academic Support', 'Code Website for my Event', 'Steve Jobs', '11 Aug 2025', 'cancelled', 'Cancelled', { requesterStatus: 'Cancelled' }),
+  mockSession('h1', 'req-4', 'Rated', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Student Name', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', volunteerRating: 4.5, studConfirmed: true, volConfirmed: true, studentFeedback: { rating: 4.5, comments: 'Great session with clear explanations. I feel much more confident now.' } }),
+  mockSession('h2', 'req-4', 'Rated', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Student Name', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', volunteerRating: 4.5, studConfirmed: true, volConfirmed: true, studentFeedback: { rating: 5, comments: 'Very patient and helpful. The examples made difficult topics easier to understand.' } }),
+  mockSession('h3', 'req-4', 'Rated', 'Academic Support', 'Help Me do Advanced Maths (fec101)', 'Student Name', '11 Aug 2025', 'completed', 'Completed', { requesterStatus: 'Accepted', volunteerRating: 4.5, studConfirmed: true, volConfirmed: true, studentFeedback: { rating: 4.5, comments: 'Loved the clear explanations and supportive teaching.' } }),
+  mockSession('h4', 'req-8', 'Cancelled', 'Academic Support', 'Code Website for my Event', 'Steve Jobs', '11 Aug 2025', 'cancelled', 'Cancelled', { requesterStatus: 'Cancelled' }),
+  mockSession('h5', 'req-8', 'Cancelled', 'Academic Support', 'Code Website for my Event', 'Steve Jobs', '11 Aug 2025', 'cancelled', 'Cancelled', { requesterStatus: 'Cancelled' }),
 ];
