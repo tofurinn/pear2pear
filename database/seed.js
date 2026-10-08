@@ -36,8 +36,8 @@ const users = [
 
 // ---------- Volunteer profile ----------
 const volunteers = [
-  { UID: "user001", volCategories: "Academic Support", skills: "High-achiever;Problem-solver", prefSupportMode: "Virtual", avgRating: 5.0},
-  { UID: "user002", volCategories: "Technology Support", skills: "Patience;Tech Wiz", prefSupportMode: "Physical", avgRating: 4.5 },
+  { UID: "user001", volCategories: "Academic Support;New Student Support;General Student Support", skills: "High-achiever;Problem-solver", prefSupportMode: "Virtual", avgRating: 5.0},
+  { UID: "user002", volCategories: "Academic Support;Technology Support", skills: "Patience;Tech Wiz", prefSupportMode: "Physical", avgRating: 4.5 },
   { UID: "user003", volCategories: "General Student Support", skills: "Friendly", prefSupportMode: "Physical", avgRating: 3.5}
 ];
 
