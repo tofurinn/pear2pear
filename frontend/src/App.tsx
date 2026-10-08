@@ -10,7 +10,6 @@ import NotificationsPage from './pages/notifications/notifications'
 
 // REGISTRATION PAGES-----------------------------------------------------------------------------
 import UserRegisterPage from "./pages/registration/user-register/user-register";
-import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-register";
 import EmailValidationPage from "./pages/registration/email-validation/email-validation";
 import SetPasswordPage from "./pages/registration/set-password/set-password";
 
@@ -56,7 +55,6 @@ function App() {
 
           {/* Registration routes */}
           <Route path="/user-registration" element={<UserRegisterPage />} />
-          <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
           <Route path="/email-validation" element={<EmailValidationPage />} />
           <Route path="/set-password" element={<SetPasswordPage />} />
 
