@@ -243,16 +243,30 @@
 /* Footer actions */
 .session-modal-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 14px;
 }
 
+.session-modal-footer > .ui-status-pill {
+  margin-right: auto;
+}
+
+.session-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
 .session-modal-feedback-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin-left: auto;
   height: 28px;
   padding: 0 14px;
   border: none;
@@ -282,6 +296,15 @@
 .session-modal-stars {
   display: inline-flex;
   gap: 1px;
+}
+
+.session-modal-stars .ui-star {
+  color: var(--sm-star-empty);
+  font-size: var(--sm-font-size);
+}
+
+.session-modal-stars .ui-star-fill {
+  color: var(--sm-star);
 }
 
 .session-modal-star {
