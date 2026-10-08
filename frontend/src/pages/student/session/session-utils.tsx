@@ -1,6 +1,14 @@
 import { Timestamp } from 'firebase/firestore';
 import type { Support_Request } from '../../../types/Support_Request';
 import type { Support_Session } from '../../../types/Support_Session';
+import {
+  formatLongDate,
+  formatTimeslotRange,
+  hourToSlot,
+  parseDateKey,
+  slotToHour,
+  toDateKey,
+} from '../student-utils.tsx';
 
 // ─── Form types ────────────────────────────────────────────────────────────────
 
@@ -82,26 +90,6 @@ export const getAvailability = (_volID: string): Record<number, number[]> => {
   const weekend = [10, 11, 12, 13, 14, 15, 16, 17];
   return { 1: [10, 11, 12], 2: weekday, 3: weekday, 4: weekday, 5: weekend, 6: weekend, 0: weekend };
 };
-
-// ─── Date / time helpers ───────────────────────────────────────────────────────
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-
-// Indexed by Date.getDay() (Sunday first)
-export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-export const formatDayMonth = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
-export const formatLongDate = (d: Date) => `${formatDayMonth(d)} ${d.getFullYear()}`;
-export const formatHour = (h: number) => `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
-export const formatTimeslotRange = (h: number) =>
-  `${formatHour(h).toUpperCase()} – ${formatHour(h + 1).toUpperCase()}`;
-
-export const toDateKey = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-export const parseDateKey = (key: string) => new Date(`${key}T00:00:00`);
-
-export const hourToSlot = (h: number) => `${String(h).padStart(2, '0')}:00`;
-export const slotToHour = (slot: string) => parseInt(slot, 10);
 
 // The next `count` days starting from tomorrow, based on the device's clock.
 // Today is excluded, so there are no same-day or past slots to worry about.

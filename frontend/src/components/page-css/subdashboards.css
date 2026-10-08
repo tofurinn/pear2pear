@@ -299,7 +299,7 @@
 }
 
 /* ---------- Card footer: status pill + action chips (+ View Details) ---------- */
-.vol-card-actions {
+.dashboard-item-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -326,20 +326,19 @@
   color: var(--color-green1);
 }
 
-/* ---------- Stars (half stars via --fill) ---------- */
+/* ---------- Volunteer dashboard stars ---------- */
 .vol-stars {
   display: inline-flex;
   gap: 1px;
 }
 
-.vol-star {
+.vol-stars .ui-star {
   font-size: calc(24 * var(--u));
-  line-height: 1;
-  background: linear-gradient(90deg, #fbc02d var(--fill), #e3e3e3 var(--fill));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: #e3e3e3;
+}
+
+.vol-stars .ui-star-fill {
+  color: #fbc02d;
 }
 
 /* volunteer pages: small screens */

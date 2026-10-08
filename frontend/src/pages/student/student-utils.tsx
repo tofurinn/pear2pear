@@ -1,12 +1,50 @@
 import { Timestamp } from 'firebase/firestore';
-import type { Support_Request } from '../../../types/Support_Request';
-import type { Support_Session } from '../../../types/Support_Session';
+import type { Support_Request } from '../../types/Support_Request';
+import type { Support_Session } from '../../types/Support_Session';
+import type {
+  DashboardRequestItem,
+  DashboardSessionItem,
+  DashboardStatusTone,
+} from '../../types/Dashboard';
+
+export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+export const formatHour = (hour: number) => `${hour % 12 || 12}${hour < 12 ? 'am' : 'pm'}`;
+export const hourToSlot = (hour: number) => `${String(hour).padStart(2, '0')}:00`;
+export const slotToHour = (slot: string) => parseInt(slot, 10);
+export const weekdaySlotKey = (weekday: number, hour: number) => `${weekday}:${hourToSlot(hour)}`;
+
+export const parseWeekdaySlotKey = (key: string) => {
+  const separator = key.indexOf(':');
+  return {
+    weekday: Number(key.slice(0, separator)),
+    hour: slotToHour(key.slice(separator + 1)),
+  };
+};
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+
+export const formatDayMonth = (date: Date) => `${date.getDate()} ${MONTHS[date.getMonth()]}`;
+export const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+export const formatLongDate = (date: Date) => `${formatDayMonth(date)} ${date.getFullYear()}`;
+export const formatTimeslotRange = (hour: number) =>
+  `${formatHour(hour).toUpperCase()} – ${formatHour(hour + 1).toUpperCase()}`;
+export const formatTimeslot = (start: Date) => {
+  const formatTime = (date: Date) => {
+    const hour = date.getHours();
+    return `${hour % 12 || 12}${hour < 12 ? 'AM' : 'PM'}`;
+  };
+  return `${formatTime(start)} – ${formatTime(new Date(start.getTime() + 60 * 60 * 1000))}`;
+};
+
+export const toDateKey = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+export const parseDateKey = (key: string) => new Date(`${key}T00:00:00`);
 
 // ─── What a session card needs ─────────────────────────────────────────────────
 
-export type StatusTone =
-  | 'planned' | 'to-confirm' | 'confirmed' | 'completed' | 'rated' | 'cancelled'   // sessions
-  | 'pending' | 'accepted' | 'scheduled' | 'rejected' | 'awaiting';                  // requests (cancelled is shared)
+export type StatusTone = DashboardStatusTone;
 
 // Volunteer.name lives on User and the rating count isn't stored yet, so the backend will assemble this
 export interface VolunteerSummary {
@@ -16,22 +54,7 @@ export interface VolunteerSummary {
   skills?: string[];
 }
 
-export interface SessionItem {
-  sessID: string;
-  sessStatus: Support_Session['sessStatus'];
-  studConfirmed: boolean;
-  volConfirmed: boolean;
-  category: Support_Request['category'];
-  title: string;
-  personName: string;
-  rating: { value: number; count: number };
-  sessDate: Date;           // for sorting
-  dateLabel: string;
-  status: { label: string; tone: StatusTone };
-  description?: string;
-  supportMode?: Support_Session['supportMode'];
-  timeslot?: string;
-  location?: string;
+export interface SessionItem extends DashboardSessionItem {
   volunteer?: {
     name: string;
     rating: number;
@@ -57,9 +80,6 @@ const getStatusPill = (session: Support_Session): { label: string; tone: StatusT
   }
   return STATUS_PILL[session.sessStatus];
 };
-
-const formatDate = (date: Date) =>
-  date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 // Pure mapping: once the data comes from Firestore, only the inputs change
 export const toSessionItem = (
@@ -90,14 +110,6 @@ export const toSessionItem = (
     requestStatusLabel: request.reqStatus,
   },
 });
-
-const formatTimeslot = (start: Date) => {
-  const formatHour = (date: Date) => {
-    const hour = date.getHours();
-    return `${hour % 12 || 12}${hour < 12 ? 'AM' : 'PM'}`;
-  };
-  return `${formatHour(start)} – ${formatHour(new Date(start.getTime() + 60 * 60 * 1000))}`;
-};
 
 export const buildSessionItems = (
   sessions: Support_Session[],
@@ -188,15 +200,7 @@ export const MOCK_SESSION_FEEDBACK: Record<string, { rating: number; comments: s
 
 // ─── My Requests ───────────────────────────────────────────────────────────────
 
-export interface RequestItem {
-  reqID: string;
-  reqStatus: Support_Request['reqStatus'];
-  category: Support_Request['category'];
-  title: string;
-  personName: string;
-  dateLabel: string;
-  status: { label: string; tone: StatusTone };
-  description: string;
+export interface RequestItem extends DashboardRequestItem {
   volunteer: {
     name: string;
     rating: number;

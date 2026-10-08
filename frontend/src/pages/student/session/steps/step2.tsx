@@ -4,14 +4,16 @@ import {
   formatDayMonth,
   formatHour,
   formatTimeslotRange,
-  getAvailability,
-  getRequestById,
-  getUpcomingDays,
-  getVolunteerById,
   hourToSlot,
   parseDateKey,
   slotToHour,
   toDateKey,
+} from '../../student-utils.tsx';
+import {
+  getAvailability,
+  getRequestById,
+  getUpcomingDays,
+  getVolunteerById,
 } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
 import { CheckIcon } from '../../../../components/icons.tsx';

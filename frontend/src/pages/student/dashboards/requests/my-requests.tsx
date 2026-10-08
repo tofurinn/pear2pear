@@ -3,47 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 import RequestDetailsModal from './request-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
-import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../components/icons.tsx';
-import { MOCK_MY_REQUESTS, MOCK_VOLUNTEERS, buildRequestItems } from '../dashboards-utils.tsx';
-import type { RequestItem } from '../dashboards-utils.tsx';
+import { ChevronLeft } from '../../../../components/icons.tsx';
+import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
+import { MOCK_MY_REQUESTS, MOCK_VOLUNTEERS, buildRequestItems } from '../../student-utils.tsx';
+import type { RequestItem } from '../../student-utils.tsx';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
-
-// ─── Request card (same markup in all three columns) ───────────────────────────
-
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M5 5l14 14M19 5L5 19" />
-  </svg>
-);
-
-interface RequestCardProps {
-  item: RequestItem;
-  onViewDetails: () => void;
-}
-
-function RequestCard({ item, onViewDetails }: RequestCardProps) {
-  const { tone, label } = item.status;
-
-  return (
-    <article className="ui-item-card">
-      <span className="ui-category-tag">{item.category}</span>
-      <h3 className="ui-item-card-title">{item.title}</h3>
-      <p className="ui-item-card-person">{item.personName}</p>
-
-      <div className="ui-item-card-footer">
-        <span className="ui-item-card-date">{item.dateLabel}</span>
-        <span className={`ui-status-pill ui-status-pill--${tone}`}>
-          {tone === 'pending' ? <ClockIcon /> : tone === 'accepted' ? <CheckIcon /> : tone === 'scheduled' ? <CalendarIcon /> : <CloseIcon />} {label}
-        </span>
-        <button type="button" className="ui-chip-btn ui-chip-btn--info" onClick={onViewDetails}>
-          View Details
-        </button>
-      </div>
-    </article>
-  );
-}
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
@@ -86,7 +52,15 @@ function MyRequests() {
                 <h2 className="dashboard-section-title">Pending</h2>
                 <div className="dashboard-cards dashboard-cards--scroll">
                   {pending.map(item => (
-                    <RequestCard key={item.reqID} item={item} onViewDetails={() => handleViewDetails(item)} />
+                    <ItemCard
+                      key={item.reqID}
+                      category={item.category}
+                      title={item.title}
+                      personName={item.personName}
+                      dateLabel={item.dateLabel}
+                      pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                      onViewDetails={() => handleViewDetails(item)}
+                    />
                   ))}
                   {pending.length === 0 && <p className="dashboard-empty">No pending requests</p>}
                 </div>
@@ -96,7 +70,15 @@ function MyRequests() {
                 <h2 className="dashboard-section-title">Accepted</h2>
                 <div className="dashboard-cards dashboard-cards--scroll">
                   {accepted.map(item => (
-                    <RequestCard key={item.reqID} item={item} onViewDetails={() => handleViewDetails(item)} />
+                    <ItemCard
+                      key={item.reqID}
+                      category={item.category}
+                      title={item.title}
+                      personName={item.personName}
+                      dateLabel={item.dateLabel}
+                      pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                      onViewDetails={() => handleViewDetails(item)}
+                    />
                   ))}
                   {accepted.length === 0 && <p className="dashboard-empty">No accepted requests</p>}
                 </div>
@@ -106,7 +88,15 @@ function MyRequests() {
                 <h2 className="dashboard-section-title">Inactive</h2>
                 <div className="dashboard-cards dashboard-cards--scroll">
                   {inactive.map(item => (
-                    <RequestCard key={item.reqID} item={item} onViewDetails={() => handleViewDetails(item)} />
+                    <ItemCard
+                      key={item.reqID}
+                      category={item.category}
+                      title={item.title}
+                      personName={item.personName}
+                      dateLabel={item.dateLabel}
+                      pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                      onViewDetails={() => handleViewDetails(item)}
+                    />
                   ))}
                   {inactive.length === 0 && <p className="dashboard-empty">No inactive requests</p>}
                 </div>

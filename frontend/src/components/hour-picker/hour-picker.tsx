@@ -1,6 +1,7 @@
 import React from 'react';
 import type { CSSProperties } from 'react';
-import { DAY_NAMES, formatHour, weekdaySlotKey } from '../../pages/student/request/request-utils.tsx';
+import { DAY_NAMES, formatHour } from '../../pages/student/student-utils.tsx';
+import { weekdaySlotKey } from '../../pages/student/request/request-utils.tsx';
 import { CheckIcon } from '../../pages/student/request/request-ui.tsx';
 import './hour-picker.css';
 

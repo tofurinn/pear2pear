@@ -1,4 +1,5 @@
 import type { Support_Request } from '../../../types/Support_Request';
+import { hourToSlot, slotToHour } from '../student-utils.tsx';
 
 // ─── Form types ────────────────────────────────────────────────────────────────
 
@@ -20,14 +21,6 @@ export interface RequestFormData {
 }
 
 // ─── Date / time helpers ───────────────────────────────────────────────────────
-
-// Indexed by Date.getDay() (Sunday first)
-export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-export const formatHour = (h: number) => `${h % 12 || 12}${h < 12 ? 'am' : 'pm'}`;
-
-export const hourToSlot = (h: number) => `${String(h).padStart(2, '0')}:00`;
-export const slotToHour = (slot: string) => parseInt(slot, 10);
 
 export const weekdaySlotKey = (weekday: number, hour: number) => `${weekday}:${hourToSlot(hour)}`;
 export const parseWeekdaySlotKey = (key: string) => {

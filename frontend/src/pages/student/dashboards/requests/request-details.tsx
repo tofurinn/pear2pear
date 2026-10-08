@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, StarRating } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
-import type { RequestItem } from '../dashboards-utils.tsx';
+import type { RequestItem } from '../../student-utils.tsx';
 
 import '../../../../components/page-css/details.css';
 

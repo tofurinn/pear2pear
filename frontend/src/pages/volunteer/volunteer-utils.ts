@@ -1,11 +1,13 @@
-import type { RequestItem, SessionItem, StatusTone } from '../../student/dashboards/dashboards-utils.tsx';
+import type {
+  DashboardRequestItem,
+  DashboardSessionItem,
+  DashboardStatusTone,
+} from '../../types/Dashboard';
+import type { Support_Request } from '../../types/Support_Request';
 
-export type VolunteerRequestItem = Pick<
-  RequestItem,
-  'reqID' | 'reqStatus' | 'category' | 'title' | 'personName' | 'dateLabel' | 'status' | 'description'
->;
+export type VolunteerRequestItem = DashboardRequestItem;
 
-export type VolunteerSessionItem = SessionItem & {
+export type VolunteerSessionItem = DashboardSessionItem & {
   reqID: string;
   sessTimeSlot: Date;
   volunteerRating?: number;
@@ -28,14 +30,14 @@ export const getVolunteerSessionStatus = (item: VolunteerSessionItem, now = new 
 };
 
 export const requestPatch = (
-  reqStatus: RequestItem['reqStatus'],
-  tone: StatusTone,
+  reqStatus: Support_Request['reqStatus'],
+  tone: DashboardStatusTone,
   label: string,
-): Pick<RequestItem, 'reqStatus' | 'status'> => ({ reqStatus, status: { tone, label } });
+): Pick<DashboardRequestItem, 'reqStatus' | 'status'> => ({ reqStatus, status: { tone, label } });
 
 export const sessionPatch = (
-  sessStatus: SessionItem['sessStatus'],
-  tone: StatusTone,
+  sessStatus: VolunteerSessionItem['sessStatus'],
+  tone: DashboardStatusTone,
   label: string,
 ): Pick<VolunteerSessionItem, 'sessStatus' | 'status'> => ({ sessStatus, status: { tone, label } });
 
@@ -50,12 +52,12 @@ export const MOCK_INCOMING_REQUESTS: VolunteerRequestItem[] = [
 function mockSession(
   sessID: string,
   reqID: string,
-  sessStatus: SessionItem['sessStatus'],
-  category: SessionItem['category'],
+  sessStatus: VolunteerSessionItem['sessStatus'],
+  category: VolunteerSessionItem['category'],
   title: string,
   personName: string,
   dateLabel: string,
-  tone: StatusTone,
+  tone: DashboardStatusTone,
   label: string,
   options: Partial<Pick<
     VolunteerSessionItem,
