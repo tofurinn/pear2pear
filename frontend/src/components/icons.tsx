@@ -26,6 +26,7 @@ const Icon: React.FC<IconProps & { children: React.ReactNode }> = ({ className, 
 );
 
 export const CheckIcon = (p: IconProps) => <Icon {...p}><path d="M4 12.5l5 5L20 6.5" /></Icon>;
+export const CloseIcon = (p: IconProps) => <Icon {...p}><path d="M5 5l14 14M19 5L5 19" /></Icon>;
 export const ChevronLeft = (p: IconProps) => <Icon {...p}><path d="M15 4l-8 8 8 8" /></Icon>;
 export const ChevronRight = (p: IconProps) => <Icon {...p}><path d="M9 4l8 8-8 8" /></Icon>;
 export const ChevronDown = (p: IconProps) => <Icon {...p}><path d="M4 9l8 8 8-8" /></Icon>;
@@ -65,8 +66,8 @@ export const StarIcon: React.FC<StarIconProps> = ({ filled = true, outlined = tr
 
 // ─── Read-only star row that supports halves (e.g. 4.5) ───
 
-export const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
-  <span className="ui-stars" role="img" aria-label={`${rating} out of 5 stars`}>
+export const StarRating: React.FC<{ rating: number; className?: string }> = ({ rating, className }) => (
+  <span className={`ui-stars ${className ?? ''}`.trim()} role="img" aria-label={`${rating} out of 5 stars`}>
     {[0, 1, 2, 3, 4].map(i => (
       <span className="ui-star" key={i}>
         <span className="ui-star-fill" style={{ width: `${Math.min(Math.max(rating - i, 0), 1) * 100}%` }}>★</span>
@@ -74,4 +75,12 @@ export const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
       </span>
     ))}
   </span>
+);
+
+// Exclamation in a circle for the "To confirm" pill (needs the student's attention)
+export const AlertIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7.5v5.5M12 16.5h.01" />
+  </Icon>
 );
