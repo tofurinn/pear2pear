@@ -12,7 +12,7 @@ import {
 import { MOCK_INCOMING_REQUESTS, requestPatch } from '../volunteer-utils.ts';
 import type { VolunteerRequestItem } from '../volunteer-utils.ts';
 
-import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
 function VolunteerRequests() {

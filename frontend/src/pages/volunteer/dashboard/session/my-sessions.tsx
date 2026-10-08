@@ -12,7 +12,7 @@ import {
 import { MOCK_VOLUNTEER_SESSIONS, sessionPatch } from '../volunteer-utils.ts';
 import type { VolunteerSessionItem } from '../volunteer-utils.ts';
 
-import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
 function VolunteerSessions() {
