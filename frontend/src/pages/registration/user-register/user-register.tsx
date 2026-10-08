@@ -6,7 +6,7 @@ import "../register.css";
 // TODO: fill in your route paths
 const ROUTES = {
   login: "/login",
-  volunteerRegister: "/volunteer-register",
+  volunteerRegister: "/volunteer-registration",
   nextStep: "/email-validation", // step 2 of the student registration (e.g. password)
 };
 

@@ -5,7 +5,7 @@ import "../login.css";
 
 // TODO: fill in your route paths
 const ROUTES = {
-  nextStep: "", // where to go after the email is verified
+  nextStep: "/student/dashboard", // where to go after the email is verified
 };
 
 const CODE_LENGTH = 6;

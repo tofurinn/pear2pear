@@ -10,13 +10,13 @@ import NotificationsPage from './pages/notifications/notifications'
 
 // REGISTRATION PAGES-----------------------------------------------------------------------------
 import UserRegisterPage from "./pages/registration/user-register/user-register";
-import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-steps/step1";
 import EmailValidationPage from "./pages/registration/email-validation/email-validation";
 import SetPasswordPage from "./pages/registration/set-password/set-password";
 
 // LOGIN PAGES-----------------------------------------------------------------------------
 import UserLoginPage from "./pages/login/login";
 import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
+import EmailVerificationPage from "./pages/login/2FA/2fa";
 import VerifyCodePage from "./pages/login/forgot-password/verify-code";
 import ResetPasswordPage from "./pages/login/forgot-password/reset-password";
 
@@ -55,13 +55,13 @@ function App() {
 
           {/* Registration routes */}
           <Route path="/user-registration" element={<UserRegisterPage />} />
-          <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
           <Route path="/email-validation" element={<EmailValidationPage />} />
           <Route path="/set-password" element={<SetPasswordPage />} />
 
           {/* Login routes */}
           <Route path="/login" element={<UserLoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/email-verification" element={<EmailVerificationPage />} />
           <Route path="/verify-code" element={<VerifyCodePage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 

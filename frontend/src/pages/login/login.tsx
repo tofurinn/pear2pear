@@ -12,8 +12,8 @@ import "./login.css";
 // TODO: fill in your route paths
 const ROUTES = {
   forgotPassword: "/forgot-password",
-  signUp: "/user-register",
-  afterLogin: "/student/dashboard",
+  signUp: "/user-registration",
+  afterLogin: "/email-verification",
 };
 
 interface LoginFormData {

@@ -90,8 +90,8 @@ const EmailValidationPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // TODO: call your API to verify the code, e.g.
-      // await verifyEmailCode({ email, code });
+      // TODO: call your API to valid the code, e.g.
+      // await validEmailCode({ email, code });
 
       navigate(ROUTES.nextStep, { state: location.state });
     } catch {
@@ -120,19 +120,19 @@ const EmailValidationPage: React.FC = () => {
   };
 
   return (
-    <div className="verify-page">
+    <div className="valid-page">
         <Navbar />
-      <main className="verify-main">
-        <section className="verify-card">
-          <h1 className="verify-card__title">Email Validation</h1>
-          <p className="verify-card__subtitle">
+      <main className="valid-main">
+        <section className="valid-card">
+          <h1 className="valid-card__title">Email Validation</h1>
+          <p className="valid-card__subtitle">
             Please check your email inbox for a {CODE_LENGTH}-digit code!
           </p>
-          <p className="verify-card__resend-text">
+          <p className="valid-card__resend-text">
             Didn&rsquo;t receive it?{" "}
             <button
               type="button"
-              className="verify-card__resend-btn"
+              className="valid-card__resend-btn"
               onClick={handleResend}
               disabled={isResending}
             >
@@ -140,9 +140,9 @@ const EmailValidationPage: React.FC = () => {
             </button>
           </p>
 
-          <form className="verify-form" onSubmit={handleSubmit} noValidate>
+          <form className="valid-form" onSubmit={handleSubmit} noValidate>
             <div
-              className="verify-code"
+              className="valid-code"
               role="group"
               aria-label={`${CODE_LENGTH}-digit verification code`}
             >
@@ -152,7 +152,7 @@ const EmailValidationPage: React.FC = () => {
                   ref={(el) => {
                     inputRefs.current[index] = el;
                   }}
-                  className={`verify-code__input ${error ? "verify-code__input--error" : ""}`}
+                  className={`valid-code__input ${error ? "valid-code__input--error" : ""}`}
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
@@ -170,7 +170,7 @@ const EmailValidationPage: React.FC = () => {
 
             {/* Reserved line so the layout doesn't jump when a message appears */}
             <p
-              className={`verify-form__message ${error ? "verify-form__message--error" : ""}`}
+              className={`valid-form__message ${error ? "valid-form__message--error" : ""}`}
               role={error ? "alert" : "status"}
             >
               {error || resendMessage}
@@ -178,7 +178,7 @@ const EmailValidationPage: React.FC = () => {
 
             <button
               type="submit"
-              className="verify-btn"
+              className="valid-btn"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Verifying..." : "Submit"}
