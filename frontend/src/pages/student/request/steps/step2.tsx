@@ -1,11 +1,11 @@
-import { SKILLS, addDays, getTomorrowKey } from '../request-utils.tsx';
+import { SKILLS } from '../request-utils.tsx';
 import type { RequestFormData, SupportMode } from '../request-utils.tsx';
 import { CheckIcon, ChevronDown, StepNav } from '../request-ui.tsx';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface Step2Props {
-  formData: Pick<RequestFormData, 'prefStart' | 'prefEnd' | 'supportMode' | 'requiredSkills'>;
+  formData: Pick<RequestFormData, 'supportMode' | 'requiredSkills'>;
   updateFormData: (data: Partial<RequestFormData>) => void;
   onPrevious: () => void;
   onNext: () => void;
@@ -14,19 +14,7 @@ interface Step2Props {
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 function FilteringStep({ formData, updateFormData, onPrevious, onNext }: Step2Props) {
-  const { prefStart, prefEnd, requiredSkills } = formData;
-
-  // Changing the date range clears chosen slots in step 3, since they may fall outside it
-  const changeStart = (start: string) => {
-    if (!start) return;
-    const keepEnd = prefEnd >= start && prefEnd <= addDays(start, 6);
-    updateFormData({ prefStart: start, prefEnd: keepEnd ? prefEnd : addDays(start, 6), availability: [] });
-  };
-
-  const changeEnd = (end: string) => {
-    if (!end) return;
-    updateFormData({ prefEnd: end, availability: [] });
-  };
+  const { requiredSkills } = formData;
 
   const toggleSkill = (skill: string) =>
     updateFormData({
@@ -35,37 +23,11 @@ function FilteringStep({ formData, updateFormData, onPrevious, onNext }: Step2Pr
         : [...requiredSkills, skill],
     });
 
-  const validRange = prefStart !== '' && prefEnd !== '' && prefEnd >= prefStart;
-
   return (
     <>
       <h2 className="ui-card-heading">Step 2: Filtering</h2>
 
       <div className="ui-card-body ui-field-stack">
-        <div className="ui-field">
-          <span className="ui-field-label" id="date-label">Preferred Date</span>
-          <div className="ui-field-control rf-date-range" role="group" aria-labelledby="date-label">
-            <input
-              type="date"
-              className="rf-date-input"
-              aria-label="From date"
-              value={prefStart}
-              min={getTomorrowKey()}
-              onChange={e => changeStart(e.target.value)}
-            />
-            <span aria-hidden="true">–</span>
-            <input
-              type="date"
-              className="rf-date-input"
-              aria-label="To date"
-              value={prefEnd}
-              min={prefStart}
-              max={prefStart ? addDays(prefStart, 6) : undefined}
-              onChange={e => changeEnd(e.target.value)}
-            />
-          </div>
-        </div>
-
         <div className="ui-field">
           <label className="ui-field-label" htmlFor="supportMode">Preferred Support Mode</label>
           <div className="ui-select-wrap">
@@ -105,7 +67,7 @@ function FilteringStep({ formData, updateFormData, onPrevious, onNext }: Step2Pr
         </div>
       </div>
 
-      <StepNav onPrevious={onPrevious} onNext={onNext} nextDisabled={!validRange} />
+      <StepNav onPrevious={onPrevious} onNext={onNext} />
     </>
   );
 }

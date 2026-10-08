@@ -54,8 +54,7 @@ function MultiStepRequestForm() {
     try {
       // TODO: create the Support_Request document from formData
       //   category, title, description -> as entered
-      //   prefStart / prefEnd          -> parseDateKey(...)
-      //   availability                 -> parseSlotKey(...) for each slot key, converted to Timestamps
+      //   availability                 -> recurring weekday/hour preferences
       //   volID                        -> the chosen volunteer, reqStatus: 'Pending'
 
       const submitted = buildSummary(formData);
@@ -94,8 +93,6 @@ function MultiStepRequestForm() {
         return (
           <FilteringStep
             formData={{
-              prefStart: formData.prefStart,
-              prefEnd: formData.prefEnd,
               supportMode: formData.supportMode,
               requiredSkills: formData.requiredSkills,
             }}
@@ -108,8 +105,6 @@ function MultiStepRequestForm() {
         return (
           <AvailabilityStep
             formData={{
-              prefStart: formData.prefStart,
-              prefEnd: formData.prefEnd,
               availability: formData.availability,
             }}
             updateFormData={updateFormData}

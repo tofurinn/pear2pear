@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 import { CalendarIcon, CheckIcon, ClockIcon } from '../../../../components/icons.tsx';
@@ -16,6 +17,11 @@ export interface SessionDetailsExtras {
   supportMode?: string; // e.g. "Physical"
   timeslot?: string; // e.g. "3PM – 4PM"
   location?: string; // e.g. "Help's Founder's Library Discussion Room 1"
+  studentDetails?: {
+    name: string;
+    requestStatus: string;
+    feedback?: { rating: number; comments: string };
+  };
   volunteer?: {
     name: string;
     rating: number;
@@ -81,15 +87,17 @@ interface SessionDetailsModalProps {
   item: SessionDetailsItem;
   onClose: () => void;
   onSubmitFeedback?: (item: SessionDetailsItem) => void;
+  footerActions?: ReactNode;
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-function SessionDetailsModal({ item, onClose, onSubmitFeedback }: SessionDetailsModalProps) {
+function SessionDetailsModal({ item, onClose, onSubmitFeedback, footerActions }: SessionDetailsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const { tone, label } = item.status;
   const volunteer = item.volunteer;
+  const student = item.studentDetails;
   const canGiveFeedback = item.sessStatus === 'Completed' && !!onSubmitFeedback;
 
   // Escape to close, Tab stays inside the dialog, page behind doesn't scroll,
@@ -186,6 +194,27 @@ function SessionDetailsModal({ item, onClose, onSubmitFeedback }: SessionDetails
 
         {item.description && <p className="session-modal-description">{item.description}</p>}
 
+        {student && (
+          <section className="session-modal-volunteer session-modal-requester" aria-label="Requesting student">
+            <div className="session-modal-volunteer-head">
+              <span className="session-modal-requested-by">Requested by <strong>{student.name}</strong></span>
+              <span className="session-modal-volunteer-status">{student.requestStatus}</span>
+            </div>
+            {student.feedback && (
+              <div className="session-modal-feedback">
+                <h3 className="session-modal-feedback-title">Submitted Feedback</h3>
+                <div className="session-modal-feedback-content">
+                  <div className="session-modal-feedback-stars" aria-label={`${student.feedback.rating} out of 5 stars`}>
+                    {'★'.repeat(Math.floor(student.feedback.rating))}
+                    {student.feedback.rating % 1 >= 0.5 ? '½' : ''}
+                  </div>
+                  <p className="session-modal-feedback-comments">{student.feedback.comments}</p>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
         {volunteer && (
           <section className="session-modal-volunteer" aria-label="Matched volunteer">
             <div className="session-modal-volunteer-head">
@@ -208,6 +237,7 @@ function SessionDetailsModal({ item, onClose, onSubmitFeedback }: SessionDetails
           <span className={`ui-status-pill ui-status-pill--${tone}`}>
             {tone === 'planned' ? <ClockIcon /> : tone === 'to-confirm' ? <AlertIcon /> : tone === 'confirmed' ? <CheckIcon /> : <CalendarIcon />} {label}
           </span>
+          {footerActions}
           {canGiveFeedback && (
             <button
               type="button"

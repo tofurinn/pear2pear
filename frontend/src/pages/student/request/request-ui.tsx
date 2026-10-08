@@ -1,8 +1,7 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from '../../../components/icons.tsx';
+import { CheckIcon, ChevronDown, ChevronLeft, ChevronRight, StarRating } from '../../../components/icons.tsx';
 
-// Shared icons and StarRating live in components/icons; re-exported so the steps keep their imports
-export * from '../../../components/icons.tsx';
+export { CheckIcon, ChevronDown, StarRating };
 
 // ─── Shared Previous / Next row ────────────────────────────────────────────────
 

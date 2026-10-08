@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import './App.css';
 
 import app from "./firebase/config";
@@ -6,6 +6,7 @@ console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.optio
 
 // WHATEVER PAGES-----------------------------------------------------------------------------
 import IndexPage from './pages/index/index'
+import NotificationsPage from './pages/notifications/notifications'
 
 //STUDENT PAGES -----------------------------------------------------------------------------
 
@@ -22,33 +23,46 @@ import FeedbackForm from './pages/student/feedback/feedback-form';
 
 //VOLUNTEER PAGES -----------------------------------------------------------------------------
 import VolunteerDashboard from "./pages/volunteer/dashboard/dashboard";
+import VolunteerRequests from "./pages/volunteer/dashboard/request/my-support-requests";
+import VolunteerSessions from "./pages/volunteer/dashboard/session/my-sessions";
+import VolunteerHistory from "./pages/volunteer/dashboard/history/my-support-history";
 
 
 function App() {
+  const location = useLocation();
+
   return (
     <div className="page-background bg-default">
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<IndexPage />} />
+      <div key={location.pathname} className="page-transition">
+        <Routes location={location}>
+          {/* Public routes */}
+          <Route path="/" element={<IndexPage />} />
 
-        {/* - - - STUDENT ROUTES - - - */}
-        {/* Dashboard Forms */}
-        <Route path="/student/dashboard" element={<MyDashboard />} />
-        <Route path="/student/my-requests" element={<MyRequests />} />
-        <Route path="/student/my-sessions" element={<MySessions />} />
-        <Route path="/student/my-support-history" element={<MySupportHistory />} />
+          {/* Notifications */}
+          <Route path="/notifications" element={<NotificationsPage />} />
 
-        {/* Student Forms */}
-        <Route path="/student/request-form" element={<MultiStepRequestForm />} />
-        <Route path="/student/session-form" element={<MultiStepSessionForm/>} />
-        <Route path="/student/feedback-form/:sessID" element={<FeedbackForm/>} />
-        <Route path="/student/session/:sessID/edit" element={<SessionRearrangement/>} />
+          {/* - - - STUDENT ROUTES - - - */}
+          {/* Dashboard Forms */}
+          <Route path="/student/dashboard" element={<MyDashboard />} />
+          <Route path="/student/my-requests" element={<MyRequests />} />
+          <Route path="/student/my-sessions" element={<MySessions />} />
+          <Route path="/student/my-support-history" element={<MySupportHistory />} />
 
-        {/* - - - VOLUNTEER ROUTES - - -*/}
-        <Route path="/volunteer/dashboard" element={<VolunteerDashboard />} />
-        <Route path="/volunteer/sessions" element={<MySessions dashboardPath="/volunteer/dashboard" />} />
-        <Route path="/volunteer/history" element={<MySupportHistory dashboardPath="/volunteer/dashboard" />} />
-      </Routes>
+          {/* Student Forms */}
+          <Route path="/student/request-form" element={<MultiStepRequestForm />} />
+          <Route path="/student/session-form" element={<MultiStepSessionForm />} />
+          <Route path="/student/feedback-form/:sessID" element={<FeedbackForm />} />
+          <Route path="/student/session/:sessID/edit" element={<SessionRearrangement />} />
+
+          {/* - - - VOLUNTEER ROUTES - - - */}
+          <Route path="/volunteer/dashboard" element={<VolunteerDashboard />} />
+          <Route path="/volunteer/requests" element={<VolunteerRequests />} />
+          <Route path="/volunteer/sessions" element={<VolunteerSessions />} />
+          <Route path="/volunteer/history" element={<VolunteerHistory />} />
+          <Route path="/volunteer/session-form" element={<MultiStepSessionForm />} />
+          <Route path="/volunteer/session/:sessID/edit" element={<SessionRearrangement />} />
+        </Routes>
+      </div>
     </div>
   );
 }

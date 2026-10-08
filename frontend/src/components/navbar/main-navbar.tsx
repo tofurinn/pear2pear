@@ -7,14 +7,15 @@ type MainNavbarProps = {
 }
 
 function MainNavbar({ dashboardPath = '/student/dashboard' }: MainNavbarProps) {
+	const isVolunteer = dashboardPath.startsWith('/volunteer/')
 	return (
 		<header className="global-navbar">
 			<NavLink className="global-navbar__brand" to="/" aria-label="Pear2Pear home">
 				<img src={textLogo} alt="Pear2Pear" />
 			</NavLink>
 			<nav className="global-navbar__actions" aria-label="Account navigation">
-				<NavLink className="global-navbar__signup" to="/request-form">Request</NavLink>
-				<NavLink className="global-navbar__login" to="/session-form">Session</NavLink>
+				<NavLink className="global-navbar__signup" to="/student/request-form">Request</NavLink>
+				<NavLink className="global-navbar__login" to={isVolunteer ? '/volunteer/session-form' : '/student/session-form'}>Session</NavLink>
 				<NavLink
 					className="global-navbar__notification"
 					to="/notifications"

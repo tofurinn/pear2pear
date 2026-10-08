@@ -73,7 +73,7 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
   return (
     <div className="ui-page">
       <Navbar dashboardPath={dashboardPath} />
-      <main className="dashboard-background">
+      <main className="student-dashboard-background">
         <div className="dashboard-inner">
           <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate(dashboardPath)}>
             <ChevronLeft /> Dashboard

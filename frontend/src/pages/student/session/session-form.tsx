@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 //state objects: currentStep - which step is showing
 //state object: formData - holds all form input values across steps
 //state object: summary - snapshot of the booked session, shown on the confirmation page
@@ -12,7 +12,7 @@ import SelectRequestStep from './steps/step1.tsx';
 import TimeSlotStep from './steps/step2.tsx';
 import MeetupDetailsStep from './steps/step3.tsx';
 import SessionConfirmationStep from './steps/step4.tsx';
-import { EMPTY_FORM, buildSummary, isStepValid } from './session-utils.tsx';
+import { EMPTY_FORM, MOCK_REQUESTS, buildSummary, isStepValid } from './session-utils.tsx';
 import type { SessionStepKey } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary } from './session-utils.tsx';
 
@@ -25,9 +25,18 @@ const STEP_KEYS: SessionStepKey[] = ['request', 'timeSlot', 'meetup'];
 
 function MultiStepSessionForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isVolunteerRoute = location.pathname.startsWith('/volunteer/');
+  const dashboardPath = isVolunteerRoute ? '/volunteer/dashboard' : '/student/dashboard';
+  const sessionsPath = isVolunteerRoute ? '/volunteer/sessions' : '/student/my-sessions';
+  const requestedReqID = (location.state as { reqID?: unknown } | null)?.reqID;
+  const initialReqID =
+    typeof requestedReqID === 'string' && MOCK_REQUESTS.some(request => request.reqID === requestedReqID)
+      ? requestedReqID
+      : '';
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<SessionFormData>(EMPTY_FORM);
+  const [formData, setFormData] = useState<SessionFormData>(() => ({ ...EMPTY_FORM, reqID: initialReqID }));
   const [summary, setSummary] = useState<SessionSummary | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
@@ -116,15 +125,15 @@ function MultiStepSessionForm() {
 
   return (
     <div className="ui-page">
-      <Navbar />
+      <Navbar dashboardPath={dashboardPath} />
       <main className="ui-page-session-background">
         <section className={`ui-card ${isConfirmed ? 'ui-card--centered' : ''}`}>
           {isConfirmed ? (
             // Confirmation has its own heading, so no "Support Session" title/divider
             <SessionConfirmationStep
               summary={summary}
-              onReturnToDashboard={() => navigate('/dashboard')}
-              onViewSession={() => navigate('/sessions')} // adjust to your session detail route
+              onReturnToDashboard={() => navigate(dashboardPath)}
+              onViewSession={() => navigate(sessionsPath)}
             />
           ) : (
             <>

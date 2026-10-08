@@ -192,6 +192,19 @@
   font-weight: 700;
 }
 
+.session-modal-requested-by {
+  font-size: var(--sm-font-size);
+  font-weight: 700;
+}
+
+.session-modal-requested-by strong {
+  color: var(--sm-green);
+}
+
+.session-modal-requester .session-modal-volunteer-head {
+  padding-bottom: 0;
+}
+
 .session-modal-skills {
   padding: 12px 8px;
   background: var(--sm-teal-fill);
@@ -253,6 +266,12 @@
   cursor: pointer;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   transition: filter 0.15s ease;
+}
+
+.session-modal .session-modal-action {
+  min-height: 28px;
+  padding: 0 14px;
+  font-size: var(--sm-font-size);
 }
 
 .session-modal-feedback-btn:hover {
