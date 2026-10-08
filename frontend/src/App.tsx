@@ -4,9 +4,14 @@ import './App.css';
 import app from "./firebase/config";
 console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.options.projectId);
 
-// WHATEVER PAGES-----------------------------------------------------------------------------
+// PUBLIC PAGES-----------------------------------------------------------------------------
 import IndexPage from './pages/index/index'
 import NotificationsPage from './pages/notifications/notifications'
+import UserRegisterPage from "./pages/registration/user-register/user-register";
+import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-steps/step1";
+import EmailVerificationPage from "./pages/registration/email-validation/email-validation";
+import UserLoginPage from "./pages/login/login";
+import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
 
 //STUDENT PAGES -----------------------------------------------------------------------------
 
@@ -38,8 +43,24 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<IndexPage />} />
 
-          {/* Notifications */}
-          <Route path="/notifications" element={<NotificationsPage />} />
+        {/* Notifications */}
+        <Route path="/notifications" element={<NotificationsPage />} />
+        
+        {/* Registration routes */}
+        <Route path="/user-registration" element={<UserRegisterPage />} />
+        <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
+        <Route path="/email-validation" element={<EmailVerificationPage />} />
+
+        {/* Login routes */}
+        <Route path="/login" element={<UserLoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+        {/* - - - STUDENT ROUTES - - - */}
+        {/* Dashboard Forms */}
+        <Route path="/student/dashboard" element={<MyDashboard />} />
+        <Route path="/student/my-requests" element={<MyRequests />} />
+        <Route path="/student/my-sessions" element={<MySessions />} />
+        <Route path="/student/my-support-history" element={<MySupportHistory />} />
 
           {/* - - - STUDENT ROUTES - - - */}
           {/* Dashboard Forms */}

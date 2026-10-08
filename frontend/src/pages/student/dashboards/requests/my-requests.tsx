@@ -7,7 +7,7 @@ import { CalendarIcon, CheckIcon, ChevronLeft, ClockIcon } from '../../../../com
 import { MOCK_MY_REQUESTS, MOCK_VOLUNTEERS, buildRequestItems } from '../dashboards-utils.tsx';
 import type { RequestItem } from '../dashboards-utils.tsx';
 
-import '../../../../components/page-css/forms-ui.css';
+import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
 // ─── Request card (same markup in all three columns) ───────────────────────────
