@@ -5,14 +5,14 @@ import "./email-validation.css";
 
 // TODO: fill in your route paths
 const ROUTES = {
-  nextStep: "", // where to go after the email is verified
+  nextStep: "/set-password",
 };
 
 const CODE_LENGTH = 6;
 
 
 
-const EmailVerificationPage: React.FC = () => {
+const EmailValidationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -124,7 +124,7 @@ const EmailVerificationPage: React.FC = () => {
         <Navbar />
       <main className="verify-main">
         <section className="verify-card">
-          <h1 className="verify-card__title">Email Verification</h1>
+          <h1 className="verify-card__title">Email Validation</h1>
           <p className="verify-card__subtitle">
             Please check your email inbox for a {CODE_LENGTH}-digit code!
           </p>
@@ -190,4 +190,4 @@ const EmailVerificationPage: React.FC = () => {
   );
 };
 
-export default EmailVerificationPage;
+export default EmailValidationPage;

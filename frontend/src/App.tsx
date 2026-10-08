@@ -7,11 +7,18 @@ console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.optio
 // PUBLIC PAGES-----------------------------------------------------------------------------
 import IndexPage from './pages/index/index'
 import NotificationsPage from './pages/notifications/notifications'
+
+// REGISTRATION PAGES-----------------------------------------------------------------------------
 import UserRegisterPage from "./pages/registration/user-register/user-register";
 import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-steps/step1";
-import EmailVerificationPage from "./pages/registration/email-validation/email-validation";
+import EmailValidationPage from "./pages/registration/email-validation/email-validation";
+import SetPasswordPage from "./pages/registration/set-password/set-password";
+
+// LOGIN PAGES-----------------------------------------------------------------------------
 import UserLoginPage from "./pages/login/login";
 import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
+import VerifyCodePage from "./pages/login/forgot-password/verify-code";
+import ResetPasswordPage from "./pages/login/forgot-password/reset-password";
 
 //STUDENT PAGES -----------------------------------------------------------------------------
 
@@ -49,11 +56,15 @@ function App() {
           {/* Registration routes */}
           <Route path="/user-registration" element={<UserRegisterPage />} />
           <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
-          <Route path="/email-validation" element={<EmailVerificationPage />} />
+          <Route path="/email-validation" element={<EmailValidationPage />} />
+          <Route path="/set-password" element={<SetPasswordPage />} />
 
           {/* Login routes */}
           <Route path="/login" element={<UserLoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/verify-code" element={<VerifyCodePage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+
 
           {/* - - - STUDENT ROUTES - - - */}
           {/* Dashboard Forms */}
