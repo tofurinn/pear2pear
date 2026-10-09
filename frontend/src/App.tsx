@@ -39,6 +39,7 @@ import VolunteerDashboard from "./pages/volunteer/dashboards/dashboard";
 import VolunteerRequests from "./pages/volunteer/dashboards/request/my-requests";
 import VolunteerSessions from "./pages/volunteer/dashboards/session/my-sessions";
 import VolunteerHistory from "./pages/volunteer/dashboards/support-history/my-support-history";
+import VolunteerNotifications from "./pages/volunteer/notifications/notifications";
 
 
 function App() {
