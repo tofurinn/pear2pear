@@ -2,6 +2,7 @@ import type { Timestamp } from 'firebase/firestore';
 import { MOCK_REQUESTS, getVolunteerById } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
 import { CheckIcon } from '../../../../components/icons.tsx';
+import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import '../../../../global.css';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -39,7 +40,7 @@ function SelectRequestStep({ formData, updateFormData }: Step1Props) {
               className={`request-card ${isSelected ? 'selected' : ''}`}
               onClick={() => selectRequest(request.reqID)}
             >
-              <span className="category-tag">{request.category}</span>
+              <CategoryTag>{request.category}</CategoryTag>
               <span className="request-title">{request.title}</span>
               <span className="volunteer-name">{getVolunteerById(request.volID)?.name}</span>
               <span className="request-footer">

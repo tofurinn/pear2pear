@@ -1,6 +1,7 @@
 import { CATEGORIES } from '../request-utils.tsx';
 import type { RequestFormData } from '../request-utils.tsx';
 import { StepNav } from '../request-ui.tsx';
+import { CategoryTagButton } from '../../../../components/category-tag/category-tag.tsx';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -29,16 +30,13 @@ function SupportTypeStep({ formData, updateFormData, onNext }: Step1Props) {
             aria-labelledby="category-label"
           >
             {CATEGORIES.map(category => (
-              <button
+              <CategoryTagButton
                 key={category}
-                type="button"
-                role="radio"
-                aria-checked={formData.category === category}
-                className="rf-tag"
+                selected={formData.category === category}
                 onClick={() => updateFormData({ category })}
               >
                 {category}
-              </button>
+              </CategoryTagButton>
             ))}
           </div>
         </div>

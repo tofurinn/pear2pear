@@ -43,7 +43,8 @@ function SessionRearrangement() {
   const navigationState = location.state as SessionRearrangementLocationState | null;
   const isVolunteerRoute = location.pathname.startsWith('/volunteer/');
   const dashboardPath = isVolunteerRoute ? '/volunteer/dashboard' : '/student/dashboard';
-  const sessionsPath = isVolunteerRoute ? '/volunteer/sessions' : '/student/my-sessions';
+  const pageBackgroundClass = isVolunteerRoute ? 'ui-page-volunteer-background' : 'ui-page-student-background';
+  const sessionsPath = isVolunteerRoute ? '/volunteer/my-sessions' : '/student/my-sessions';
 
   // TODO: load this session from Firestore, and check it belongs to the signed-in student
   const session = getSessionById(sessID);
@@ -98,7 +99,7 @@ function SessionRearrangement() {
     return (
       <div className="ui-page">
         <Navbar dashboardPath={dashboardPath} />
-        <main className="ui-page-session-background">
+        <main className={pageBackgroundClass}>
           <section className="ui-card ui-card--centered">
             <SessionConfirmationStep
               summary={summary}
@@ -119,7 +120,7 @@ function SessionRearrangement() {
     return (
       <div className="ui-page">
         <Navbar dashboardPath={dashboardPath} />
-        <main className="ui-page-session-background">
+        <main className={pageBackgroundClass}>
           <section className="ui-card">
             <h1 className="ui-card-title">Rearrange Session</h1>
             <hr className="ui-card-divider" />
@@ -144,7 +145,7 @@ function SessionRearrangement() {
   return (
     <div className="ui-page">
       <Navbar dashboardPath={dashboardPath} />
-      <main className="ui-page-session-background">
+      <main className={pageBackgroundClass}>
         <section className="ui-card">
           <h1 className="ui-card-title">Rearrange Session</h1>
           <hr className="ui-card-divider" />

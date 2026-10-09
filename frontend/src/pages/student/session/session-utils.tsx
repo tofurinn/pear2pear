@@ -57,7 +57,7 @@ const REQUEST_DETAILS: Pick<Support_Request, 'title' | 'category'>[] = [
   { title: 'Moving Boxes Helper', category: 'General Student Support' },
   { title: 'Course Registration Guide', category: 'New Student Support' },
   { title: 'Python Debugging Session', category: 'Technology Support' },
-  { title: 'Study Group Starter', category: 'Academic Support' },
+  { title: 'Need of Backup Guitarist', category: 'Academic Support' },
 ];
 
 export const MOCK_VOLUNTEERS: Record<string, Volunteer> = Object.fromEntries(

@@ -12,7 +12,7 @@
   justify-content: center;
   align-items: flex-start;
   padding: calc(75 * var(--u)) calc(24 * var(--u));
-  background: #eff6ea;
+  background: var(--color-student);
 }
 
 .volunteer-dashboard-background {
@@ -21,7 +21,7 @@
   justify-content: center;
   align-items: flex-start;
   padding: calc(75 * var(--u)) calc(24 * var(--u));
-  background: #ebf3f5;
+  background: var(--color-volunteer) ;
 }
 
 .dashboard-inner {
@@ -215,16 +215,7 @@
   white-space: nowrap;
 }
 
-/* ---------- Tag, status pill, chip buttons ---------- */
-.ui-category-tag {
-  align-self: flex-start;
-  padding: 1px calc(9 * var(--u));
-  font-size: var(--fs-small);
-  color: #fff;
-  background: linear-gradient(90deg, #b5c4e8, #c4dcb8);
-  border-radius: 999px;
-}
-
+/* ---------- Status pill and chip buttons ---------- */
 .ui-status-pill {
   display: inline-flex;
   align-items: center;
