@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import CategoryTag from './category-tag/category-tag.tsx';
 
 import {
   AlertIcon,
@@ -30,7 +31,7 @@ export function ItemCard({
 }: ItemCardProps) {
   return (
     <article className="ui-item-card">
-      <span className="ui-category-tag">{category}</span>
+      <CategoryTag>{category}</CategoryTag>
       <h3 className="ui-item-card-title">{title}</h3>
       <p className="ui-item-card-person">{personName}</p>
 

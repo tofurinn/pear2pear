@@ -30,7 +30,8 @@ function MultiStepSessionForm() {
   const location = useLocation();
   const isVolunteerRoute = location.pathname.startsWith('/volunteer/');
   const dashboardPath = isVolunteerRoute ? '/volunteer/dashboard' : '/student/dashboard';
-  const sessionsPath = isVolunteerRoute ? '/volunteer/sessions' : '/student/my-sessions';
+  const pageBackgroundClass = isVolunteerRoute ? 'ui-page-volunteer-background' : 'ui-page-student-background';
+  const sessionsPath = isVolunteerRoute ? '/volunteer/my-sessions' : '/student/my-sessions';
   const requestedReqID = (location.state as { reqID?: unknown } | null)?.reqID;
   const initialReqID =
     typeof requestedReqID === 'string' && MOCK_REQUESTS.some(request => request.reqID === requestedReqID)
@@ -130,7 +131,7 @@ function MultiStepSessionForm() {
   return (
     <div className="ui-page">
       <Navbar dashboardPath={dashboardPath} />
-      <main className="ui-page-session-background">
+      <main className={pageBackgroundClass}>
         <section className={`ui-card ${isConfirmed ? 'ui-card--centered' : ''}`}>
           {isConfirmed ? (
             // Confirmation has its own heading, so no "Support Session" title/divider

@@ -1,7 +1,8 @@
-/* Notifications page.
-   Reuses .ui-page and .ui-category-tag from your existing CSS; everything else
-   is prefixed .notif-* so nothing else is affected. Colours are approximated
-   from the design: map them to your global variables if you have them. */
+/* Notifications page shared by student and volunteer modes. */
+
+.notif-background {
+  padding-block: 0;
+}
 
 .notif-main {
   --notif-ink: #3d1f1f;
@@ -37,17 +38,15 @@
   list-style: none;
 }
 
-/* ---------------- Banner ---------------- */
-
 .notif-banner {
   padding: 22px 20px 20px;
   border-radius: 20px;
   background: linear-gradient(
-    90deg,
-    #b6e4e4 0%,
-    #c0e6c0 35%,
-    #d7ebc2 65%,
-    #f8fde9 100%
+    180deg,
+    #ffffff 0%,
+    #fffffff4 35%,
+    #ffffffc5 65%,
+    #ffffff7b 100%
   );
 }
 
@@ -62,8 +61,6 @@
   color: var(--notif-muted);
   font-size: 1rem;
 }
-
-/* ---------------- Filters ---------------- */
 
 .notif-filters {
   display: flex;
@@ -103,8 +100,6 @@
   outline: 3px solid var(--notif-ink);
   outline-offset: 2px;
 }
-
-/* ---------------- List + cards ---------------- */
 
 .notif-list {
   display: flex;
@@ -167,8 +162,6 @@
   text-align: center;
   font-size: 1rem;
 }
-
-/* ---------------- Responsive ---------------- */
 
 @media (max-width: 640px) {
   .notif-main {

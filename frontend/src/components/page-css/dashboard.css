@@ -10,11 +10,12 @@
   --dash-green: #72c876;
   --dash-star: #fbc02d;
   --dash-star-empty: #e3e3e3;
+
   /* Student dashboard */
   --dash-hero-base: #9bc86d;
   --dash-hero-glow-1: #6dbf74;
   --dash-hero-glow-2: #d3d58a;
-  --dash-page-bg: #f0f6ea;
+  --dash-page-bg: var(--color-student);
   --dash-toggle-off: rgba(255, 255, 255, 0.35);
 
   min-height: 120vh;
@@ -27,7 +28,7 @@
   --dash-hero-base: #84b0b8;
   --dash-hero-glow-1: #6dbf9c;
   --dash-hero-glow-2: #7aa3ae;
-  --dash-page-bg: #ebf3f5;
+  --dash-page-bg: var(--color-volunteer);
   --dash-toggle-off: rgba(255, 255, 255, 0.4);
 }
 
@@ -120,12 +121,24 @@
   font-size: var(--font-size-caption);
 }
 
+.dash-rating-stars {
+  font-size: 20px;
+}
+
+.dash-rating-stars .ui-star {
+  color: #e3e3e3;
+}
+
+.dash-rating-stars .ui-star-fill {
+  color: #fbc02d;
+}
+
 /* Mode toggle */
 .dash-toggle {
   display: inline-flex;
   gap: 6px;
   margin-top: 12px;
-  padding: 6px 8px;
+  padding: 4px 6px;
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.2);
@@ -164,7 +177,7 @@
   grid-template-columns: minmax(0, 2.5fr) minmax(0, 1fr);
   gap: 24px;
   max-width: 960px;
-  margin: 36px auto 48px;
+  margin: 20px auto 48px;
   padding: 0 16px;
   align-items: stretch;
 }
@@ -172,7 +185,7 @@
 /* ---------------- Support journey ---------------- */
 
 .dash-journey {
-  padding: 22px 28px 28px 20px;
+  padding: 10px 28px 28px 20px;
   background: #fff;
   border-radius: 20px;
 }
@@ -195,10 +208,19 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 188px;
+  min-height: 170px;
   padding: 14px 14px 16px;
   border-radius: 10px;
   transition: box-shadow 0.15s ease;
+}
+
+.dash-action[role="link"] {
+  cursor: pointer;
+}
+
+.dash-action[role="link"]:focus-visible {
+  outline: 3px solid var(--dash-ink);
+  outline-offset: 2px;
 }
 
 .dash-action:hover {
@@ -221,7 +243,7 @@
 }
 
 .dash-action-title {
-  font-size: var(--font-size-form-title);
+  font-size: var(--font-size-h3);
   font-weight: var(--font-weight-bold);
   line-height: 1.15;
 }
@@ -246,7 +268,7 @@
 .dash-pill {
   align-self: flex-end;
   margin-top: auto;
-  padding: 8px 20px;
+  padding: 4px 10px;
   border: none;
   border-radius: 999px;
   background: #fff;
@@ -373,6 +395,49 @@
   color: var(--dash-ink);
   font-size: var(--font-size-form-answer);
   font-weight: var(--font-weight-bold);
+}
+
+.dash-volunteer-registration {
+  display: grid;
+  min-height: 420px;
+  padding: 44px 24px;
+  place-items: center;
+}
+
+.dash-volunteer-registration__card {
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 710px;
+  min-height: 320px;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  width: 100%;
+}
+
+.dash-volunteer-registration__card h2 {
+  font-size: var(--font-size-h2);
+}
+
+.dash-volunteer-registration__card p {
+  font-size: var(--font-size-body);
+  line-height: 1.4;
+}
+
+.dash-volunteer-registration__button {
+  background: #70c5c4;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: var(--font-weight-bold);
+  margin-top: 2px;
+  max-width: 356px;
+  padding: 10px 20px;
+  width: 100%;
 }
 
 /* ---------------- Stars ---------------- */

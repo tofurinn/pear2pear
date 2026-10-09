@@ -7,6 +7,7 @@ import {
   StarRating,
   SwapIcon,
 } from '../../../../components/icons.tsx';
+import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 
 // Approximation of the Figma clipboard icon: export the real SVG from Figma and swap it in
 const SessionArrangedIcon = ({ className }: { className?: string }) => (
@@ -47,14 +48,14 @@ function SessionConfirmationStep({
   const { volunteer } = summary;
 
   return (
-    <div className="confirmation">
-      <SessionArrangedIcon className="confirmation-icon" />
-      <h1 className="confirmation-title">{title}</h1>
-      <p className="confirmation-message">{message}</p>
+    <div className="ui-confirmation">
+      <SessionArrangedIcon className="ui-confirmation-icon" />
+      <h1 className="ui-confirmation-title">{title}</h1>
+      <p className="ui-confirmation-message">{message}</p>
 
       <h2 className="summary-label">Session Booking Summary</h2>
       <div className="summary">
-        <span className="category-tag">{summary.category}</span>
+        <CategoryTag>{summary.category}</CategoryTag>
         <h3 className="summary-title">{summary.title}</h3>
 
         <dl className="summary-details">
@@ -86,7 +87,7 @@ function SessionConfirmationStep({
         </div>
       </div>
 
-      <div className="confirmation-actions">
+      <div className="ui-confirmation-actions">
         <button type="button" className="ui-btn ui-btn-solid" onClick={onReturnToDashboard}>
           Return to Dashboard
         </button>

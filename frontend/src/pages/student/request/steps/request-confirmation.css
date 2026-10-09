@@ -1,45 +1,13 @@
 /* Step 5 – confirmation page. Colours are approximated from the design;
    swap in your own CSS variables if you have them. */
 
-.rf-confirm {
-  --rf-ink: #3d1f1f;
+.rf-summary {
   --rf-teal: #74cac8;
   --rf-teal-text: #5fc3c3;
-  --rf-green: #72c876;
   --rf-panel: #eef6f6;
   --rf-star: #fbc02d;
   --rf-star-empty: #e3e3e3;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  color: var(--rf-ink);
-  text-align: center;
-}
-
-.rf-confirm-icon {
-  width: 60px;
-  height: auto;
-  margin-bottom: 28px;
-}
-
-.rf-confirm-title {
-  margin: 0 0 10px;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.rf-confirm-subtitle {
-  max-width: 480px;
-  margin: 0 0 20px;
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-/* Summary block */
-.rf-summary {
   width: 100%;
   text-align: left;
 }
@@ -56,7 +24,7 @@
   border-radius: 28px;
 }
 
-.rf-confirm-summary-tag {
+.category-tag.rf-confirm-summary-tag {
   display: inline-block;
   padding: 2px 10px;
   border-radius: 999px;
@@ -103,7 +71,7 @@
 
 .rf-confirm-volunteer-rating {
   font-size: var(--fs-small);
-  color: var(--rf-ink);
+  color: var(--color-text);
 }
 
 .rf-confirm-volunteer-traits {
@@ -134,35 +102,6 @@
   color: transparent;
 }
 
-/* Button */
-.rf-confirm-button {
-  padding: calc(8 * var(--u)) calc(24 * var(--u));
-  border: none;
-  border-radius: 999px;
-  background: var(--rf-green);
-  color: #fff;
-  font: inherit;
-  font-size: var(--fs-btn);
-  line-height: 1.4;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: filter 0.15s ease;
-}
-
-.rf-confirm-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 28px;
-}
-
-.rf-confirm-button--secondary {
-  color: var(--rf-ink);
-  background: #fff;
-}
-
 .rf-confirm-details {
   display: flex;
   flex-wrap: wrap;
@@ -184,20 +123,7 @@
   margin: 0;
 }
 
-.rf-confirm-button:hover {
-  filter: brightness(0.95);
-}
-
-.rf-confirm-button:focus-visible {
-  outline: 3px solid var(--rf-ink);
-  outline-offset: 3px;
-}
-
 @media (max-width: 640px) {
-  .rf-confirm {
-    padding: 0;
-  }
-
   .rf-confirm-volunteer-header {
     flex-wrap: wrap;
   }
