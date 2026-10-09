@@ -9,9 +9,8 @@ import "../register.css";
 // import { login } from "../../../firebase/auth";
 // import { getAuthErrorMessage } from "../../../firebase/errors";
 
-// TODO: fill in your route paths
 const ROUTES = {
-  afterSet: "/student/dashboard"
+  afterSet: "/account-created",
 };
 
 interface SetPasswordFormData {
@@ -104,7 +103,7 @@ const SetPasswordPage: React.FC = () => {
                 id="password"
                 name="password"
                 type="password"
-                className={`pass-field__input ${errors.password ? "set-field__input--error" : ""}`}
+                className={`pass-field__input ${errors.password ? "pass-field__input--error" : ""}`}
                 value={formData.password}
                 onChange={handleChange}
                 autoComplete="new-password"
