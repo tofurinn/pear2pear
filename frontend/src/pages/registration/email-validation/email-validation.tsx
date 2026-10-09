@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../../components/navbar/global-navbar";
-import "./email-validation.css";
+import "../register.css";
 
 // TODO: fill in your route paths
 const ROUTES = {

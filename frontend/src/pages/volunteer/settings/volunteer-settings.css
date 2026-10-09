@@ -1,0 +1,130 @@
+/* =============================================================================
+   Volunteer settings. Builds on register.css + volunteer-register.css
+   (fields, checkboxes, select) and ui.css (buttons). Import this file last.
+   ============================================================================= */
+
+/* Flat light-blue page, and white pills / circles instead of beige */
+.register-page.settings-page {
+  --color-input-bg: #ffffff;
+
+  background: #eaf3f6;
+}
+
+/* ---------- Card ---------- */
+
+.settings-card {
+  max-width: 65rem;
+  padding: 2rem 3rem 2.2rem;
+  background: #d3e8ef;
+  box-shadow: 0 2px 6px rgba(68, 36, 33, 0.15);
+}
+
+.settings-card__title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.settings-divider {
+  margin: 0.9rem 0 1.6rem;
+  border: 0;
+  border-top: 1px solid var(--color-heading);
+}
+
+/* ---------- Availability button + messages ---------- */
+
+.settings-availability-btn {
+  justify-content: center;
+  min-width: max(150px, calc(300 * var(--u)));
+}
+
+.settings-message {
+  min-height: 1.4rem;
+  margin: 0.8rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-heading);
+}
+
+.settings-message--error {
+  color: var(--color-error);
+}
+
+/* ---------- Availability dialog ---------- */
+
+.settings-dialog {
+  width: min(92vw, 70rem);
+  max-height: 90vh;
+  padding: 1.6rem 2rem;
+  overflow: auto;
+  color: var(--color-heading);
+  background: #ffffff;
+  border: 0;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.settings-dialog::backdrop {
+  background: rgba(63, 32, 32, 0.35);
+}
+
+.settings-dialog__title {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.settings-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+/* ---------- Responsive ----------
+   Every value is smaller than its desktop value: tablet (<= 900px), phone (<= 600px). */
+
+@media (max-width: 900px) {
+  .settings-card {
+    padding: 1.8rem 2rem;
+  }
+
+  .settings-card__title {
+    font-size: 1.6rem;
+  }
+
+  .settings-dialog {
+    padding: 1.4rem 1.6rem;
+  }
+
+  .settings-dialog__title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .settings-card {
+    padding: 1.5rem 1.2rem 1.6rem;
+  }
+
+  .settings-card__title {
+    font-size: 1.4rem;
+  }
+
+  .settings-message {
+    font-size: 0.8rem;
+  }
+
+  .settings-dialog {
+    padding: 1.2rem 1rem;
+    border-radius: 1rem;
+  }
+
+  .settings-dialog__title {
+    font-size: 1.1rem;
+  }
+
+  .settings-dialog__actions {
+    gap: 0.6rem;
+  }
+}

@@ -40,6 +40,7 @@ import VolunteerRequests from "./pages/volunteer/dashboards/request/my-requests"
 import VolunteerSessions from "./pages/volunteer/dashboards/session/my-sessions";
 import VolunteerHistory from "./pages/volunteer/dashboards/support-history/my-support-history";
 import VolunteerNotifications from "./pages/volunteer/notifications/notifications";
+import VolunteerSettings from "./pages/volunteer/settings/volunteer-settings";
 
 
 function App() {
@@ -105,6 +106,7 @@ function App() {
           {/* Volunteer Forms */}
           <Route path="/volunteer/session-form" element={<MultiStepSessionForm />} />
           <Route path="/volunteer/session-edit/:sessID" element={<SessionRearrangement />} />
+          <Route path="/volunteer/settings" element={<VolunteerSettings />} />
         </Routes>
       </div>
     </div>

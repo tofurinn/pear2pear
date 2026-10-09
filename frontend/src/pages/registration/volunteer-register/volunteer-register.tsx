@@ -3,7 +3,6 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../../../components/navbar/global-navbar";
 import Step1 from "./volunteer-steps/step1";
 import Step2 from "./volunteer-steps/step2";
-import "../user-register/user-register.css";
 import "./volunteer-register.css";
 
 export interface VolunteerProfileData {
@@ -20,6 +19,7 @@ export default function VolunteerRegisterPage() {
   const ROUTES = {
     register: "/user-registration",
     validation: "/email-validation",
+    dashboard: "/volunteer/dashboard",
   };
 
   const navigate = useNavigate();

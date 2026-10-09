@@ -1,9 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
 
-.register-page, .pass-page {
+/* ============================================================
+   SHARED TOKENS
+   Declared once on every auth page wrapper so all three pages
+   read from the same palette.
+   ============================================================ */
+
+.register-page,
+.pass-page,
+.valid-page {
   --color-heading: #3f2020;
-  --color-text: #111111;
+  --color-text: #3f2020;
+  --color-input-text: #111111;
   --color-input-bg: #f7f5e9;
+  --color-box-bg: #f0f6ea;
   --color-green: #74c880;
   --color-green-dark: #5db46a;
   --color-teal: #76c8c8;
@@ -12,33 +22,6 @@
   --color-error: #c0392b;
   --color-gradient-top: #f4edb9;
   --color-gradient-bottom: #a9d680;
-
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  color: var(--color-text);
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0,
-    var(--color-gradient-top) 8rem,
-    var(--color-gradient-bottom) 100%
-  );
-  box-sizing: border-box;
-}
-
-.pass-page {
-  --color-heading: #3f2020;
-  --color-text: #3f2020;
-  --color-input-text: #111111;
-  --color-box-bg: #f0f6ea;
-  --color-green: #74c880;
-  --color-green-dark: #5db46a;
-  --color-link: #0b7bdc;
-  --color-error: #c0392b;
-  --color-gradient-top: #f4edb9;
-  --color-gradient-bottom: #a9d680;
-
   --navbar-height: 8rem;
 
   min-height: 100vh;
@@ -54,13 +37,32 @@
   box-sizing: border-box;
 }
 
+/* Register page starts the gradient white so it blends under the navbar */
+.register-page {
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0,
+    var(--color-gradient-top) 8rem,
+    var(--color-gradient-bottom) 100%
+  );
+}
+
+/* Shared box-sizing reset */
+.register-page *,
+.register-page *::before,
+.register-page *::after,
 .pass-page *,
 .pass-page *::before,
-.pass-page *::after {
+.pass-page *::after,
+.valid-page *,
+.valid-page *::before,
+.valid-page *::after {
   box-sizing: inherit;
 }
 
-/* ---------- Navigation bar ---------- */
+/* ============================================================
+   NAVBAR (register/login flow only)
+   ============================================================ */
 
 .register-nav {
   height: 8rem;
@@ -108,7 +110,11 @@
   text-decoration: underline;
 }
 
-/* ---------- Main + card ---------- */
+/* ============================================================
+   SHARED MAIN + CARD
+   .register-main  = top-aligned (form pages)
+   .pass-main/.valid-main = centered (single message / OTP pages)
+   ============================================================ */
 
 .register-main {
   flex: 1;
@@ -118,7 +124,18 @@
   padding: 3rem;
 }
 
-.register-card {
+.pass-main,
+.valid-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.register-card,
+.pass-card,
+.valid-card {
   width: 90%;
   min-width: 0;
   padding: 2rem 3rem 2rem;
@@ -126,61 +143,161 @@
   border-radius: 1.2rem;
 }
 
-.register-card__title {
-  margin: 0 0 1.9rem;
+/* Pass / valid cards are narrower and center their content */
+.pass-card,
+.valid-card {
+  max-width: 60rem;
+  padding: 2.4rem 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+.register-card__title,
+.pass-card__title,
+.valid-card__title {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--color-heading);
 }
 
-/* ---------- Form fields ---------- */
+.register-card__title {
+  margin: 0 0 1.9rem;
+  text-align: center;
+}
 
-.register-form {
+.pass-card__title {
+  margin: 0;
+}
+
+.valid-card__title {
+  margin: 0 0 1.5rem;
+}
+
+.pass-card__subtitle,
+.valid-card__subtitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.valid-card__subtitle {
+  font-size: 1.2rem;
+}
+
+.pass-card__text,
+.valid-card__resend-text {
+  margin: 0.6rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.valid-card__resend-text {
+  font-size: 1rem;
+}
+
+/* ============================================================
+   SHARED FORM WRAPPER
+   ============================================================ */
+
+.register-form,
+.pass-form,
+.valid-form {
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.register-field {
+.register-form {
+  /* register form fills the card; no center alignment */
+}
+
+.pass-form,
+.valid-form {
+  margin-top: 2.6rem;
+  align-items: center;
+}
+
+.pass-form--tight {
+  margin-top: 1.5rem;
+}
+
+/* ============================================================
+   SHARED FIELD STYLES
+   ============================================================ */
+
+.register-field,
+.pass-field {
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin-bottom: 1.2rem;
 }
 
-.register-field__label {
+.pass-field {
+  text-align: left;
+}
+
+.register-field__label,
+.pass-field__label {
   margin-bottom: 0.4rem;
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--color-text);
 }
 
-.register-field__input {
+.register-field__input,
+.pass-field__input {
   width: 100%;
   height: 2.2rem;
   padding: 0 1.1rem;
   font-family: inherit;
   font-size: 0.8rem;
-  color: var(--color-text);
-  background: var(--color-input-bg);
   border: 2px solid transparent;
   border-radius: 999px;
   outline: none;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.register-field__input:focus-visible {
+.register-field__input {
+  color: var(--color-text);
+  background: var(--color-input-bg);
+}
+
+.pass-field__input {
+  color: var(--color-input-text);
+  background: var(--color-box-bg);
+}
+
+.register-field__input:focus-visible,
+.pass-field__input:focus-visible {
   border-color: var(--color-green);
   background: #ffffff;
 }
 
-.register-field__input--error {
+.register-field__input--error,
+.pass-field__input--error {
   border-color: var(--color-error);
 }
 
-.register-field__error {
-  margin: 0.3rem 0 0 1.1rem;
+.register-field__error,
+.pass-field__error,
+.valid-form__message,
+.pass-form__message {
   font-size: 0.75rem;
   color: var(--color-error);
+}
+
+.register-field__error,
+.pass-field__error {
+  margin: 0.3rem 0 0 1.1rem;
+}
+
+/* Reserved line so layout doesn't jump when an error appears */
+.pass-field__error--reserve {
+  min-height: 1.2rem;
 }
 
 .register-form__submit-error {
@@ -190,182 +307,20 @@
   color: var(--color-error);
 }
 
-/* ---------- Buttons ---------- */
+/* ============================================================
+   MESSAGE LINE (shared by pass + valid forms)
+   ============================================================ */
 
-.register-actions {
-  margin-top: 2.6rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 4rem;
-}
-
-.register-actions__col {
-  width: 20rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.register-btn {
-  width: 100%;
-  height: 2rem;
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #ffffff;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-}
-
-.register-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-.register-btn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
-}
-
-.register-btn:focus-visible {
-  outline: 3px solid var(--color-heading);
-  outline-offset: 3px;
-}
-
-.register-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.register-btn--primary {
-  background: var(--color-green);
-}
-
-.register-btn--primary:hover:not(:disabled) {
-  background: var(--color-green-dark);
-}
-
-.register-btn--volunteer {
-  background: var(--color-teal);
-}
-
-.register-btn--volunteer:hover:not(:disabled) {
-  background: var(--color-teal-dark);
-}
-
-.register-actions__login {
-  margin: 0.5rem 0 0;
-  font-size: 0.9rem;
-}
-
-.register-actions__login-link {
-  color: var(--color-link);
-  text-decoration: none;
-}
-
-.register-actions__login-link:hover {
-  text-decoration: underline;
-}
-
-/* set password CSS */
-
-.pass-main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 3rem;
-}
-
-.pass-card {
-  width: 90%;
-  max-width: 60rem;
-  padding: 2.4rem 2.5rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  background: #ffffff;
-  border-radius: 1.2rem;
-}
-
-.pass-card__title {
-  margin: 0 0 0rem;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--color-heading);
-}
-
-.pass-card__subtitle {
-  margin: 0;
-  font-size: 1.1rem;
-  color: var(--color-heading);
-}
-
-.pass-card__text {
-  margin: 0.6rem 0 0;
-  font-size: 0.9rem;
-  color: var(--color-text);
-}
-
-/* ---------- Links (works on <a>, <Link> and <button>) ---------- */
-
-.pass-link {
-  padding: 0;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: 500;
-  color: var(--color-link);
-  background: none;
-  border: none;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.pass-link:hover:not(:disabled) {
-  text-decoration: underline;
-}
-
-.pass-link:focus-visible {
-  outline: 2px solid var(--color-link);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-.pass-link:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.pass-link--underlined {
-  text-decoration: underline;
-}
-
-/* ---------- Form ---------- */
-
-.pass-form {
-  width: 100%;
-  margin-top: 2.6rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.pass-form--tight {
-  margin-top: 1.5rem;
-}
-
-.pass-form__message {
+.pass-form__message,
+.valid-form__message {
   min-height: 1.4rem;
   margin: 0.8rem 0 1.4rem;
   font-size: 0.95rem;
   color: var(--color-text);
 }
 
-.pass-form__message--error {
+.pass-form__message--error,
+.valid-form__message--error {
   color: var(--color-error);
 }
 
@@ -376,61 +331,16 @@
   font-size: 0.9rem;
 }
 
-/* ---------- Text fields (Log in, Forgot password) ---------- */
+/* ============================================================
+   BUTTONS
+   .register-btn : solid pill, used on register choice pages
+   .pass-btn     : solid pill, used on password pages (may hold icon)
+   .valid-btn    : solid pill, used on the email validation page
+   ============================================================ */
 
-.pass-field {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.2rem;
-  text-align: left;
-}
-
-.pass-field__label {
-  margin-bottom: 0.4rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.pass-field__input {
-  width: 100%;
-  height: 2.2rem;
-  padding: 0 1.1rem;
-  font-family: inherit;
-  font-size: 0.8rem;
-  color: var(--color-input-text);
-  background: var(--color-box-bg);
-  border: 2px solid transparent;
-  border-radius: 999px;
-  outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.pass-field__input:focus-visible {
-  border-color: var(--color-green);
-  background: #ffffff;
-}
-
-.pass-field__input--error {
-  border-color: var(--color-error);
-}
-
-.pass-field__error {
-  margin: 0.3rem 0 0 1.1rem;
-  font-size: 0.75rem;
-  color: var(--color-error);
-}
-
-/* Keeps the line's height so the layout doesn't jump when an error appears */
-.pass-field__error--reserve {
-  min-height: 1.2rem;
-}
-
-/* ---------- Buttons ---------- */
-
-.pass-btn {
-  position: relative;
+.register-btn,
+.pass-btn,
+.valid-btn {
   width: 20rem;
   max-width: 100%;
   height: 2rem;
@@ -448,29 +358,63 @@
   text-decoration: none;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
-.pass-btn:hover:not(:disabled) {
+.register-btn {
+  font-size: 1rem;
+}
+
+.register-btn:hover:not(:disabled),
+.pass-btn:hover:not(:disabled),
+.valid-btn:hover:not(:disabled) {
   background: var(--color-green-dark);
   transform: translateY(-1px);
 }
 
-.pass-btn:active:not(:disabled) {
+.register-btn:active:not(:disabled),
+.pass-btn:active:not(:disabled),
+.valid-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.pass-btn:focus-visible {
+.register-btn:focus-visible,
+.pass-btn:focus-visible,
+.valid-btn:focus-visible {
   outline: 3px solid var(--color-heading);
   outline-offset: 3px;
 }
 
-.pass-btn:disabled {
+.register-btn:disabled,
+.pass-btn:disabled,
+.valid-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* White button with a dark outline, e.g. the "< Log in" back button */
+/* .pass-btn needs position:relative so an absolute icon can sit inside it */
+.pass-btn {
+  position: relative;
+}
+
+/* Variants */
+
+.register-btn--primary {
+  background: var(--color-green);
+}
+
+.register-btn--primary:hover:not(:disabled) {
+  background: var(--color-green-dark);
+}
+
+.register-btn--volunteer {
+  background: var(--color-teal);
+}
+
+.register-btn--volunteer:hover:not(:disabled) {
+  background: var(--color-teal-dark);
+}
+
 .pass-btn--outline {
   color: var(--color-heading);
   background: #ffffff;
@@ -492,7 +436,76 @@
   transform: translateY(-50%);
 }
 
-/* Two buttons on one row (back left, submit right) */
+/* ============================================================
+   LINK STYLES (shared)
+   ============================================================ */
+
+.register-actions__login-link,
+.pass-link,
+.valid-card__resend-btn {
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  color: var(--color-link);
+  background: none;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.register-actions__login-link:hover,
+.pass-link:hover:not(:disabled),
+.valid-card__resend-btn:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.pass-link:focus-visible,
+.valid-card__resend-btn:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.pass-link:disabled,
+.valid-card__resend-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pass-link--underlined {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   REGISTER ACTIONS ROW
+   Two-column row with primary / volunteer buttons + login link
+   ============================================================ */
+
+.register-actions {
+  margin-top: 2.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4rem;
+}
+
+.register-actions__col {
+  width: 20rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.register-actions__login {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   PASSWORD / VALID ACTIONS ROW
+   Back button left, submit right
+   ============================================================ */
+
 .pass-actions {
   width: 100%;
   margin-top: 1.4rem;
@@ -505,10 +518,48 @@
   width: 12.5rem;
 }
 
-/* ---------- Responsive ----------
-   Every value below is smaller than its desktop value above, in two steps:
-   tablet (<= 900px) and phone (<= 600px). The two buttons stack once the
-   card is too narrow for them side by side. */
+/* ============================================================
+   EMAIL VALIDATION CODE BOXES (valid-page only)
+   ============================================================ */
+
+.valid-code {
+  width: 55%;
+  height: 4.2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.valid-code__input {
+  flex: 0 1 5rem;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  font-family: inherit;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-heading);
+  background: var(--color-box-bg);
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  outline: none;
+  caret-color: var(--color-green);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.valid-code__input:focus-visible {
+  border-color: var(--color-green);
+  background: #ffffff;
+}
+
+.valid-code__input--error {
+  border-color: var(--color-error);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 
 @media (max-width: 900px) {
   .register-nav {
@@ -540,6 +591,36 @@
 
   .register-card__title {
     margin-bottom: 1.6rem;
+    font-size: 1.6rem;
+  }
+
+  .pass-card,
+  .valid-card {
+    padding: 1.6rem 1.2rem 2rem;
+  }
+
+  .pass-card__title,
+  .valid-card__title {
+    font-size: 1.9rem;
+  }
+
+  .pass-card__subtitle {
+    font-size: 1.25rem;
+  }
+
+  .valid-card__subtitle {
+    font-size: 1.25rem;
+  }
+
+  .valid-card__resend-text {
+    font-size: 1.1rem;
+  }
+
+  .valid-code {
+    gap: 0.5rem;
+  }
+
+  .valid-code__input {
     font-size: 1.6rem;
   }
 
@@ -612,13 +693,15 @@
     font-size: 0.8rem;
   }
 
-  /* 16px (1rem) on phones: smaller text makes iOS Safari zoom in when the field is focused */
-  .register-field__input {
+  /* 16px on phones stops iOS Safari zooming on focus */
+  .register-field__input,
+  .pass-field__input {
     height: 2.4rem;
     font-size: 1rem;
   }
 
-  .register-field__error {
+  .register-field__error,
+  .pass-field__error {
     font-size: 0.7rem;
   }
 
@@ -642,7 +725,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .register-btn,
-  .register-field__input {
+  .register-field__input,
+  .pass-btn,
+  .pass-field__input,
+  .valid-btn,
+  .valid-code__input {
     transition: none;
   }
 }
