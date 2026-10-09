@@ -5,8 +5,8 @@ import SupportDetailsModal from './support-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_SESSION_FEEDBACK, MOCK_VOLUNTEERS, buildSessionItems } from '../../student-utils.tsx';
-import type { SessionItem } from '../../student-utils.tsx';
+import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_SESSION_FEEDBACK, MOCK_VOLUNTEERS, buildStudentSessionItems } from '../../student-utils.tsx';
+import type { StudentSessionItem } from '../../student-utils.tsx';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
@@ -29,14 +29,14 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
   // History = sessions that are over: rated (completed unrated ones stay in My Sessions) or cancelled
   const history = useMemo(
     () =>
-      buildSessionItems(MOCK_SESSIONS, MOCK_REQUESTS, MOCK_VOLUNTEERS)
+      buildStudentSessionItems(MOCK_SESSIONS, MOCK_REQUESTS, MOCK_VOLUNTEERS)
         .filter(item => item.sessStatus === 'Rated' || item.sessStatus === 'Cancelled')
         .sort((a, b) => b.sessDate.getTime() - a.sessDate.getTime()), // newest first
     []
   );
 
-  const [selected, setSelected] = useState<SessionItem | null>(null);
-  const handleViewDetails = (item: SessionItem) => setSelected(item);
+  const [selected, setSelected] = useState<StudentSessionItem | null>(null);
+  const handleViewDetails = (item: StudentSessionItem) => setSelected(item);
 
   return (
     <div className="ui-page">
