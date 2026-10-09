@@ -1,6 +1,7 @@
 import heartFinger from "../../../../assets/images/heart-finger.png";
 import "./request-confirmation.css";
 import type { RequestSummary } from "../request-utils.tsx";
+import CategoryTag from "../../../../components/category-tag/category-tag.tsx";
 
 type StepConfirmationProps = {
   summary: RequestSummary;
@@ -36,11 +37,11 @@ export default function StepConfirmation({
   const { volunteer } = summary;
 
   return (
-    <div className="rf-confirm">
-      <img className="rf-confirm-icon" src={heartFinger} alt="" />
+    <div className="ui-confirmation">
+      <img className="ui-confirmation-icon" src={heartFinger} alt="" />
 
-      <h1 className="rf-confirm-title">Your Support Request Is Submitted!</h1>
-      <p className="rf-confirm-subtitle">
+      <h1 className="ui-confirmation-title">Your Support Request Is Submitted!</h1>
+      <p className="ui-confirmation-message">
         Sit tight, you will receive a notification once your matched Volunteer
         accepts the request
       </p>
@@ -48,7 +49,7 @@ export default function StepConfirmation({
       <section className="rf-summary" aria-labelledby="rf-summary-heading">
 
         <div className="rf-confirm-summary-panel">
-          <span className="rf-confirm-summary-tag">{summary.category}</span>
+          <CategoryTag className="rf-confirm-summary-tag">{summary.category}</CategoryTag>
           <h3 className="rf-confirm-summary-title">{summary.title}</h3>
           <p className="rf-confirm-summary-description">{summary.description}</p>
 
@@ -67,11 +68,11 @@ export default function StepConfirmation({
         </div>
       </section>
 
-      <div className="rf-confirm-actions">
-        <button type="button" className="rf-confirm-button" onClick={onReturnToDashboard}>
+      <div className="ui-confirmation-actions">
+        <button type="button" className="ui-btn ui-btn-solid" onClick={onReturnToDashboard}>
           Return to Dashboard
         </button>
-        <button type="button" className="rf-confirm-button rf-confirm-button--secondary" onClick={onViewRequests}>
+        <button type="button" className="ui-btn ui-btn-outline" onClick={onViewRequests}>
           View Requests
         </button>
       </div>

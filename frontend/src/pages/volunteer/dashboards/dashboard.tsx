@@ -1,9 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import pearVolunteer from "../../../assets/images/volunteerpfp-cropped.png";
 import Navbar from "../../../components/navbar/main-navbar";
 import CategoryTag from "../../../components/category-tag/category-tag";
+import { StarRating } from "../../../components/icons";
 
+import '../../../components/ui.css';
 import '../../../components/page-css/dashboard.css';
 
 type Stat = { label: string; value: number };
@@ -54,26 +56,6 @@ const HISTORY: HistoryItem[] = [
   },
 ];
 
-function Stars({ rating }: { rating: number }) {
-  return (
-    <span className="dash-stars" role="img" aria-label={`${rating} out of 5 stars`}>
-      {[0, 1, 2, 3, 4].map(i => {
-        const fill = Math.max(0, Math.min(1, rating - i)) * 100;
-        return (
-          <span
-            key={i}
-            className="dash-star"
-            style={{ ["--fill" as string]: `${fill}%` }}
-            aria-hidden="true"
-          >
-            ★
-          </span>
-        );
-      })}
-    </span>
-  );
-}
-
 function ChevronRight() {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
@@ -109,6 +91,10 @@ export default function VolunteerDashboard({
   onOpenSettings,
 }: VolunteerDashboardProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const showRegistrationPrompt =
+    (location.state as { showVolunteerRegistrationPrompt?: unknown } | null)
+      ?.showVolunteerRegistrationPrompt === true;
 
   return (
     <div className="dash dash--volunteer">
@@ -134,7 +120,7 @@ export default function VolunteerDashboard({
             </div>
 
             <div className="dash-rating">
-              <Stars rating={volunteerRating.rating} />
+              <StarRating rating={volunteerRating.rating} className="dash-rating-stars" />
               <span className="dash-rating-text">
                 {volunteerRating.rating.toFixed(1)} ({volunteerRating.count})
               </span>
@@ -162,6 +148,21 @@ export default function VolunteerDashboard({
         </div>
       </header>
 
+      {showRegistrationPrompt ? (
+        <main className="dash-volunteer-registration">
+          <section className="dash-volunteer-registration__card" aria-labelledby="volunteer-registration-title">
+            <h2 id="volunteer-registration-title">Oops!...</h2>
+            <p>Looks like you’re not a volunteer?<br />Come join the family now!</p>
+            <button
+              type="button"
+              className="dash-volunteer-registration__button"
+              onClick={() => navigate("/volunteer-registration")}
+            >
+              Join as Volunteer
+            </button>
+          </section>
+        </main>
+      ) : (
       <main className="dash-body">
         <section className="dash-journey" aria-labelledby="dash-journey-heading">
           <h2 id="dash-journey-heading" className="dash-journey-heading">
@@ -169,28 +170,60 @@ export default function VolunteerDashboard({
           </h2>
 
           <div className="dash-actions">
-            <article className="dash-action dash-action--requests">
+            <article
+              className="dash-action dash-action--requests"
+              role="link"
+              tabIndex={0}
+              aria-label="Open incoming requests"
+              onClick={onOpenRequests ?? (() => navigate('/volunteer/my-requests'))}
+              onKeyDown={event => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  (onOpenRequests ?? (() => navigate('/volunteer/my-requests')))();
+                }
+              }}
+            >
               <div className="dash-action-head">
                 <h3 className="dash-action-title">Incoming Requests</h3>
                 <button
                   type="button"
                   className="dash-action-arrow"
                   aria-label="Open incoming requests"
-                  onClick={onOpenRequests ?? (() => navigate('/volunteer/requests'))}
+                  onClick={event => {
+                    event.stopPropagation();
+                    (onOpenRequests ?? (() => navigate('/volunteer/my-requests')))();
+                  }}
                 >
                   <ChevronRight />
                 </button>
               </div>
               <p className="dash-action-sub">Check in to see which pear needs you!</p>
             </article>
-            <article className="dash-action dash-action--sessions">
+            <article
+              className="dash-action dash-action--sessions"
+              role="link"
+              tabIndex={0}
+              aria-label="Open my sessions"
+              onClick={() => navigate("/volunteer/my-sessions")}
+              onKeyDown={event => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  navigate("/volunteer/my-sessions");
+                }
+              }}
+            >
               <div className="dash-action-head">
                 <h3 className="dash-action-title">My Sessions</h3>
                 <button
                   type="button"
                   className="dash-action-arrow"
                   aria-label="Open my sessions"
-                  onClick={() => navigate("/volunteer/sessions")}
+                  onClick={event => {
+                    event.stopPropagation();
+                    navigate("/volunteer/my-sessions");
+                  }}
                 >
                   <ChevronRight />
                 </button>
@@ -199,7 +232,10 @@ export default function VolunteerDashboard({
               <button
                 type="button"
                 className="dash-pill dash-pill--green"
-                onClick={() => navigate("/volunteer/session-form")}
+                onClick={event => {
+                  event.stopPropagation();
+                  navigate("/volunteer/session-form");
+                }}
               >
                 Schedule Session
               </button>
@@ -228,7 +264,7 @@ export default function VolunteerDashboard({
                 <h3 className="dash-history-title">{item.title}</h3>
                 <div className="dash-history-meta">
                   <time className="dash-history-date">{item.date}</time>
-                  <Stars rating={item.rating} />
+                  <StarRating rating={item.rating} className="dash-rating-stars" />
                 </div>
               </li>
             ))}
@@ -237,13 +273,14 @@ export default function VolunteerDashboard({
           <button
             type="button"
             className="dash-more"
-            onClick={() => navigate("/volunteer/history")}
+            onClick={() => navigate("/volunteer/my-support-history")}
           >
             View More
             <ChevronRight />
           </button>
         </aside>
       </main>
+      )}
     </div>
   );
 }

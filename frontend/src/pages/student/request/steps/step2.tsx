@@ -38,7 +38,7 @@ function FilteringStep({ formData, updateFormData, onPrevious, onNext }: Step2Pr
               onChange={e => updateFormData({ supportMode: e.target.value as SupportMode })}
             >
               <option value="Physical">Physical</option>
-              <option value="Online">Online</option>
+              <option value="Virtual">Virtual</option>
             </select>
             <ChevronDown className="ui-select-icon" />
           </div>

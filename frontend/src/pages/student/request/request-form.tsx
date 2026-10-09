@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 //state object: formData - holds all form input values across steps
 //state object: summary - snapshot of the submitted request, shown on the confirmation page
 //state object: isSubmitting / submitMessage / errorMessage - submission state
+//state object: showConfirm - whether the "Submit this support request?" popup is open
 
 import Navbar from '../../../components/navbar/main-navbar.tsx';
 import '../../../components/category-tag/category-tag.css';
 import StepProgress from '../../../components/step-progress.tsx';
+import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 import SupportTypeStep from './steps/step1.tsx';
 import FilteringStep from './steps/step2.tsx';
 import AvailabilityStep from './steps/step3.tsx';
@@ -30,6 +32,7 @@ function MultiStepRequestForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const totalSteps = 4; // the confirmation page is not a numbered step
 
@@ -72,6 +75,7 @@ function MultiStepRequestForm() {
       setSubmitMessage('error');
     } finally {
       setIsSubmitting(false);
+      setShowConfirm(false);
     }
   };
 
@@ -123,7 +127,7 @@ function MultiStepRequestForm() {
             }}
             updateFormData={updateFormData}
             onPrevious={handlePrevious}
-            onSubmit={handleSubmit}
+            onSubmit={() => setShowConfirm(true)}
             isSubmitting={isSubmitting}
           />
         );
@@ -137,14 +141,14 @@ function MultiStepRequestForm() {
   return (
     <div className="ui-page">
       <Navbar />
-      <main className="ui-page-background ui-page-request-background">
+      <main className="ui-page-student-background">
         <section className={`ui-card ${isSubmitted ? 'ui-card--centered' : ''}`}>
           {isSubmitted ? (
             // Confirmation has its own heading, so no "Support Request" title/divider
             <RequestSubmittedStep
               summary={summary}
-              onReturnToDashboard={() => navigate('/dashboard')}
-              onViewRequests={() => navigate('/requests')} // adjust to your request list route
+              onReturnToDashboard={() => navigate('/student/dashboard')}
+              onViewRequests={() => navigate('/student/my-requests')}
             />
           ) : (
             <>
@@ -171,7 +175,7 @@ function MultiStepRequestForm() {
                     currentStep={currentStep}
                     totalSteps={totalSteps}
                     label="Support request progress"
-                    tone="blue"
+                    tone="green"
                   />
                   {renderStep()}
                 </>
@@ -180,6 +184,17 @@ function MultiStepRequestForm() {
           )}
         </section>
       </main>
+
+      <ConfirmPopup
+        open={showConfirm}
+        title="Submit this support request?"
+        message="Are you sure you want to submit this support request?"
+        confirmLabel="Submit Request"
+        busy={isSubmitting}
+        busyLabel="Submitting…"
+        onConfirm={handleSubmit}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 }

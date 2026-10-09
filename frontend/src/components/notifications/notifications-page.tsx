@@ -1,25 +1,25 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Navbar from "../../components/navbar/main-navbar";
+import Navbar from '../navbar/main-navbar';
+import CategoryTag from '../category-tag/category-tag';
 
-import '../../components/ui.css';
+import '../ui.css';
 import './notifications.css';
-
-// ─── Types ─────────────────────────────────────────────────────────────────────
 
 type NotificationKind = 'request' | 'session' | 'confirmed' | 'rejected';
 type Filter = 'all' | NotificationKind;
+type UserMode = 'student' | 'volunteer';
 
 interface NotificationItem {
   id: string;
   kind: NotificationKind;
-  actorName: string; // shown in bold, e.g. "Student Name"
-  message: string; // rest of the sentence, e.g. "has sent you a Support Request!"
+  actorName: string;
+  message: string;
   category: string;
   title: string;
   dateLabel: string;
-  path: string; // where clicking the card goes
+  path: string;
 }
 
 const FILTERS: { value: Filter; label: string }[] = [
@@ -72,8 +72,6 @@ const EMPTY_MESSAGES: Record<Filter, string> = {
   rejected: 'No rejected notifications',
 };
 
-// ─── Notification card ─────────────────────────────────────────────────────────
-
 interface NotificationCardProps {
   item: NotificationItem;
   onOpen: () => void;
@@ -86,7 +84,7 @@ function NotificationCard({ item, onOpen }: NotificationCardProps) {
         <p className="notif-card-message">
           <strong>{item.actorName}</strong> {item.message}
         </p>
-        <span className="ui-category-tag">{item.category}</span>
+        <CategoryTag>{item.category}</CategoryTag>
         <span className="notif-card-row">
           <span className="notif-card-title">{item.title}</span>
           <span className="notif-card-date">{item.dateLabel}</span>
@@ -96,10 +94,12 @@ function NotificationCard({ item, onOpen }: NotificationCardProps) {
   );
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────────
-
-function Notifications({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
+export default function NotificationsPage({ mode }: { mode: UserMode }) {
   const navigate = useNavigate();
+  const dashboardPath = mode === 'volunteer' ? '/volunteer/dashboard' : '/student/dashboard';
+  const backgroundClass = mode === 'volunteer'
+    ? 'ui-page-volunteer-background'
+    : 'ui-page-student-background';
   const [filter, setFilter] = useState<Filter>('all');
 
   const visible = useMemo(
@@ -111,35 +111,35 @@ function Notifications({ dashboardPath = '/student/dashboard' }: { dashboardPath
     <div className="ui-page">
       <Navbar dashboardPath={dashboardPath} />
 
-      <main className="notif-main">
-        <header className="notif-banner">
-          <h1 className="notif-banner-title">Notifications</h1>
-          <p className="notif-banner-subtitle">Always stay updated !</p>
-        </header>
+      <main className={`${backgroundClass} notif-background`}>
+        <div className="notif-main">
+          <header className="notif-banner">
+            <h1 className="notif-banner-title">Notifications</h1>
+            <p className="notif-banner-subtitle">Always stay updated !</p>
+          </header>
 
-        <div className="notif-filters" role="group" aria-label="Filter notifications">
-          {FILTERS.map(f => (
-            <button
-              key={f.value}
-              type="button"
-              className="notif-filter"
-              aria-pressed={filter === f.value}
-              onClick={() => setFilter(f.value)}
-            >
-              {f.label}
-            </button>
-          ))}
+          <div className="notif-filters" role="group" aria-label="Filter notifications">
+            {FILTERS.map(f => (
+              <button
+                key={f.value}
+                type="button"
+                className="notif-filter"
+                aria-pressed={filter === f.value}
+                onClick={() => setFilter(f.value)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          <ul className="notif-list" aria-live="polite">
+            {visible.map(item => (
+              <NotificationCard key={item.id} item={item} onOpen={() => navigate(item.path)} />
+            ))}
+            {visible.length === 0 && <li className="notif-empty">{EMPTY_MESSAGES[filter]}</li>}
+          </ul>
         </div>
-
-        <ul className="notif-list" aria-live="polite">
-          {visible.map(item => (
-            <NotificationCard key={item.id} item={item} onOpen={() => navigate(item.path)} />
-          ))}
-          {visible.length === 0 && <li className="notif-empty">{EMPTY_MESSAGES[filter]}</li>}
-        </ul>
       </main>
     </div>
   );
 }
-
-export default Notifications;

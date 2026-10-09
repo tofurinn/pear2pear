@@ -3,7 +3,7 @@ import { hourToSlot, slotToHour } from '../student-utils.tsx';
 
 // ─── Form types ────────────────────────────────────────────────────────────────
 
-export type SupportMode = 'Physical' | 'Online';
+export type SupportMode = 'Physical' | 'Virtual';
 
 // Combined form data across all steps
 export interface RequestFormData {

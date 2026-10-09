@@ -10,7 +10,7 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(68, 36, 33, 0.45);
+  background: rgba(33, 68, 56, 0.45);
 }
 
 .popup-card {

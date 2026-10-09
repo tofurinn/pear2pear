@@ -1,5 +1,5 @@
 /* Session details popup.
-   Reuses your existing .ui-category-tag and .ui-status-pill classes;
+   Reuses the CategoryTag component and .ui-status-pill;
    everything else is prefixed .session-modal-* so nothing else is affected.
    Colours are approximated from the design: map them to your variables. */
 

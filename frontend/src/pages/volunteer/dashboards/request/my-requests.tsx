@@ -88,7 +88,7 @@ function VolunteerRequests() {
           onAccept={() => handleAccept(selected)}
           onReject={() => handleReject(selected)}
           onSchedule={() => navigate('/volunteer/session-form', { state: { reqID: selected.reqID } })}
-          onViewSession={() => navigate('/volunteer/sessions')}
+          onViewSession={() => navigate('/volunteer/my-sessions')}
         />
       )}
     </div>
