@@ -2,10 +2,12 @@ import { Timestamp } from 'firebase/firestore';
 import type { Support_Request } from '../../types/Support_Request';
 import type { Support_Session } from '../../types/Support_Session';
 import type {
+  DashboardStatus,
   DashboardRequestItem,
   DashboardSessionItem,
-  DashboardStatusTone,
 } from '../../types/Dashboard';
+
+// --- Shared date and time helpers ---------------------------------------------------------------------------------------
 
 export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -42,19 +44,16 @@ export const toDateKey = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 export const parseDateKey = (key: string) => new Date(`${key}T00:00:00`);
 
-// ─── What a session card needs ─────────────────────────────────────────────────
+// -- Student dashboard display models ---------------------------------------------------------------------------------------
 
-export type StatusTone = DashboardStatusTone;
-
-// Volunteer.name lives on User and the rating count isn't stored yet, so the backend will assemble this
-export interface VolunteerSummary {
+export interface StudentVolunteerSummary {
   name: string;
   rating: number;
   ratingCount: number;
   skills?: string[];
 }
 
-export interface SessionItem extends DashboardSessionItem {
+export interface StudentSessionItem extends DashboardSessionItem {
   volunteer?: {
     name: string;
     rating: number;
@@ -64,7 +63,62 @@ export interface SessionItem extends DashboardSessionItem {
   };
 }
 
-const STATUS_PILL: Record<Support_Session['sessStatus'], { label: string; tone: StatusTone }> = {
+export interface StudentRequestItem extends DashboardRequestItem {
+  volunteer: {
+    name: string;
+    rating: number;
+    reviewCount: number;
+    skills?: string[];
+    requestStatusLabel: string;
+  };
+}
+
+// -- Student request status and mapping ---------------------------------------------------------------------------------------
+
+const STUDENT_REQUEST_STATUS: Record<Support_Request['reqStatus'], DashboardStatus> = {
+  Pending:   { label: 'Pending',   tone: 'pending' },
+  Accepted:  { label: 'Accepted',  tone: 'accepted' },
+  Scheduled: { label: 'Scheduled', tone: 'scheduled' },   // a session has been arranged from it
+  Rejected:  { label: 'Rejected',  tone: 'rejected' },
+  Cancelled: { label: 'Cancelled', tone: 'cancelled' },
+};
+
+export const getStudentRequestStatus = (reqStatus: Support_Request['reqStatus']) =>
+  STUDENT_REQUEST_STATUS[reqStatus];
+
+export const toStudentRequestItem = (
+  request: Support_Request,
+  volunteer: StudentVolunteerSummary,
+): StudentRequestItem => ({
+  reqID: request.reqID,
+  reqStatus: request.reqStatus,
+  category: request.category,
+  title: request.title,
+  personName: volunteer.name,
+  dateLabel: formatDate(request.reqTimestamp.toDate()),
+  status: getStudentRequestStatus(request.reqStatus),
+  description: request.description,
+  volunteer: {
+    name: volunteer.name,
+    rating: volunteer.rating,
+    reviewCount: volunteer.ratingCount,
+    skills: volunteer.skills,
+    requestStatusLabel: request.reqStatus,
+  },
+});
+
+export const buildStudentRequestItems = (
+  requests: Support_Request[],
+  volunteers: Record<string, StudentVolunteerSummary>,
+): StudentRequestItem[] =>
+  requests.flatMap(request => {
+    const volunteer = volunteers[request.volID];
+    return volunteer ? [toStudentRequestItem(request, volunteer)] : [];
+  });
+
+// -- Student session status and mapping ---------------------------------------------------------------------------------------
+
+const STUDENT_SESSION_STATUS: Record<Support_Session['sessStatus'], DashboardStatus> = {
   Planned:   { label: 'Planned',   tone: 'planned' },
   Confirmed: { label: 'Confirmed', tone: 'confirmed' },
   Completed: { label: 'Completed', tone: 'completed' },   // finished, waiting for feedback
@@ -73,20 +127,20 @@ const STATUS_PILL: Record<Support_Session['sessStatus'], { label: string; tone: 
 };
 
 // Planned means only one side has confirmed so far. Labels are from the student's point of view.
-const getStatusPill = (session: Support_Session): { label: string; tone: StatusTone } => {
+export const getStudentSessionStatus = (session: Support_Session): DashboardStatus => {
   if (session.sessStatus === 'Planned') {
     if (session.studConfirmed && !session.volConfirmed) return { label: 'Waiting', tone: 'planned' }; // student arranged it, volunteer hasn't responded
     if (!session.studConfirmed && session.volConfirmed) return { label: 'To confirm', tone: 'to-confirm' };  // volunteer arranged it, student still has to confirm
   }
-  return STATUS_PILL[session.sessStatus];
+  return STUDENT_SESSION_STATUS[session.sessStatus];
 };
 
 // Pure mapping: once the data comes from Firestore, only the inputs change
-export const toSessionItem = (
+export const toStudentSessionItem = (
   session: Support_Session,
   request: Support_Request,
-  volunteer: VolunteerSummary
-): SessionItem => ({
+  volunteer: StudentVolunteerSummary
+): StudentSessionItem => ({
   sessID: session.sessID,
   sessStatus: session.sessStatus,
   studConfirmed: session.studConfirmed,
@@ -97,7 +151,7 @@ export const toSessionItem = (
   rating: { value: volunteer.rating, count: volunteer.ratingCount },
   sessDate: session.sessDate,
   dateLabel: formatDate(session.sessDate),
-  status: getStatusPill(session),
+  status: getStudentSessionStatus(session),
   description: request.description,
   supportMode: session.supportMode,
   timeslot: formatTimeslot(session.sessTimeSlot.toDate()),
@@ -111,20 +165,20 @@ export const toSessionItem = (
   },
 });
 
-export const buildSessionItems = (
+export const buildStudentSessionItems = (
   sessions: Support_Session[],
   requests: Support_Request[],
-  volunteers: Record<string, VolunteerSummary>
-): SessionItem[] =>
+  volunteers: Record<string, StudentVolunteerSummary>
+): StudentSessionItem[] =>
   sessions.flatMap(session => {
     const request = requests.find(r => r.reqID === session.reqID);
     const volunteer = request ? volunteers[request.volID] : undefined;
-    return request && volunteer ? [toSessionItem(session, request, volunteer)] : [];
+    return request && volunteer ? [toStudentSessionItem(session, request, volunteer)] : [];
   });
 
-// ─── Mock data (delete once this comes from Firestore) ─────────────────────────
+// -- Student session and volunteer mock data  ---------------------------------------------------------------------------------------
 
-export const MOCK_VOLUNTEERS: Record<string, VolunteerSummary> = {
+export const MOCK_VOLUNTEERS: Record<string, StudentVolunteerSummary> = {
   'vol-chiikawa': { name: 'Chiikawa', rating: 4.5, ratingCount: 10, skills: ['Gardening', 'Lawn care'] },
   'vol-omniman':  { name: 'Omniman', rating: 4, ratingCount: 2, skills: ['Computer repair', 'IT troubleshooting'] },
   'vol-natasha':  { name: 'Natasha Laoshi', rating: 4.5, ratingCount: 10, skills: ['Mathematics', 'Study support'] },
@@ -198,55 +252,8 @@ export const MOCK_SESSION_FEEDBACK: Record<string, { rating: number; comments: s
   },
 };
 
-// ─── My Requests ───────────────────────────────────────────────────────────────
+// -- Student request mock data  ---------------------------------------------------------------------------------------
 
-export interface RequestItem extends DashboardRequestItem {
-  volunteer: {
-    name: string;
-    rating: number;
-    reviewCount: number;
-    skills?: string[];
-    requestStatusLabel: string;
-  };
-}
-
-const REQUEST_STATUS_PILL: Record<Support_Request['reqStatus'], { label: string; tone: StatusTone }> = {
-  Pending:   { label: 'Pending',   tone: 'pending' },
-  Accepted:  { label: 'Accepted',  tone: 'accepted' },
-  Scheduled: { label: 'Scheduled', tone: 'scheduled' },   // a session has been arranged from it
-  Rejected:  { label: 'Rejected',  tone: 'rejected' },
-  Cancelled: { label: 'Cancelled', tone: 'cancelled' },
-};
-
-// Pure mapping, like toSessionItem: once the data comes from Firestore only the inputs change
-export const toRequestItem = (request: Support_Request, volunteer: VolunteerSummary): RequestItem => ({
-  reqID: request.reqID,
-  reqStatus: request.reqStatus,
-  category: request.category,
-  title: request.title,
-  personName: volunteer.name,
-  dateLabel: formatDate(request.reqTimestamp.toDate()),
-  status: REQUEST_STATUS_PILL[request.reqStatus],
-  description: request.description,
-  volunteer: {
-    name: volunteer.name,
-    rating: volunteer.rating,
-    reviewCount: volunteer.ratingCount,
-    skills: volunteer.skills,
-    requestStatusLabel: request.reqStatus,
-  },
-});
-
-export const buildRequestItems = (
-  requests: Support_Request[],
-  volunteers: Record<string, VolunteerSummary>
-): RequestItem[] =>
-  requests.flatMap(request => {
-    const volunteer = volunteers[request.volID];
-    return volunteer ? [toRequestItem(request, volunteer)] : [];
-  });
-
-// Mock requests for the My Requests page (delete once this comes from Firestore)
 const CAT_SITTING = { title: 'Cat-sitting for a weekend!', category: 'General Student Support' } as const;
 const LOGIN = { title: 'Cybersafe Login Problem', category: 'Technology Support' } as const;
 const BIRTHDAY = { title: 'Birthday Party Helper!!!', category: 'General Student Support' } as const;

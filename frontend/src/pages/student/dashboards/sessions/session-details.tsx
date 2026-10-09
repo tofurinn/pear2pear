@@ -4,12 +4,12 @@ import { createPortal } from 'react-dom';
 
 import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
-import type { SessionItem } from '../../student-utils.tsx';
+import type { StudentSessionItem } from '../../student-utils.tsx';
 
 import '../../../../components/page-css/details.css';
 
 // ─── Extra fields the popup needs ──────────────────────────────────────────────
-// Schedule details are populated by buildSessionItems() when session data is mapped.
+// Schedule details are populated by buildStudentSessionItems() when session data is mapped.
 
 export interface SessionDetailsExtras {
   description?: string;
@@ -31,7 +31,7 @@ export interface SessionDetailsExtras {
   };
 }
 
-export type SessionDetailsItem = SessionItem & SessionDetailsExtras;
+export type SessionDetailsItem = StudentSessionItem & SessionDetailsExtras;
 
 // ─── Small icons (swap for ones in icons.tsx if you already have them) ─────────
 

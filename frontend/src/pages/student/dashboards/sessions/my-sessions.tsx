@@ -5,8 +5,8 @@ import SessionDetailsModal from './session-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildSessionItems } from '../../student-utils.tsx';
-import type { SessionItem } from '../../student-utils.tsx';
+import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_VOLUNTEERS, buildStudentSessionItems } from '../../student-utils.tsx';
+import type { StudentSessionItem } from '../../student-utils.tsx';
 import { hourToSlot, toDateKey } from '../../student-utils.tsx';
 
 import '../../../../components/ui.css';
@@ -18,19 +18,19 @@ function MySessions() {
   const navigate = useNavigate();
 
   // TODO: load this student's sessions (and their requests / volunteers) from Firestore
-  const [items, setItems] = useState<SessionItem[]>(() =>
-    buildSessionItems(MOCK_SESSIONS, MOCK_REQUESTS, MOCK_VOLUNTEERS)
+  const [items, setItems] = useState<StudentSessionItem[]>(() =>
+    buildStudentSessionItems(MOCK_SESSIONS, MOCK_REQUESTS, MOCK_VOLUNTEERS)
   );
 
   const planned = items.filter(item => item.sessStatus === 'Planned');
   const confirmed = items.filter(item => item.sessStatus === 'Confirmed');
   const toRate = items.filter(item => item.sessStatus === 'Completed'); // 'Rated' ones live in Support History
 
-  const [selected, setSelected] = useState<SessionItem | null>(null);
-  const handleViewDetails = (item: SessionItem) => setSelected(item);
-  const handleFeedback = (item: SessionItem) => navigate(`/student/feedback-form/${item.sessID}`);
+  const [selected, setSelected] = useState<StudentSessionItem | null>(null);
+  const handleViewDetails = (item: StudentSessionItem) => setSelected(item);
+  const handleFeedback = (item: StudentSessionItem) => navigate(`/student/feedback-form/${item.sessID}`);
 
-  const handleCancelSession = (item: SessionItem) => {
+  const handleCancelSession = (item: StudentSessionItem) => {
     setItems(previous => previous.map(session => session.sessID === item.sessID
       ? { ...session, sessStatus: 'Cancelled', status: { label: 'Cancelled', tone: 'cancelled' } }
       : session
@@ -38,7 +38,7 @@ function MySessions() {
     setSelected(null);
   };
 
-  const handleConfirmArrangement = (item: SessionItem) => {
+  const handleConfirmArrangement = (item: StudentSessionItem) => {
     setItems(previous => previous.map(session => session.sessID === item.sessID
       ? {
           ...session,
@@ -52,7 +52,7 @@ function MySessions() {
     setSelected(null);
   };
 
-  const handleRearrange = (item: SessionItem) => {
+  const handleRearrange = (item: StudentSessionItem) => {
     const session = MOCK_SESSIONS.find(candidate => candidate.sessID === item.sessID);
     if (!session) return;
 

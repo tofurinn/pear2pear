@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 
 import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
-import type { SessionItem } from '../../student-utils.tsx';
+import type { StudentSessionItem } from '../../student-utils.tsx';
 
 import '../../../../components/page-css/details.css';
 
@@ -13,7 +13,7 @@ interface SupportFeedback {
 }
 
 interface SupportDetailsModalProps {
-  item: SessionItem;
+  item: StudentSessionItem;
   feedback?: SupportFeedback;
   onClose: () => void;
 }

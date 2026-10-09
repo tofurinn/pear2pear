@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -51,12 +51,12 @@ function validate(data: StudentStepOneData): FormErrors {
 
 const UserRegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const saved = (location.state as { stepOne?: StudentStepOneData } | null)?.stepOne;
 
-  const [formData, setFormData] = useState<StudentStepOneData>({
-    name: "",
-    email: "",
-    studentID: "",
-  });
+  const [formData, setFormData] = useState<StudentStepOneData>(
+    saved ?? { name: "", email: "", studentID: "" }
+  );
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -94,13 +94,18 @@ const UserRegisterPage: React.FC = () => {
   };
 
   const handleBecomeVolunteer = () => {
-    navigate(ROUTES.volunteerRegister);
+    setSubmitError("");
+
+    const validationErrors = validate(formData);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+    navigate(ROUTES.volunteerRegister, { state: { stepOne: formData } });
   };
 
   return (
     <div className="register-page">
       {/* Navigation bar */}
-        <Navbar />
+      <Navbar />
 
       {/* Main content */}
       <main className="register-main">

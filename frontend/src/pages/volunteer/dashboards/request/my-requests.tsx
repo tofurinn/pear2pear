@@ -5,7 +5,7 @@ import RequestDetailsModal from './request-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { BoardSection, ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
-import { MOCK_INCOMING_REQUESTS, requestPatch } from '../../volunteer-utils.ts';
+import { createVolunteerRequestPatch, MOCK_INCOMING_REQUESTS } from '../../volunteer-utils.ts';
 import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
 
 import '../../../../components/ui.css';
@@ -28,8 +28,8 @@ function VolunteerRequests() {
   const updateRequest = (id: VolunteerRequestItem['reqID'], patch: Partial<VolunteerRequestItem>) =>
     setItems(prev => prev.map(item => (item.reqID === id ? { ...item, ...patch } : item)));
 
-  const handleAccept = (item: VolunteerRequestItem) => updateRequest(item.reqID, requestPatch('Accepted', 'accepted', 'Accepted'));
-  const handleReject = (item: VolunteerRequestItem) => updateRequest(item.reqID, requestPatch('Rejected', 'rejected', 'Rejected'));
+  const handleAccept = (item: VolunteerRequestItem) => updateRequest(item.reqID, createVolunteerRequestPatch('Accepted'));
+  const handleReject = (item: VolunteerRequestItem) => updateRequest(item.reqID, createVolunteerRequestPatch('Rejected'));
 
   const renderCard = (item: VolunteerRequestItem) => {
     const { tone, label } = item.status;

@@ -9,9 +9,9 @@ import IndexPage from './pages/index/index'
 
 // REGISTRATION PAGES-----------------------------------------------------------------------------
 import UserRegisterPage from "./pages/registration/user-register/user-register";
+import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-register";
 import EmailValidationPage from "./pages/registration/email-validation/email-validation";
 import SetPasswordPage from "./pages/registration/set-password/set-password";
-import VolunteerRegisterPage from "./pages/registration/volunteer-register/volunteer-steps/step1";
 
 // LOGIN PAGES-----------------------------------------------------------------------------
 import UserLoginPage from "./pages/login/login";
@@ -35,11 +35,10 @@ import FeedbackForm from './pages/student/feedback/feedback-form';
 import StudentNotifications from './pages/student/notifications/notifications';
 
 //VOLUNTEER PAGES -----------------------------------------------------------------------------
-import VolunteerDashboard from "./pages/volunteer/dashboard/dashboard";
-import VolunteerRequests from "./pages/volunteer/dashboard/request/my-support-requests";
-import VolunteerSessions from "./pages/volunteer/dashboard/session/my-sessions";
-import VolunteerHistory from "./pages/volunteer/dashboard/history/my-support-history";
-import VolunteerNotifications from "./pages/volunteer/notifications/notifications";
+import VolunteerDashboard from "./pages/volunteer/dashboards/dashboard";
+import VolunteerRequests from "./pages/volunteer/dashboards/request/my-requests";
+import VolunteerSessions from "./pages/volunteer/dashboards/session/my-sessions";
+import VolunteerHistory from "./pages/volunteer/dashboards/support-history/my-support-history";
 
 
 function App() {
