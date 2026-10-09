@@ -130,6 +130,32 @@
   padding-top: 0;
 }
 
+.ui-btn-primary {
+  height: 2rem;
+  letter-spacing: 0.02em;
+  padding-inline: calc(32 * var(--u));
+  color: #fff;
+  background: var(--color-green1);
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(18 * var(--u));
+  padding: calc(8 * var(--u)) calc(24 * var(--u));
+  font-family: var(--font-sans);
+  font-size: var(--fs-btn);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.4;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ui-btn-primary:hover:not(:disabled) {
+  background: var(--color-green-dark);
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {

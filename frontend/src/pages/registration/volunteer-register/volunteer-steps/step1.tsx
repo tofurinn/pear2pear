@@ -1,16 +1,6 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import Navbar from "../../../../components/navbar/global-navbar";
-import "../../user-register/user-register.css";
-import "../volunteer-register.css";
+import type { VolunteerProfileData } from "../volunteer-register";
 
-// TODO: fill in your route paths
-const ROUTES = {
-  previousPage: "", // e.g. the student step 1 page
-  nextPage: "",
-};
-
-// TODO: swap these labels for ids/enums if your backend expects them
 const CATEGORIES = [
   "Academic Support",
   "Technology Support",
@@ -18,35 +8,28 @@ const CATEGORIES = [
   "General Student Support",
 ] as const;
 
-// Listed row by row so the 3-column grid matches the wireframe
 const SKILLS = [
-  "High Achiever",
-  "Navigation",
-  "Cooking",
-  "Patience",
-  "Friendly",
-  "Sewing",
-  "Tech Wiz",
-  "Strength",
-  "Problem-solver",
+  "High Achiever", "Navigation", "Cooking",
+  "Patience", "Friendly", "Sewing",
+  "Tech Wiz", "Strength", "Problem-solver",
 ] as const;
 
-// TODO: add the rest of the support modes
 const SUPPORT_MODES = [
   { value: "virtual", label: "Virtual" },
-  { value: "physical", label: "Physical" }
+  { value: "physical", label: "Physical" },
 ];
-
-export interface VolunteerProfileData {
-  categories: string[];
-  supportMode: string;
-  skills: string[];
-}
 
 type FormErrors = {
   categories?: string;
   skills?: string;
 };
+
+interface Step1Props {
+  data: VolunteerProfileData;
+  onChange: (patch: Partial<VolunteerProfileData>) => void;
+  onBack: () => void;
+  onNext: () => void;
+}
 
 const toggleItem = (list: string[], item: string): string[] =>
   list.includes(item) ? list.filter((i) => i !== item) : [...list, item];
@@ -75,151 +58,111 @@ const ChevronDown = () => (
   </svg>
 );
 
-const VolunteerRegisterPage: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [categories, setCategories] = useState<string[]>([]);
-  const [supportMode, setSupportMode] = useState<string>(SUPPORT_MODES[0].value);
-  const [skills, setSkills] = useState<string[]>([]);
+export default function Step1({ data, onChange, onBack, onNext }: Step1Props) {
   const [errors, setErrors] = useState<FormErrors>({});
 
   const handleToggleCategory = (category: string) => {
-    setCategories((prev) => toggleItem(prev, category));
+    const categories = toggleItem(data.categories, category);
+    onChange({ categories });
     if (errors.categories) setErrors((prev) => ({ ...prev, categories: undefined }));
   };
 
   const handleToggleSkill = (skill: string) => {
-    setSkills((prev) => toggleItem(prev, skill));
+    const skills = toggleItem(data.skills, skill);
+    onChange({ skills });
     if (errors.skills) setErrors((prev) => ({ ...prev, skills: undefined }));
-  };
-
-  const handlePrevious = () => {
-    navigate(ROUTES.previousPage);
   };
 
   const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const nextErrors: FormErrors = {};
-    if (categories.length === 0) nextErrors.categories = "Choose at least one category.";
-    if (skills.length === 0) nextErrors.skills = "Choose at least one skill.";
+    if (data.categories.length === 0) nextErrors.categories = "Choose at least one category.";
+    if (data.skills.length === 0) nextErrors.skills = "Choose at least one skill.";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    const volunteerProfile: VolunteerProfileData = { categories, supportMode, skills };
-
-    // TODO: save via your API here if this step needs to be stored before moving on
-
-    // Keep anything passed from earlier pages and add this step's data
-    navigate(ROUTES.nextPage, {
-      state: { ...(location.state as object | null), volunteerProfile },
-    });
+    onNext();
   };
 
   return (
-    // "ui-page" provides the sizing tokens the .ui-btn buttons rely on
-    <div className="ui-page register-page">
-      <Navbar />
+    <form className="register-form" onSubmit={handleNext} noValidate>
+      <fieldset className="volunteer-fieldset">
+        <legend className="register-field__label volunteer-legend">Category</legend>
+        <div className="volunteer-options">
+          {CATEGORIES.map((category) => (
+            <label key={category} className="volunteer-check">
+              <input
+                type="checkbox"
+                className="volunteer-check__input"
+                checked={data.categories.includes(category)}
+                onChange={() => handleToggleCategory(category)}
+              />
+              <span className="volunteer-check__box" aria-hidden="true">
+                <CheckIcon />
+              </span>
+              <span className="volunteer-check__label">{category}</span>
+            </label>
+          ))}
+        </div>
+        {errors.categories && (
+          <p className="register-field__error" role="alert">{errors.categories}</p>
+        )}
+      </fieldset>
 
-      <main className="register-main">
-        <section className="register-card">
-          <h1 className="register-card__title">Register as a Volunteer</h1>
+      <div className="register-field">
+        <label htmlFor="supportMode" className="register-field__label">
+          Preferred Support Mode
+        </label>
+        <div className="volunteer-select">
+          <select
+            id="supportMode"
+            name="supportMode"
+            className="register-field__input volunteer-select__control"
+            value={data.supportMode}
+            onChange={(e) => onChange({ supportMode: e.target.value })}
+          >
+            {SUPPORT_MODES.map((mode) => (
+              <option key={mode.value} value={mode.value}>{mode.label}</option>
+            ))}
+          </select>
+          <span className="volunteer-select__icon"><ChevronDown /></span>
+        </div>
+      </div>
 
-          <form className="register-form" onSubmit={handleNext} noValidate>
-            {/* Category */}
-            <fieldset className="volunteer-fieldset">
-              <legend className="register-field__label volunteer-legend">Category</legend>
-              <div className="volunteer-options">
-                {CATEGORIES.map((category) => (
-                  <label key={category} className="volunteer-check">
-                    <input
-                      type="checkbox"
-                      className="volunteer-check__input"
-                      checked={categories.includes(category)}
-                      onChange={() => handleToggleCategory(category)}
-                    />
-                    <span className="volunteer-check__box" aria-hidden="true">
-                      <CheckIcon />
-                    </span>
-                    <span className="volunteer-check__label">{category}</span>
-                  </label>
-                ))}
-              </div>
-              {errors.categories && (
-                <p className="register-field__error" role="alert">
-                  {errors.categories}
-                </p>
-              )}
-            </fieldset>
+      <fieldset className="volunteer-fieldset">
+        <legend className="register-field__label volunteer-legend">Skills</legend>
+        <div className="volunteer-options volunteer-options--grid">
+          {SKILLS.map((skill) => (
+            <label key={skill} className="volunteer-check">
+              <input
+                type="checkbox"
+                className="volunteer-check__input"
+                checked={data.skills.includes(skill)}
+                onChange={() => handleToggleSkill(skill)}
+              />
+              <span className="volunteer-check__box" aria-hidden="true">
+                <CheckIcon />
+              </span>
+              <span className="volunteer-check__label">{skill}</span>
+            </label>
+          ))}
+        </div>
+        {errors.skills && (
+          <p className="register-field__error" role="alert">{errors.skills}</p>
+        )}
+      </fieldset>
 
-            {/* Preferred Support Mode */}
-            <div className="register-field">
-              <label htmlFor="supportMode" className="register-field__label">
-                Preferred Support Mode
-              </label>
-              <div className="volunteer-select">
-                <select
-                  id="supportMode"
-                  name="supportMode"
-                  className="register-field__input volunteer-select__control"
-                  value={supportMode}
-                  onChange={(e) => setSupportMode(e.target.value)}
-                >
-                  {SUPPORT_MODES.map((mode) => (
-                    <option key={mode.value} value={mode.value}>
-                      {mode.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="volunteer-select__icon">
-                  <ChevronDown />
-                </span>
-              </div>
-            </div>
-
-            {/* Skills */}
-            <fieldset className="volunteer-fieldset">
-              <legend className="register-field__label volunteer-legend">Skills</legend>
-              <div className="volunteer-options volunteer-options--grid">
-                {SKILLS.map((skill) => (
-                  <label key={skill} className="volunteer-check">
-                    <input
-                      type="checkbox"
-                      className="volunteer-check__input"
-                      checked={skills.includes(skill)}
-                      onChange={() => handleToggleSkill(skill)}
-                    />
-                    <span className="volunteer-check__box" aria-hidden="true">
-                      <CheckIcon />
-                    </span>
-                    <span className="volunteer-check__label">{skill}</span>
-                  </label>
-                ))}
-              </div>
-              {errors.skills && (
-                <p className="register-field__error" role="alert">
-                  {errors.skills}
-                </p>
-              )}
-            </fieldset>
-
-            {/* Buttons follow the shared ui.css styles */}
-            <div className="ui-actions volunteer-actions">
-              <button type="button" className="ui-btn ui-btn-outline" onClick={handlePrevious}>
-                <ChevronLeft />
-                Previous Page
-              </button>
-              <button type="submit" className="ui-btn ui-btn-outline">
-                Next Page
-                <ChevronRight />
-              </button>
-            </div>
-          </form>
-        </section>
-      </main>
-    </div>
+      <div className="ui-actions volunteer-actions">
+        <button type="button" className="ui-btn ui-btn-outline" onClick={onBack}>
+          <ChevronLeft />
+          Previous Page
+        </button>
+        <button type="submit" className="ui-btn ui-btn-outline">
+          Next Page
+          <ChevronRight />
+        </button>
+      </div>
+    </form>
   );
-};
-
-export default VolunteerRegisterPage;
+}
