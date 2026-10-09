@@ -5,7 +5,11 @@ import SessionDetailsModal from './session-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { BoardSection, ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
-import { getVolunteerSessionStatus, MOCK_VOLUNTEER_SESSIONS, sessionPatch } from '../../volunteer-utils.ts';
+import {
+  createVolunteerSessionPatch,
+  getVolunteerSessionStatus,
+  MOCK_VOLUNTEER_SESSIONS,
+} from '../../volunteer-utils.ts';
 import type { VolunteerSessionItem } from '../../volunteer-utils.ts';
 import { hourToSlot, toDateKey } from '../../../student/student-utils.tsx';
 
@@ -30,16 +34,16 @@ function VolunteerSessions() {
 
   const handleConfirm = (item: VolunteerSessionItem) =>
     updateSession(item.sessID, {
-      ...sessionPatch('Confirmed', 'confirmed', 'Confirmed'),
+      ...createVolunteerSessionPatch('Confirmed'),
       studConfirmed: true,
       volConfirmed: true,
     });
   const handleCancel = (item: VolunteerSessionItem) => {
-    updateSession(item.sessID, sessionPatch('Cancelled', 'cancelled', 'Cancelled'));
+    updateSession(item.sessID, createVolunteerSessionPatch('Cancelled'));
     setSelectedID(null);
   };
   const handleMarkComplete = (item: VolunteerSessionItem) =>
-    updateSession(item.sessID, sessionPatch('Completed', 'completed', 'Completed'));
+    updateSession(item.sessID, createVolunteerSessionPatch('Completed'));
 
   const handleRearrange = (item: VolunteerSessionItem) => {
     navigate(`/volunteer/session/${item.sessID}/edit`, {

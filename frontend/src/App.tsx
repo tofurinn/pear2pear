@@ -34,10 +34,10 @@ import SessionRearrangement from './pages/student/session/session-rearrangement'
 import FeedbackForm from './pages/student/feedback/feedback-form';
 
 //VOLUNTEER PAGES -----------------------------------------------------------------------------
-import VolunteerDashboard from "./pages/volunteer/dashboard/dashboard";
-import VolunteerRequests from "./pages/volunteer/dashboard/request/my-support-requests";
-import VolunteerSessions from "./pages/volunteer/dashboard/session/my-sessions";
-import VolunteerHistory from "./pages/volunteer/dashboard/history/my-support-history";
+import VolunteerDashboard from "./pages/volunteer/dashboards/dashboard";
+import VolunteerRequests from "./pages/volunteer/dashboards/request/my-requests";
+import VolunteerSessions from "./pages/volunteer/dashboards/session/my-sessions";
+import VolunteerHistory from "./pages/volunteer/dashboards/support-history/my-support-history";
 
 
 function App() {

@@ -5,8 +5,8 @@ import RequestDetailsModal from './request-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
-import { MOCK_MY_REQUESTS, MOCK_VOLUNTEERS, buildRequestItems } from '../../student-utils.tsx';
-import type { RequestItem } from '../../student-utils.tsx';
+import { MOCK_MY_REQUESTS, MOCK_VOLUNTEERS, buildStudentRequestItems } from '../../student-utils.tsx';
+import type { StudentRequestItem } from '../../student-utils.tsx';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
@@ -17,15 +17,15 @@ function MyRequests() {
   const navigate = useNavigate();
 
   // TODO: load this student's requests (and the volunteers' names) from Firestore
-  const items = useMemo(() => buildRequestItems(MOCK_MY_REQUESTS, MOCK_VOLUNTEERS), []);
+  const items = useMemo(() => buildStudentRequestItems(MOCK_MY_REQUESTS, MOCK_VOLUNTEERS), []);
 
   const pending = items.filter(item => item.reqStatus === 'Pending');
   const accepted = items.filter(item => item.reqStatus === 'Accepted');
   // Inactive = no longer waiting on anything: already turned into a session, rejected, or cancelled
   const inactive = items.filter(item => ['Scheduled', 'Rejected', 'Cancelled'].includes(item.reqStatus));
 
-  const [selected, setSelected] = useState<RequestItem | null>(null);
-  const handleViewDetails = (item: RequestItem) => setSelected(item);
+  const [selected, setSelected] = useState<StudentRequestItem | null>(null);
+  const handleViewDetails = (item: StudentRequestItem) => setSelected(item);
 
   return (
     <div className="ui-page">
