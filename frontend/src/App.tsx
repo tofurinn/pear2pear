@@ -13,6 +13,7 @@ import VolunteerRegisterPage from "./pages/registration/volunteer-register/volun
 import EmailValidationPage from "./pages/registration/email-validation/email-validation";
 import SetPasswordPage from "./pages/registration/set-password/set-password";
 import AccountCreatedPage from "./pages/registration/account-created/account-created";
+import VolunteerRegisteredPage from "./pages/registration/account-created/volunteer-registered";
 
 // LOGIN PAGES-----------------------------------------------------------------------------
 import UserLoginPage from "./pages/login/login";
@@ -72,10 +73,11 @@ function App() {
 
           {/* Registration routes */}
           <Route path="/user-registration" element={<UserRegisterPage />} />
-          <Route path="/volunteer-registration" element={<VolunteerRegisterPage />} />
+          <Route path="/volunteer-registration" element={<VolunteerRegisterPage flow="signup" />} />
           <Route path="/email-validation" element={<EmailValidationPage />} />
           <Route path="/set-password" element={<SetPasswordPage />} />
           <Route path="/account-created" element={<AccountCreatedPage />} />
+          <Route path="/volunteer-registered" element={<VolunteerRegisteredPage />} />
 
           {/* Login routes */}
           <Route path="/login" element={<UserLoginPage />} />
@@ -83,7 +85,6 @@ function App() {
           <Route path="/email-verification" element={<EmailVerificationPage />} />
           <Route path="/verify-code" element={<VerifyCodePage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-
 
           {/* - - - STUDENT ROUTES - - - */}
           {/* Dashboard Forms */}
@@ -106,6 +107,7 @@ function App() {
           <Route path="/volunteer/my-sessions" element={<VolunteerSessions />} />
           <Route path="/volunteer/my-support-history" element={<VolunteerHistory />} />
           <Route path="/volunteer/notifications" element={<VolunteerNotifications />} />
+          <Route path="/become-volunteer" element={<VolunteerRegisterPage flow="upgrade" />}/>
 
           {/* Volunteer Forms */}
           <Route path="/volunteer/session-form" element={<MultiStepSessionForm />} />

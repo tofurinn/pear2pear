@@ -12,18 +12,36 @@ export interface VolunteerProfileData {
   availability: string[];
 }
 
-export default function VolunteerRegisterPage() {
+type Flow = "signup" | "upgrade";
 
+interface FlowConfig {
+  backTo: string;       // where step 1's "Previous Page" goes
+  successTo: string;    // where submit goes
+}
+
+const FLOWS: Record<Flow, FlowConfig> = {
+  signup: {
+    backTo: "/user-registration",
+    successTo: "/email-validation",
+  },
+  upgrade: {
+    backTo: "/student/dashboard",
+    successTo: "/volunteer-registered",
+  },
+};
+
+interface VolunteerRegisterPageProps {
+  flow?: Flow;
+}
+
+export default function VolunteerRegisterPage({
+  flow = "signup",
+}: VolunteerRegisterPageProps) {
   const location = useLocation();
-
-  const ROUTES = {
-    register: "/user-registration",
-    validation: "/email-validation",
-    dashboard: "/volunteer/dashboard",
-  };
-
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
+
+  const { backTo, successTo } = FLOWS[flow];
 
   const [profile, setProfile] = useState<VolunteerProfileData>({
     categories: [],
@@ -33,12 +51,12 @@ export default function VolunteerRegisterPage() {
   });
 
   const goToStep = (n: number) =>
-  setParams({ step: String(n) }, { state: location.state });
+    setParams({ step: String(n) }, { state: location.state });
 
   const handleSubmitAll = () => {
     // TODO: send profile to your API
     console.log("Submitting volunteer registration:", profile);
-    navigate(ROUTES.validation, {
+    navigate(successTo, {
       state: { ...(location.state as object | null), volunteerProfile: profile },
     });
   };
@@ -46,7 +64,6 @@ export default function VolunteerRegisterPage() {
   const updateProfile = (patch: Partial<VolunteerProfileData>) =>
     setProfile((prev) => ({ ...prev, ...patch }));
 
-  // Step 2 only shows if step 1 is done. Anything else (including ?step=abc) shows step 1.
   const step1Done = profile.categories.length > 0 && profile.skills.length > 0;
   const step = params.get("step") === "2" && step1Done ? 2 : 1;
 
@@ -62,7 +79,7 @@ export default function VolunteerRegisterPage() {
             <Step1
               data={profile}
               onChange={updateProfile}
-              onBack={() => navigate(ROUTES.register, { state: location.state })}
+              onBack={() => navigate(backTo, { state: location.state })}
               onNext={() => goToStep(2)}
             />
           )}
