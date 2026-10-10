@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { mergePendingSignup } from "../../../firebase/pending-signup";
 import Navbar from "../../../components/navbar/global-navbar";
 import Step1 from "./volunteer-steps/step1";
 import Step2 from "./volunteer-steps/step2";
@@ -54,10 +55,11 @@ export default function VolunteerRegisterPage({
     setParams({ step: String(n) }, { state: location.state });
 
   const handleSubmitAll = () => {
-    // TODO: send profile to your API
     console.log("Submitting volunteer registration:", profile);
+    mergePendingSignup({ volunteerProfile: profile });
+
     navigate(successTo, {
-      state: { ...(location.state as object | null), volunteerProfile: profile },
+      state: { ...(location.state as object | null) },
     });
   };
 

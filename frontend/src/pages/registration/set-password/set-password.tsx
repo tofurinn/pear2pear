@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// TODO: adjust this path if this file lives in a different folder
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../../../firebase/config";
+import { readPendingSignup, clearPendingSignup } from "../../../firebase/pending-signup";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -8,10 +11,6 @@ import "../register.css";
 // TODO: import your Firebase auth helpers and error mapper, e.g.
 // import { login } from "../../../firebase/auth";
 // import { getAuthErrorMessage } from "../../../firebase/errors";
-
-const ROUTES = {
-  afterSet: "/account-created",
-};
 
 interface SetPasswordFormData {
   password: string;
@@ -67,19 +66,51 @@ const SetPasswordPage: React.FC = () => {
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
+    const pending = readPendingSignup();
+    if (!pending?.stepOne.email) {
+      // State lost (rare now that sessionStorage is in play, but be safe)
+      setSubmitError("Your session expired. Please start over.");
+      navigate("/user-registration", { replace: true });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // TODO: sign in with your auth helper, e.g.
-      // await login(formData.email.trim(), formData.password);
+      // 1. Create the Firebase Auth account
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        pending.stepOne.email,
+        formData.password
+      );
 
-      // TODO: if the account's accStatus is "Pending" (email not verified yet),
-      // send them to the email verification page instead.
-      // TODO: send volunteers to the volunteer dashboard if that's where they should land.
+      // 2. Write the user document, keyed by auth UID
+      await setDoc(doc(db, "users", cred.user.uid), {
+        UID: cred.user.uid,
+        name: pending.stepOne.name,
+        email: pending.stepOne.email,
+        studentID: pending.stepOne.studentID,
+        isVolunteer: Boolean(pending.volunteerProfile),
+        createdAt: serverTimestamp(),
+        // no accStatus — you said you're removing it
+      });
 
-      navigate(ROUTES.afterSet);
-    } catch {
-      // TODO: use your errors.ts mapping here. Keep wrong email and wrong password
-      // on the same message so the form doesn't reveal which accounts exist.
+      // 3. If they came through the volunteer flow, write the volunteer doc too
+      if (pending.volunteerProfile) {
+        await setDoc(doc(db, "volunteers", cred.user.uid), {
+          UID: cred.user.uid,
+          ...pending.volunteerProfile,
+          avgRating: 0,
+          createdAt: serverTimestamp(),
+        });
+      }
+
+      // 4. Clean up
+      clearPendingSignup();
+
+      // 5. Move on
+      navigate("/account-created", { replace: true });
+    } catch (err) {
+      // map firebase errors here
       setSubmitError("Incorrect email or password.");
     } finally {
       setIsSubmitting(false);
