@@ -312,7 +312,7 @@
 }
 
 .verify-card__resend-text {
-  margin: 0.6rem 0 0;
+  margin: 0.5rem 0 0;
   font-size: 1rem;
   color: var(--color-text);
 }
@@ -585,6 +585,15 @@
     font-size: 1.4rem;
     border-radius: 0.8rem;
   }
+
+  .verify-card__subtitle {
+  font-size: 1.1rem;
+}
+
+.verify-card__resend-text {
+  margin: 0.6rem 0 0;
+  font-size: 0.9rem;
+}
 }
 
 @media (max-width: 480px) {

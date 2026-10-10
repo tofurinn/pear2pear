@@ -3,16 +3,17 @@ import { useNavigate } from "react-router-dom";
 // TODO: adjust these paths to your folders
 import MainNavbar from "../../../components/navbar/main-navbar";
 import HourPicker from "../../../components/hour-picker/hour-picker";
-import VolunteerProfileFields from "../../../components/volunteer-profile-fields";
+import VolunteerProfileFields from "../../../components/profile-fields/volunteer-profile-fields";
 import type {
   ProfileFieldsErrors,
   ProfileFieldsValue,
-} from "../../../components/volunteer-profile-fields";
+} from "../../../components/profile-fields/volunteer-profile-fields";
 // Shared styles for the fields (the register-* and volunteer-* classes)
 import "../../registration/register.css";
 import "../../registration/volunteer-register/volunteer-register.css";
 // Keep this one last so its overrides win
 import "./volunteer-settings.css";
+import "../../../components/page-css/settings.css";
 
 // TODO: fill in your route paths
 const ROUTES = {
@@ -135,7 +136,7 @@ export default function VolunteerSettingsPage() {
   };
 
   return (
-    <div className="ui-page register-page settings-page">
+    <div className="ui-page register-page settings-page settings-page--volunteer">
       <MainNavbar dashboardPath={ROUTES.dashboard} />
 
       <main className="register-main">
