@@ -31,7 +31,7 @@ export default function AccountCreatedPage() {
           </h1>
 
           <p className="pass-card__text success-card__text">
-            Your account is ready. Proceed to your dashboard to begin exploring!
+            Your account is ready. Continue to your dashboard to begin exploring!
           </p>
 
           <button

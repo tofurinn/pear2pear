@@ -10,8 +10,6 @@ const ROUTES = {
 
 const CODE_LENGTH = 6;
 
-
-
 const EmailValidationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
