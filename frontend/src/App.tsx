@@ -34,6 +34,7 @@ import MultiStepSessionForm from './pages/student/session/session-form';
 import SessionRearrangement from './pages/student/session/session-rearrangement';
 import FeedbackForm from './pages/student/feedback/feedback-form';
 import StudentNotifications from './pages/student/notifications/notifications';
+import StudentSettings from './pages/student/settings/student-settings';
 
 //VOLUNTEER PAGES -----------------------------------------------------------------------------
 import VolunteerDashboard from "./pages/volunteer/dashboards/dashboard";
@@ -97,6 +98,7 @@ function App() {
           <Route path="/student/session-form" element={<MultiStepSessionForm />} />
           <Route path="/student/feedback-form/:sessID" element={<FeedbackForm />} />
           <Route path="/student/session-edit/:sessID" element={<SessionRearrangement />} />
+          <Route path="/student/settings" element={<StudentSettings />} />
 
           {/* - - - VOLUNTEER ROUTES - - - */}
           <Route path="/volunteer/dashboard" element={<VolunteerDashboard />} />

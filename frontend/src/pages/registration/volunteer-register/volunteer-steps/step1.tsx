@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { VolunteerProfileData } from "../volunteer-register";
-import VolunteerProfileFields from "../../../../components/volunteer-profile-fields";
+import VolunteerProfileFields from "../../../../components/profile-fields/volunteer-profile-fields";
 
 type FormErrors = {
   categories?: string;
