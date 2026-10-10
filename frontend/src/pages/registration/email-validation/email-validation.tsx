@@ -1,24 +1,43 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  generateSixDigitCode,
+  isExpired,
+  expiryTimestamp,
+} from "../../../firebase/otp";
+import { sendOtpEmail } from "../../../firebase/email";
+import { readPendingSignup } from "../../../firebase/pending-signup";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
-// TODO: fill in your route paths
 const ROUTES = {
   nextStep: "/set-password",
+  previousStep: "/user-registration",
 };
 
 const CODE_LENGTH = 6;
+const OTP_EXPIRY_MINUTES = 10;
 
 const EmailValidationPage: React.FC = () => {
+  const sentRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Email comes from the previous step (user registration) via location.state
+  const emailFromState =
+    (location.state as { email?: string } | null)?.email ??
+    readPendingSignup()?.stepOne.email ??
+    "";
+
+  const [email] = useState(emailFromState);
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<number | null>(null); // ← NEW
   const [error, setError] = useState("");
   const [resendMessage, setResendMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [isInitialSending, setIsInitialSending] = useState(false); // ← NEW
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -27,7 +46,6 @@ const EmailValidationPage: React.FC = () => {
     inputRefs.current[clamped]?.focus();
   };
 
-  // Fill boxes starting at `startIndex` (used for typing, pasting and autofill)
   const fillFrom = (startIndex: number, chars: string[]) => {
     const next = [...digits];
     chars.slice(0, CODE_LENGTH - startIndex).forEach((char, i) => {
@@ -36,6 +54,51 @@ const EmailValidationPage: React.FC = () => {
     setDigits(next);
     focusInput(startIndex + chars.length);
   };
+
+  // ← NEW: shared send logic for initial send AND resend
+  const sendCode = async (opts: { isResend?: boolean } = {}) => {
+    if (!email) {
+      setError("No email address found. Please start over.");
+      return;
+    }
+
+    if (opts.isResend) setIsResending(true);
+    else setIsInitialSending(true);
+
+    setError("");
+    setResendMessage("");
+
+    try {
+      const otp = generateSixDigitCode();
+      const expires = expiryTimestamp(OTP_EXPIRY_MINUTES);
+
+      setGeneratedCode(otp);
+      setExpiresAt(expires);
+
+      await sendOtpEmail(email, otp, OTP_EXPIRY_MINUTES);
+
+      if (opts.isResend) {
+        setDigits(Array(CODE_LENGTH).fill(""));
+        focusInput(0);
+        setResendMessage("A new code is on its way.");
+      }
+    } catch (err) {
+      console.error("Failed to send OTP:", err);
+      setError("We couldn't send the code. Please try again.");
+    } finally {
+      if (opts.isResend) setIsResending(false);
+      else setIsInitialSending(false);
+    }
+  };
+
+  // ← NEW: send the first code as soon as the page loads
+  useEffect(() => {
+    if (!email) return;
+    if (sentRef.current) return;   // ← the guard
+    sentRef.current = true;
+    sendCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -48,13 +111,11 @@ const EmailValidationPage: React.FC = () => {
       return;
     }
 
-    // One character = normal typing. More than one = autofill from the keyboard / SMS.
     fillFrom(index, cleaned.split(""));
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace" && digits[index] === "" && index > 0) {
-      // Empty box: step back and clear the previous one
       e.preventDefault();
       const next = [...digits];
       next[index - 1] = "";
@@ -86,10 +147,24 @@ const EmailValidationPage: React.FC = () => {
       return;
     }
 
+    // ← NEW: expiry check
+    if (expiresAt && isExpired(expiresAt)) {
+      setError("That code has expired. Click \"Send again\" for a new one.");
+      return;
+    }
+
+    console.log("generatedCode:", JSON.stringify(generatedCode));
+    console.log("userCode:     ", JSON.stringify(code));
+    console.log("equal:        ", code === generatedCode);
+
     setIsSubmitting(true);
     try {
-      // TODO: call your API to valid the code, e.g.
-      // await validEmailCode({ email, code });
+      // TODO: replace this with a server-side verification call later.
+      // For now we compare against the code we generated in this browser.
+      if (code !== generatedCode) {
+        setError("That code didn't work. Check it and try again.");
+        return;
+      }
 
       navigate(ROUTES.nextStep, { state: location.state });
     } catch {
@@ -100,26 +175,14 @@ const EmailValidationPage: React.FC = () => {
   };
 
   const handleResend = async () => {
-    setError("");
-    setResendMessage("");
-    setIsResending(true);
-    try {
-      // TODO: call your API to send a new code, e.g.
-      // await resendEmailCode({ email });
-
-      setDigits(Array(CODE_LENGTH).fill(""));
-      focusInput(0);
-      setResendMessage("A new code is on its way.");
-    } catch {
-      setError("We couldn't send a new code. Please try again.");
-    } finally {
-      setIsResending(false);
-    }
+    await sendCode({ isResend: true });
   };
+
+  const submitDisabled = isSubmitting || isInitialSending || !generatedCode;
 
   return (
     <div className="valid-page">
-        <Navbar />
+      <Navbar />
       <main className="valid-main">
         <section className="valid-card">
           <h1 className="valid-card__title">Email Validation</h1>
@@ -132,9 +195,9 @@ const EmailValidationPage: React.FC = () => {
               type="button"
               className="valid-card__resend-btn"
               onClick={handleResend}
-              disabled={isResending}
+              disabled={isResending || isInitialSending}
             >
-              Send again
+              {isResending ? "Sending..." : "Send again"}
             </button>
           </p>
 
@@ -162,22 +225,22 @@ const EmailValidationPage: React.FC = () => {
                   onFocus={(e) => e.target.select()}
                   aria-label={`Digit ${index + 1} of ${CODE_LENGTH}`}
                   aria-invalid={!!error}
+                  disabled={isInitialSending}
                 />
               ))}
             </div>
 
-            {/* Reserved line so the layout doesn't jump when a message appears */}
             <p
               className={`valid-form__message ${error ? "valid-form__message--error" : ""}`}
               role={error ? "alert" : "status"}
             >
-              {error || resendMessage}
+              {isInitialSending ? "Sending your code..." : error || resendMessage}
             </p>
 
             <button
               type="submit"
               className="valid-btn"
-              disabled={isSubmitting}
+              disabled={submitDisabled}
             >
               {isSubmitting ? "Verifying..." : "Submit"}
             </button>

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { savePendingSignup } from "../../../firebase/pending-signup";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
-// TODO: fill in your route paths
 const ROUTES = {
   login: "/login",
   volunteerRegister: "/volunteer-registration",
-  nextStep: "/email-validation", // step 2 of the student registration (e.g. password)
+  nextStep: "/email-validation"
 };
 
 // Max lengths mirror the USER table (name 255, email 255, studentID 15)
@@ -80,12 +80,20 @@ const UserRegisterPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // TODO: call your API here if you need to check the email / studentID
-      // is unused before moving on, e.g.
-      // await checkStudentAvailability(formData);
+      // TODO: check email/studentID availability
 
-      // Pass step 1 data to step 2 (or swap for context / state management)
-      navigate(ROUTES.nextStep, { state: { stepOne: formData } });
+      savePendingSignup({
+        stepOne: {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          studentID: formData.studentID.trim(),
+        },
+      });
+
+      navigate(ROUTES.nextStep, {
+        state: { ...location.state, email: formData.email.trim() },
+      });
+
     } catch {
       setSubmitError("Something went wrong. Please try again.");
     } finally {
@@ -99,7 +107,18 @@ const UserRegisterPage: React.FC = () => {
     const validationErrors = validate(formData);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
-    navigate(ROUTES.volunteerRegister, { state: { stepOne: formData } });
+
+    savePendingSignup({
+      stepOne: {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        studentID: formData.studentID.trim(),
+      },
+    });
+
+    navigate(ROUTES.nextStep, {
+      state: { ...location.state, email: formData.email.trim() },
+    });
   };
 
   return (
