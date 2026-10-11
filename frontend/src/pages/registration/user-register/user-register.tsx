@@ -116,7 +116,7 @@ const UserRegisterPage: React.FC = () => {
       },
     });
 
-    navigate(ROUTES.nextStep, {
+    navigate(ROUTES.volunteerRegister, {          // ← changed
       state: { ...location.state, email: formData.email.trim() },
     });
   };
