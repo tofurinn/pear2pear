@@ -56,7 +56,7 @@ function MySessions() {
     const session = MOCK_SESSIONS.find(candidate => candidate.sessID === item.sessID);
     if (!session) return;
 
-    navigate(`/student/my-sessions/${item.sessID}/edit`, {
+    navigate(`/student/session-edit/${item.sessID}`, {
       state: {
         formData: {
           reqID: session.reqID,

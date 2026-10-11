@@ -140,7 +140,7 @@ export default function Dashboard({
                 type="button"
                 className="dash-settings"
                 aria-label="Account settings"
-                onClick={onOpenSettings}
+                onClick={onOpenSettings ?? (() => navigate("/student/settings"))}
               >
                 <GearIcon />
               </button>
