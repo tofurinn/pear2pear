@@ -58,7 +58,11 @@ export const getVolunteersByCategory = async (category: string): Promise<Volunte
     const snap = await getDocs(collection(db, COLLECTION));
     return snap.docs
       .map(d => d.data() as Volunteer)
-      .filter(volunteer => volunteer.volCategories?.toLowerCase().includes(category.toLowerCase()));
+      .filter(volunteer =>
+  volunteer.volCategories.some(c =>
+    c.toLowerCase() === category.toLowerCase()
+  )
+);
   } catch (error) {
     console.error(`Error getting volunteers for category "${category}":`, error);
     throw error;
