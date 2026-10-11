@@ -1,0 +1,1 @@
+export const SKIP_OTP = import.meta.env.VITE_SKIP_OTP === "true";

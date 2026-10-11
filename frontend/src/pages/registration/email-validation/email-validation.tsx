@@ -7,6 +7,7 @@ import {
 } from "../../../firebase/otp";
 import { sendOtpEmail } from "../../../firebase/email";
 import { readPendingSignup } from "../../../firebase/pending-signup";
+import { SKIP_OTP } from "../../../firebase/skip-otp";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -41,6 +42,20 @@ const EmailValidationPage: React.FC = () => {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  useEffect(() => {
+    if (SKIP_OTP) {
+      navigate("/set-password", { state: location.state, replace: true });
+    }
+  }, [navigate, location.state]);
+
+  useEffect(() => {
+    if (SKIP_OTP) return;
+    if (!email) return;
+    if (sentRef.current) return;
+    sentRef.current = true;
+    sendCode();
+  }, [email]);
+
   const focusInput = (index: number) => {
     const clamped = Math.max(0, Math.min(index, CODE_LENGTH - 1));
     inputRefs.current[clamped]?.focus();
@@ -55,7 +70,7 @@ const EmailValidationPage: React.FC = () => {
     focusInput(startIndex + chars.length);
   };
 
-  // ← NEW: shared send logic for initial send AND resend
+  // Shared send logic for initial send AND resend
   const sendCode = async (opts: { isResend?: boolean } = {}) => {
     if (!email) {
       setError("No email address found. Please start over.");
@@ -91,7 +106,7 @@ const EmailValidationPage: React.FC = () => {
     }
   };
 
-  // ← NEW: send the first code as soon as the page loads
+  // Send the first code as soon as the page loads
   useEffect(() => {
     if (!email) return;
     if (sentRef.current) return;   // ← the guard
