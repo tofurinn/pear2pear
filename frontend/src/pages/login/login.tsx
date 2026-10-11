@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// TODO: adjust this path if this file lives in a different folder
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/config";
 import Navbar from "../../components/navbar/global-navbar";
-// TODO: adjust this path to wherever you keep the shared auth css
 import "./login.css";
 
 // TODO: import your Firebase auth helpers and error mapper, e.g.
 // import { login } from "../../../firebase/auth";
 // import { getAuthErrorMessage } from "../../../firebase/errors";
 
-// TODO: fill in your route paths
 const ROUTES = {
   forgotPassword: "/forgot-password",
   signUp: "/user-registration",
-  afterLogin: "/email-verification",
+  twoFactor: "/email-verification",
 };
 
 interface LoginFormData {
@@ -72,18 +71,31 @@ const UserLoginPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // TODO: sign in with your auth helper, e.g.
-      // await login(formData.email.trim(), formData.password);
+      const cred = await signInWithEmailAndPassword(
+        auth,
+        formData.email.trim(),
+        formData.password
+      );
 
-      // TODO: if the account's accStatus is "Pending" (email not verified yet),
-      // send them to the email verification page instead.
-      // TODO: send volunteers to the volunteer dashboard if that's where they should land.
-
-      navigate(ROUTES.afterLogin);
-    } catch {
-      // TODO: use your errors.ts mapping here. Keep wrong email and wrong password
-      // on the same message so the form doesn't reveal which accounts exist.
-      setSubmitError("Incorrect email or password.");
+      navigate(ROUTES.twoFactor, {
+        state: {
+          uid: cred.user.uid,
+          email: cred.user.email,
+        },
+        replace: true,
+      });
+    } catch (err: any) {
+      if (
+        err.code === "auth/user-not-found" ||
+        err.code === "auth/wrong-password" ||
+        err.code === "auth/invalid-credential"
+      ) {
+        setSubmitError("Incorrect email or password.");
+      } else if (err.code === "auth/too-many-requests") {
+        setSubmitError("Too many attempts. Please try again later.");
+      } else {
+        setSubmitError("Login failed. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }

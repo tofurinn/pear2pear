@@ -23,7 +23,7 @@ export const SUPPORT_MODES = [
 
 export interface ProfileFieldsValue {
   categories: string[];
-  supportMode: string;
+  supportMode: "Physical" | "Virtual";
   skills: string[];
 }
 
@@ -95,7 +95,7 @@ export default function VolunteerProfileFields({
             name="supportMode"
             className="register-field__input volunteer-select__control"
             value={value.supportMode}
-            onChange={(e) => onChange({ supportMode: e.target.value })}
+            onChange={(e) => onChange({ supportMode: e.target.value as "Physical" | "Virtual" })}
           >
             {SUPPORT_MODES.map((mode) => (
               <option key={mode.value} value={mode.value}>{mode.label}</option>

@@ -6,6 +6,7 @@ console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.optio
 
 // PUBLIC PAGES-----------------------------------------------------------------------------
 import IndexPage from './pages/index/index'
+import Require2FA from "./components/require-2fa";
 
 // REGISTRATION PAGES-----------------------------------------------------------------------------
 import UserRegisterPage from "./pages/registration/user-register/user-register";
@@ -19,8 +20,6 @@ import VolunteerRegisteredPage from "./pages/registration/account-created/volunt
 import UserLoginPage from "./pages/login/login";
 import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
 import EmailVerificationPage from "./pages/login/2FA/2fa";
-import VerifyCodePage from "./pages/login/forgot-password/verify-code";
-import ResetPasswordPage from "./pages/login/forgot-password/reset-password";
 
 //STUDENT PAGES -----------------------------------------------------------------------------
 
@@ -83,12 +82,10 @@ function App() {
           <Route path="/login" element={<UserLoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/email-verification" element={<EmailVerificationPage />} />
-          <Route path="/verify-code" element={<VerifyCodePage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* - - - STUDENT ROUTES - - - */}
           {/* Dashboard Forms */}
-          <Route path="/student/dashboard" element={<MyDashboard />} />
+          <Route path="/student/dashboard" element={<Require2FA><MyDashboard /></Require2FA>} />
           <Route path="/student/my-requests" element={<MyRequests />} />
           <Route path="/student/my-sessions" element={<MySessions />} />
           <Route path="/student/my-support-history" element={<MySupportHistory />} />

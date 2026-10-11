@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "../../../firebase/config";
+import { createUser } from "../../../services/UserService";
+import { createVolunteer } from "../../../services/VolunteerService";
+import { createAvailability, slotKeyToAvailability } from "../../../services/AvailabilityService";
 import { readPendingSignup, clearPendingSignup } from "../../../firebase/pending-signup";
+import { auth } from "../../../firebase/config";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -83,25 +85,27 @@ const SetPasswordPage: React.FC = () => {
         formData.password
       );
 
-      // 2. Write the user document, keyed by auth UID
-      await setDoc(doc(db, "users", cred.user.uid), {
-        UID: cred.user.uid,
+      // 2. Write the user document
+      await createUser(cred.user.uid, {
         name: pending.stepOne.name,
         email: pending.stepOne.email,
         studentID: pending.stepOne.studentID,
         isVolunteer: Boolean(pending.volunteerProfile),
-        createdAt: serverTimestamp(),
-        // no accStatus — you said you're removing it
+        accStatus: "Active"
       });
 
       // 3. If they came through the volunteer flow, write the volunteer doc too
       if (pending.volunteerProfile) {
-        await setDoc(doc(db, "volunteers", cred.user.uid), {
-          UID: cred.user.uid,
-          ...pending.volunteerProfile,
+        await createVolunteer(cred.user.uid, {
+          volCategories: pending.volunteerProfile.categories,
+          prefSupportMode: pending.volunteerProfile.supportMode as "Physical" | "Virtual",
+          skills: pending.volunteerProfile.skills,
           avgRating: 0,
-          createdAt: serverTimestamp(),
         });
+
+        for (const slot of pending.volunteerProfile.availability) {
+          await createAvailability(slotKeyToAvailability(slot, cred.user.uid));
+        }
       }
 
       // 4. Clean up
@@ -109,13 +113,19 @@ const SetPasswordPage: React.FC = () => {
 
       // 5. Move on
       navigate("/account-created", { replace: true });
-    } catch (err) {
-      // map firebase errors here
-      setSubmitError("Incorrect email or password.");
+    } catch (err: any) {
+      if (err.code === "auth/email-already-in-use") {
+        setSubmitError("That email is already registered.");
+      } else if (err.code === "auth/weak-password") {
+        setSubmitError("Password is too weak.");
+      } else {
+        console.error("Signup failed:", err);
+        setSubmitError("Something went wrong. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="pass-page">

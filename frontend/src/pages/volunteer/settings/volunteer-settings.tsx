@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 // TODO: adjust these paths to your folders
 import MainNavbar from "../../../components/navbar/main-navbar";
 import HourPicker from "../../../components/hour-picker/hour-picker";
-import VolunteerProfileFields from "../../../components/profile-fields/volunteer-profile-fields";
+import VolunteerProfileFields from "../../../components/volunteer-profile-fields";
 import type {
   ProfileFieldsErrors,
   ProfileFieldsValue,
-} from "../../../components/profile-fields/volunteer-profile-fields";
+} from "../../../components/volunteer-profile-fields";
 // Shared styles for the fields (the register-* and volunteer-* classes)
 import "../../registration/register.css";
 import "../../registration/volunteer-register/volunteer-register.css";
