@@ -23,7 +23,7 @@ export const SUPPORT_MODES = [
 
 export interface ProfileFieldsValue {
   categories: string[];
-  supportMode: string;
+  supportMode: "Physical" | "Virtual";
   skills: string[];
 }
 
