@@ -5,7 +5,7 @@ export async function sendOtpEmail(
   otpCode: string,
   expiryMinutes: number = 10
 ) {
-  const expiryTime = `${expiryMinutes} minute${expiryMinutes === 1 ? "" : "s"}`;
+  const expiryTime = new Date(Date.now() + expiryMinutes * 60_000).toLocaleTimeString();
 
   const result = await emailjs.send(
     import.meta.env.VITE_EMAILJS_SERVICE_ID,
@@ -13,7 +13,7 @@ export async function sendOtpEmail(
     {
       email: toEmail,
       OTP_code: otpCode,
-      expiry_time: expiryTime,   // matches {{expiry_time}} in your template
+      expiry_time: expiryTime,
     },
     import.meta.env.VITE_EMAILJS_PUBLIC_KEY
   );
