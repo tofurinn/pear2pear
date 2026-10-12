@@ -3,7 +3,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { getUser } from "../services/UserService";
 import type { User } from "../types/User";
-
+ 
 interface AuthContextValue {
   firebaseUser: import("firebase/auth").User | null;
   userDoc: User | null;
