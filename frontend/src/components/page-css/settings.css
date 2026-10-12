@@ -1,0 +1,94 @@
+/* =============================================================================
+   Shared layout for the settings pages (Student settings, Volunteer settings).
+   Builds on register.css (fields) and ui.css (buttons).
+   Each page picks its colours with a modifier class on the page root:
+   settings-page--student or settings-page--volunteer.
+   ============================================================================= */
+
+/* ---------- Themes ---------- */
+
+.settings-page--student {
+  --settings-bg: #f0f6ec;
+  --settings-card-bg: #d3e9c0;
+  --settings-card-width: 70rem;
+}
+
+.settings-page--volunteer {
+  --settings-bg: #eaf3f6;
+  --settings-card-bg: #d3e8ef;
+  --settings-card-width: 65rem;
+}
+
+/* Flat page colour, and white pills / circles instead of beige */
+.register-page.settings-page {
+  --color-input-bg: #ffffff;
+
+  background: var(--settings-bg);
+}
+
+/* ---------- Card ---------- */
+
+.settings-card {
+  max-width: var(--settings-card-width);
+  padding: 2rem 3rem 2.2rem;
+  background: var(--settings-card-bg);
+  box-shadow: 0 2px 6px rgba(68, 36, 33, 0.15);
+}
+
+.settings-card__title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.settings-divider {
+  margin: 0.9rem 0 1.6rem;
+  border: 0;
+  border-top: 1px solid var(--color-heading);
+}
+
+/* ---------- Messages + buttons row ---------- */
+
+.settings-message {
+  min-height: 1.4rem;
+  margin: 0.8rem 0 0;
+  font-size: 0.9rem;
+  color: var(--color-heading);
+}
+
+.settings-message--error {
+  color: var(--color-error);
+}
+
+.ui-actions.settings-actions {
+  margin-top: 1.6rem;
+  padding-top: 0;
+}
+
+/* ---------- Responsive ----------
+   Every value is smaller than its desktop value: tablet (<= 900px), phone (<= 600px). */
+
+@media (max-width: 900px) {
+  .settings-card {
+    padding: 1.8rem 2rem;
+  }
+
+  .settings-card__title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .settings-card {
+    padding: 1.5rem 1.2rem 1.6rem;
+  }
+
+  .settings-card__title {
+    font-size: 1.4rem;
+  }
+
+  .settings-message {
+    font-size: 0.8rem;
+  }
+}

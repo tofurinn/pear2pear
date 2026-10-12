@@ -1,0 +1,70 @@
+/* =============================================================================
+   Volunteer settings: only what is specific to this page.
+   The card, title, divider and message styles are in the shared settings.css.
+   Import order: register css, settings.css, then this file.
+   ============================================================================= */
+
+/* ---------- Availability button ---------- */
+
+.settings-availability-btn {
+  justify-content: center;
+  min-width: max(150px, calc(300 * var(--u)));
+}
+
+/* ---------- Availability dialog ---------- */
+
+.settings-dialog {
+  width: min(92vw, 70rem);
+  max-height: 90vh;
+  padding: 1.6rem 2rem;
+  overflow: auto;
+  color: var(--color-heading);
+  background: #ffffff;
+  border: 0;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.settings-dialog::backdrop {
+  background: rgba(63, 32, 32, 0.35);
+}
+
+.settings-dialog__title {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.settings-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .settings-dialog {
+    padding: 1.4rem 1.6rem;
+  }
+
+  .settings-dialog__title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .settings-dialog {
+    padding: 1.2rem 1rem;
+    border-radius: 1rem;
+  }
+
+  .settings-dialog__title {
+    font-size: 1.1rem;
+  }
+
+  .settings-dialog__actions {
+    gap: 0.6rem;
+  }
+}

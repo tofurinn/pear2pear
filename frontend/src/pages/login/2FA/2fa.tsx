@@ -1,35 +1,46 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  generateSixDigitCode,
+  isExpired,
+  expiryTimestamp,
+} from "../../../firebase/otp";
+import { sendOtpEmail } from "../../../firebase/email";
+import { auth } from "../../../firebase/config";
+import { mark2FAVerified, is2FAVerified } from "../../../firebase/verify-session";
+import { getUser } from "../../../services/UserService";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../login.css";
 
-// TODO: fill in your route paths
-const ROUTES = {
-  nextStep: "/student/dashboard", // where to go after the email is verified
-};
-
 const CODE_LENGTH = 6;
-
-
+const OTP_EXPIRY_MINUTES = 10;
 
 const EmailVerificationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const state = location.state as { uid?: string; email?: string } | null;
+
+  const [uid] = useState(state?.uid ?? auth.currentUser?.uid ?? "");
+  const [email, setEmail] = useState(state?.email ?? auth.currentUser?.email ?? "");
+
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [resendMessage, setResendMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [isInitialSending, setIsInitialSending] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const sentRef = useRef(false);
 
   const focusInput = (index: number) => {
     const clamped = Math.max(0, Math.min(index, CODE_LENGTH - 1));
     inputRefs.current[clamped]?.focus();
   };
 
-  // Fill boxes starting at `startIndex` (used for typing, pasting and autofill)
   const fillFrom = (startIndex: number, chars: string[]) => {
     const next = [...digits];
     chars.slice(0, CODE_LENGTH - startIndex).forEach((char, i) => {
@@ -38,6 +49,72 @@ const EmailVerificationPage: React.FC = () => {
     setDigits(next);
     focusInput(startIndex + chars.length);
   };
+
+  const sendCode = async (opts: { isResend?: boolean } = {}) => {
+    if (!email) {
+      setError("No email address found. Please log in again.");
+      return;
+    }
+
+    if (opts.isResend) setIsResending(true);
+    else setIsInitialSending(true);
+
+    setError("");
+    setResendMessage("");
+
+    try {
+      const otp = generateSixDigitCode();
+      const expires = expiryTimestamp(OTP_EXPIRY_MINUTES);
+
+      setGeneratedCode(otp);
+      setExpiresAt(expires);
+
+      await sendOtpEmail(email, otp, OTP_EXPIRY_MINUTES);
+
+      if (opts.isResend) {
+        setDigits(Array(CODE_LENGTH).fill(""));
+        focusInput(0);
+        setResendMessage("A new code is on its way.");
+      }
+    } catch (err) {
+      console.error("Failed to send 2FA code:", err);
+      setError("We couldn't send the code. Please try again.");
+    } finally {
+      if (opts.isResend) setIsResending(false);
+      else setIsInitialSending(false);
+    }
+  };
+
+  // 1. Resolve email from Firestore if missing
+  useEffect(() => {
+    if (email || !uid) return;
+    getUser(uid).then((u) => {
+      if (u?.email) setEmail(u.email);
+    });
+  }, [email, uid]);
+
+  // 2. Bounce unauthenticated users back to login
+  useEffect(() => {
+    if (!auth.currentUser && !state?.uid) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate, state?.uid]);
+
+  // 3. Skip ahead if already verified this session
+  useEffect(() => {
+    if (is2FAVerified()) {
+      navigate("/student/dashboard", { replace: true });
+    }
+  }, [navigate]);
+
+  // 4. Send the first code once we have an email
+  useEffect(() => {
+    if (!email) return;
+    if (sentRef.current) return;
+    sentRef.current = true;
+    sendCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -50,13 +127,11 @@ const EmailVerificationPage: React.FC = () => {
       return;
     }
 
-    // One character = normal typing. More than one = autofill from the keyboard / SMS.
     fillFrom(index, cleaned.split(""));
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace" && digits[index] === "" && index > 0) {
-      // Empty box: step back and clear the previous one
       e.preventDefault();
       const next = [...digits];
       next[index - 1] = "";
@@ -88,13 +163,27 @@ const EmailVerificationPage: React.FC = () => {
       return;
     }
 
+    if (expiresAt && isExpired(expiresAt)) {
+      setError('That code has expired. Click "Send again" for a new one.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // TODO: call your API to verify the code, e.g.
-      // await verifyEmailCode({ email, code });
+      if (code !== generatedCode) {
+        setError("That code didn't work. Check it and try again.");
+        return;
+      }
 
-      navigate(ROUTES.nextStep, { state: location.state });
-    } catch {
+      mark2FAVerified();
+
+      const userData = uid ? await getUser(uid) : null;
+      navigate(
+        userData?.isVolunteer ? "/volunteer/dashboard" : "/student/dashboard",
+        { replace: true }
+      );
+    } catch (err) {
+      console.error("2FA verification failed:", err);
       setError("That code didn't work. Check it and try again.");
     } finally {
       setIsSubmitting(false);
@@ -102,26 +191,14 @@ const EmailVerificationPage: React.FC = () => {
   };
 
   const handleResend = async () => {
-    setError("");
-    setResendMessage("");
-    setIsResending(true);
-    try {
-      // TODO: call your API to send a new code, e.g.
-      // await resendEmailCode({ email });
-
-      setDigits(Array(CODE_LENGTH).fill(""));
-      focusInput(0);
-      setResendMessage("A new code is on its way.");
-    } catch {
-      setError("We couldn't send a new code. Please try again.");
-    } finally {
-      setIsResending(false);
-    }
+    await sendCode({ isResend: true });
   };
+
+  const submitDisabled = isSubmitting || isInitialSending || !generatedCode;
 
   return (
     <div className="verify-page">
-        <Navbar />
+      <Navbar />
       <main className="verify-main">
         <section className="verify-card">
           <h1 className="verify-card__title">Email Verification</h1>
@@ -134,9 +211,9 @@ const EmailVerificationPage: React.FC = () => {
               type="button"
               className="verify-card__resend-btn"
               onClick={handleResend}
-              disabled={isResending}
+              disabled={isResending || isInitialSending}
             >
-              Send again
+              {isResending ? "Sending..." : "Send again"}
             </button>
           </p>
 
@@ -164,22 +241,22 @@ const EmailVerificationPage: React.FC = () => {
                   onFocus={(e) => e.target.select()}
                   aria-label={`Digit ${index + 1} of ${CODE_LENGTH}`}
                   aria-invalid={!!error}
+                  disabled={isInitialSending}
                 />
               ))}
             </div>
 
-            {/* Reserved line so the layout doesn't jump when a message appears */}
             <p
               className={`verify-form__message ${error ? "verify-form__message--error" : ""}`}
               role={error ? "alert" : "status"}
             >
-              {error || resendMessage}
+              {isInitialSending ? "Sending your code..." : error || resendMessage}
             </p>
 
             <button
               type="submit"
               className="verify-btn"
-              disabled={isSubmitting}
+              disabled={submitDisabled}
             >
               {isSubmitting ? "Verifying..." : "Submit"}
             </button>

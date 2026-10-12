@@ -10,11 +10,12 @@ import '../../../../components/page-css/details.css';
 interface RequestDetailsModalProps {
   item: StudentRequestItem;
   onClose: () => void;
+  onSchedule: () => void;
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-function RequestDetailsModal({ item, onClose }: RequestDetailsModalProps) {
+function RequestDetailsModal({ item, onClose, onSchedule }: RequestDetailsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const volunteer = item.volunteer;
@@ -109,6 +110,11 @@ function RequestDetailsModal({ item, onClose }: RequestDetailsModalProps) {
           <span className={`ui-status-pill ui-status-pill--${item.status.tone}`}>
             {item.status.tone === 'pending' ? <ClockIcon /> : item.status.tone === 'accepted' ? <CheckIcon /> : item.status.tone === 'scheduled' ? <CalendarIcon /> : item.status.tone === 'rejected' || item.status.tone === 'cancelled' ? <CloseIcon /> : <AlertIcon />} {item.status.label}
           </span>
+          {item.reqStatus === 'Accepted' && (
+            <button type="button" className="ui-chip-btn ui-chip-btn--info session-modal-action" onClick={onSchedule}>
+              Schedule Session
+            </button>
+          )}
         </footer>
       </div>
     </div>,

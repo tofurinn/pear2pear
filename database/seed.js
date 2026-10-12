@@ -24,7 +24,7 @@ const PROJECT_ID = "bit216-pear2pear";            // the Firebase project id
 const SERVICE_ACCOUNT_PATH = "./secrets/service-account.json";  // path to service account key JSON
 
 // Also create matching Firebase Auth users (same UIDs) so you can log in as them
-const CREATE_AUTH_USERS = false;
+const CREATE_AUTH_USERS = true;
 const TEST_PASSWORD = "Test1234!"; // local testing only
 
 // ---------- Users: Active, Pending, Inactive + one volunteer ----------

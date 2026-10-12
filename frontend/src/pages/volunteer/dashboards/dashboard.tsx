@@ -107,16 +107,14 @@ export default function VolunteerDashboard({
           <div className="dash-identity">
             <div className="dash-name-row">
               <h1 className="dash-name">{userName}</h1>
-              {onOpenSettings && (
-                <button
-                  type="button"
-                  className="dash-settings"
-                  aria-label="Account settings"
-                  onClick={onOpenSettings}
-                >
-                  <GearIcon />
-                </button>
-              )}
+              <button
+                type="button"
+                className="dash-settings"
+                aria-label="Account settings"
+                onClick={onOpenSettings ?? (() => navigate("/volunteer/settings"))}
+              >
+                <GearIcon />
+              </button>
             </div>
 
             <div className="dash-rating">

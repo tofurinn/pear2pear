@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// TODO: adjust this path if this file lives in a different folder
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUser } from "../../../services/UserService";
+import { createVolunteer } from "../../../services/VolunteerService";
+import { createAvailability, slotKeyToAvailability } from "../../../services/AvailabilityService";
+import { readPendingSignup, clearPendingSignup } from "../../../firebase/pending-signup";
+import { auth } from "../../../firebase/config";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -8,11 +13,6 @@ import "../register.css";
 // TODO: import your Firebase auth helpers and error mapper, e.g.
 // import { login } from "../../../firebase/auth";
 // import { getAuthErrorMessage } from "../../../firebase/errors";
-
-// TODO: fill in your route paths
-const ROUTES = {
-  afterSet: "/student/dashboard"
-};
 
 interface SetPasswordFormData {
   password: string;
@@ -68,24 +68,64 @@ const SetPasswordPage: React.FC = () => {
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
+    const pending = readPendingSignup();
+    if (!pending?.stepOne.email) {
+      // State lost (rare now that sessionStorage is in play, but be safe)
+      setSubmitError("Your session expired. Please start over.");
+      navigate("/user-registration", { replace: true });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // TODO: sign in with your auth helper, e.g.
-      // await login(formData.email.trim(), formData.password);
+      // 1. Create the Firebase Auth account
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        pending.stepOne.email,
+        formData.password
+      );
 
-      // TODO: if the account's accStatus is "Pending" (email not verified yet),
-      // send them to the email verification page instead.
-      // TODO: send volunteers to the volunteer dashboard if that's where they should land.
+      // 2. Write the user document
+      await createUser(cred.user.uid, {
+        name: pending.stepOne.name,
+        email: pending.stepOne.email,
+        studentID: pending.stepOne.studentID,
+        isVolunteer: Boolean(pending.volunteerProfile),
+        accStatus: "Active"
+      });
 
-      navigate(ROUTES.afterSet);
-    } catch {
-      // TODO: use your errors.ts mapping here. Keep wrong email and wrong password
-      // on the same message so the form doesn't reveal which accounts exist.
-      setSubmitError("Incorrect email or password.");
+      // 3. If they came through the volunteer flow, write the volunteer doc too
+      if (pending.volunteerProfile) {
+        await createVolunteer(cred.user.uid, {
+          volCategories: pending.volunteerProfile.categories,
+          prefSupportMode: pending.volunteerProfile.supportMode as "Physical" | "Virtual",
+          skills: pending.volunteerProfile.skills,
+          avgRating: 0,
+        });
+
+        for (const slot of pending.volunteerProfile.availability) {
+          await createAvailability(slotKeyToAvailability(slot, cred.user.uid));
+        }
+      }
+
+      // 4. Clean up
+      clearPendingSignup();
+
+      // 5. Move on
+      navigate("/account-created", { replace: true });
+    } catch (err: any) {
+      if (err.code === "auth/email-already-in-use") {
+        setSubmitError("That email is already registered.");
+      } else if (err.code === "auth/weak-password") {
+        setSubmitError("Password is too weak.");
+      } else {
+        console.error("Signup failed:", err);
+        setSubmitError("Something went wrong. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="pass-page">
@@ -104,7 +144,7 @@ const SetPasswordPage: React.FC = () => {
                 id="password"
                 name="password"
                 type="password"
-                className={`pass-field__input ${errors.password ? "set-field__input--error" : ""}`}
+                className={`pass-field__input ${errors.password ? "pass-field__input--error" : ""}`}
                 value={formData.password}
                 onChange={handleChange}
                 autoComplete="new-password"

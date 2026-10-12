@@ -5,6 +5,11 @@ import Navbar from "../../../components/navbar/main-navbar";
 import CategoryTag from "../../../components/category-tag/category-tag";
 
 import '../../../components/page-css/dashboard.css';
+// auth testing //
+import { useEffect, useState } from "react";
+import { auth } from "../../../firebase/config";
+import { getUser } from "../../../services/UserService";
+import { onAuthStateChanged } from "firebase/auth";
 
 type Stat = { label: string; value: number };
 
@@ -17,7 +22,6 @@ type HistoryItem = {
 };
 
 type DashboardProps = {
-  userName?: string;
   onRequestSupport?: () => void;
   onScheduleSession?: () => void;
   onOpenSessions?: () => void;
@@ -111,7 +115,7 @@ function GearIcon() {
 /* ---------- Page ---------- */
 
 export default function Dashboard({
-  userName = "Freddy Fazbear",
+  //userName = "Freddy Fazbear",
   onRequestSupport,
   onScheduleSession,
   onOpenSessions,
@@ -119,6 +123,35 @@ export default function Dashboard({
   onViewMoreHistory,
 }: DashboardProps) {
   const navigate = useNavigate();
+
+  // auth testing //
+  const [userName, setUserName] = useState<string | null>(null);
+
+  // auth testing //
+  useEffect(() => {
+    let cancelled = false;
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (cancelled) return;
+
+      if (!user) {
+        setUserName(null);
+        return;
+      }
+
+      try {
+        const data = await getUser(user.uid);
+        if (!cancelled && data?.name) setUserName(data.name);
+      } catch (err) {
+        console.error("Failed to load user name:", err);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="dash">
@@ -140,7 +173,7 @@ export default function Dashboard({
                 type="button"
                 className="dash-settings"
                 aria-label="Account settings"
-                onClick={onOpenSettings}
+                onClick={onOpenSettings ?? (() => navigate("/student/settings"))}
               >
                 <GearIcon />
               </button>

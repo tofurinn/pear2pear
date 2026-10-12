@@ -110,6 +110,7 @@ function MyRequests() {
         <RequestDetailsModal
           item={selected}
           onClose={() => setSelected(null)}
+          onSchedule={() => navigate('/student/session-form', { state: { reqID: selected.reqID } })}
         />
       )}
     </div>
