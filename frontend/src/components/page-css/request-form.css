@@ -177,6 +177,12 @@
   text-align: center;
 }
 
+.rf-confirmation-volunteer-header {
+  display: flex;
+  align-items: center;
+  gap: calc(18 * var(--u));
+}
+
 .rf-confirmation-message {
   max-width: calc(560 * var(--u));
   min-width: 260px;

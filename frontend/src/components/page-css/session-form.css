@@ -229,6 +229,7 @@
   margin: calc(14 * var(--u)) 0 calc(10 * var(--u));
   font-size: var(--fs-label);
   font-weight: var(--font-weight-bold);
+  text-align: left;
   line-height: 1.3;
 }
 
@@ -236,6 +237,7 @@
   display: grid;
   grid-template-columns: max(250px, calc(480 * var(--u))) 1fr;
   gap: 8px 0;
+  text-align: left;
   margin: calc(16 * var(--u)) 0 calc(30 * var(--u));
 }
 
@@ -290,6 +292,7 @@
 .volunteer-tags {
   margin-top: calc(18 * var(--u));
   padding: calc(16 * var(--u)) calc(22 * var(--u));
+  text-align: left;
   font-size: var(--fs-body);
   line-height: 1.5;
   color: #fff;
