@@ -72,6 +72,7 @@ const EmailValidationPage: React.FC = () => {
 
   // Shared send logic for initial send AND resend
   const sendCode = async (opts: { isResend?: boolean } = {}) => {
+    if (SKIP_OTP) return;
     if (!email) {
       setError("No email address found. Please start over.");
       return;
@@ -105,15 +106,6 @@ const EmailValidationPage: React.FC = () => {
       else setIsInitialSending(false);
     }
   };
-
-  // Send the first code as soon as the page loads
-  useEffect(() => {
-    if (!email) return;
-    if (sentRef.current) return;   // ← the guard
-    sentRef.current = true;
-    sendCode();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -162,15 +154,11 @@ const EmailValidationPage: React.FC = () => {
       return;
     }
 
-    // ← NEW: expiry check
+    // Expiry check
     if (expiresAt && isExpired(expiresAt)) {
       setError("That code has expired. Click \"Send again\" for a new one.");
       return;
     }
-
-    console.log("generatedCode:", JSON.stringify(generatedCode));
-    console.log("userCode:     ", JSON.stringify(code));
-    console.log("equal:        ", code === generatedCode);
 
     setIsSubmitting(true);
     try {

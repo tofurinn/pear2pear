@@ -37,20 +37,6 @@ const EmailVerificationPage: React.FC = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const sentRef = useRef(false);
 
-  useEffect(() => {
-    if (!SKIP_OTP) return;
-    mark2FAVerified();
-    navigate("/student/dashboard", { replace: true });
-  }, [navigate]);
-
-  useEffect(() => {
-    if (SKIP_OTP) return;
-    if (!email) return;
-    if (sentRef.current) return;
-    sentRef.current = true;
-    sendCode();
-  }, [email]);
-
   const focusInput = (index: number) => {
     const clamped = Math.max(0, Math.min(index, CODE_LENGTH - 1));
     inputRefs.current[clamped]?.focus();
@@ -66,6 +52,7 @@ const EmailVerificationPage: React.FC = () => {
   };
 
   const sendCode = async (opts: { isResend?: boolean } = {}) => {
+    if (SKIP_OTP) return;
     if (!email) {
       setError("No email address found. Please log in again.");
       return;
@@ -122,13 +109,18 @@ const EmailVerificationPage: React.FC = () => {
     }
   }, [navigate]);
 
-  // 4. Send the first code once we have an email
   useEffect(() => {
+    if (!SKIP_OTP) return;
+    mark2FAVerified();
+    navigate("/student/dashboard", { replace: true });
+  }, [navigate]);
+
+  useEffect(() => {
+    if (SKIP_OTP) return;
     if (!email) return;
     if (sentRef.current) return;
     sentRef.current = true;
     sendCode();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
