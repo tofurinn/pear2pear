@@ -9,6 +9,7 @@ import { sendOtpEmail } from "../../../firebase/email";
 import { auth } from "../../../firebase/config";
 import { mark2FAVerified, is2FAVerified } from "../../../firebase/verify-session";
 import { getUser } from "../../../services/UserService";
+import { SKIP_OTP } from "../../../firebase/skip-otp";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../login.css";
 
@@ -51,6 +52,7 @@ const EmailVerificationPage: React.FC = () => {
   };
 
   const sendCode = async (opts: { isResend?: boolean } = {}) => {
+    if (SKIP_OTP) return;
     if (!email) {
       setError("No email address found. Please log in again.");
       return;
@@ -107,13 +109,18 @@ const EmailVerificationPage: React.FC = () => {
     }
   }, [navigate]);
 
-  // 4. Send the first code once we have an email
   useEffect(() => {
+    if (!SKIP_OTP) return;
+    mark2FAVerified();
+    navigate("/student/dashboard", { replace: true });
+  }, [navigate]);
+
+  useEffect(() => {
+    if (SKIP_OTP) return;
     if (!email) return;
     if (sentRef.current) return;
     sentRef.current = true;
     sendCode();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {

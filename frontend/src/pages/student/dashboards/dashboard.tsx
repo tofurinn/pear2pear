@@ -1,15 +1,11 @@
 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/authContext";
 import pearStudent from "../../../assets/images/studentpfp-cropped.png";
 import Navbar from "../../../components/navbar/main-navbar";
 import CategoryTag from "../../../components/category-tag/category-tag";
 
 import '../../../components/page-css/dashboard.css';
-// auth testing //
-import { useEffect, useState } from "react";
-import { auth } from "../../../firebase/config";
-import { getUser } from "../../../services/UserService";
-import { onAuthStateChanged } from "firebase/auth";
 
 type Stat = { label: string; value: number };
 
@@ -115,7 +111,6 @@ function GearIcon() {
 /* ---------- Page ---------- */
 
 export default function Dashboard({
-  //userName = "Freddy Fazbear",
   onRequestSupport,
   onScheduleSession,
   onOpenSessions,
@@ -123,36 +118,8 @@ export default function Dashboard({
   onViewMoreHistory,
 }: DashboardProps) {
   const navigate = useNavigate();
-
-  // auth testing //
-  const [userName, setUserName] = useState<string | null>(null);
-
-  // auth testing //
-  useEffect(() => {
-    let cancelled = false;
-
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (cancelled) return;
-
-      if (!user) {
-        setUserName(null);
-        return;
-      }
-
-      try {
-        const data = await getUser(user.uid);
-        if (!cancelled && data?.name) setUserName(data.name);
-      } catch (err) {
-        console.error("Failed to load user name:", err);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-      unsubscribe();
-    };
-  }, []);
-
+  const { userDoc } = useAuth();
+  const userName = userDoc?.name ?? null;
   return (
     <div className="dash">
       <Navbar />

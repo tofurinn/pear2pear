@@ -7,6 +7,7 @@ import {
 } from "../../../firebase/otp";
 import { sendOtpEmail } from "../../../firebase/email";
 import { readPendingSignup } from "../../../firebase/pending-signup";
+import { SKIP_OTP } from "../../../firebase/skip-otp";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -41,6 +42,20 @@ const EmailValidationPage: React.FC = () => {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  useEffect(() => {
+    if (SKIP_OTP) {
+      navigate("/set-password", { state: location.state, replace: true });
+    }
+  }, [navigate, location.state]);
+
+  useEffect(() => {
+    if (SKIP_OTP) return;
+    if (!email) return;
+    if (sentRef.current) return;
+    sentRef.current = true;
+    sendCode();
+  }, [email]);
+
   const focusInput = (index: number) => {
     const clamped = Math.max(0, Math.min(index, CODE_LENGTH - 1));
     inputRefs.current[clamped]?.focus();
@@ -55,8 +70,9 @@ const EmailValidationPage: React.FC = () => {
     focusInput(startIndex + chars.length);
   };
 
-  // ← NEW: shared send logic for initial send AND resend
+  // Shared send logic for initial send AND resend
   const sendCode = async (opts: { isResend?: boolean } = {}) => {
+    if (SKIP_OTP) return;
     if (!email) {
       setError("No email address found. Please start over.");
       return;
@@ -90,15 +106,6 @@ const EmailValidationPage: React.FC = () => {
       else setIsInitialSending(false);
     }
   };
-
-  // ← NEW: send the first code as soon as the page loads
-  useEffect(() => {
-    if (!email) return;
-    if (sentRef.current) return;   // ← the guard
-    sentRef.current = true;
-    sendCode();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email]);
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -147,15 +154,11 @@ const EmailValidationPage: React.FC = () => {
       return;
     }
 
-    // ← NEW: expiry check
+    // Expiry check
     if (expiresAt && isExpired(expiresAt)) {
       setError("That code has expired. Click \"Send again\" for a new one.");
       return;
     }
-
-    console.log("generatedCode:", JSON.stringify(generatedCode));
-    console.log("userCode:     ", JSON.stringify(code));
-    console.log("equal:        ", code === generatedCode);
 
     setIsSubmitting(true);
     try {
