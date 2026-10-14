@@ -7,57 +7,94 @@ import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import { buildStudentRequestItems } from '../../student-utils.tsx';
 import type { StudentRequestItem } from '../../student-utils.tsx';
+import type { StudentVolunteerSummary } from '../../student-utils.tsx';
 
-import { useAuth } from '../../../../context/authContext'; // adjust to where your file lives
-import { loadStudentRequests } from '../../../../services/StudentDashboardService';
-import type { VolunteerProfile } from '../../../../services/StudentDashboardService';
-import type { Support_Request } from '../../../../types/Support_Request';
+import { useAuth } from '../../../../context/authContext';
+import { getRequestsByStudent } from '../../../../services/RequestService';
+import { getUser } from '../../../../services/UserService';
+import { getVolunteer } from '../../../../services/VolunteerService';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
+
+const EMPTY_REQUESTS: Awaited<ReturnType<typeof getRequestsByStudent>> = [];
+const EMPTY_VOLUNTEERS: Record<string, StudentVolunteerSummary> = {};
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 function MyRequests() {
   const navigate = useNavigate();
-  const { firebaseUser, loading: authLoading } = useAuth();
+  const { userDoc, loading: authLoading } = useAuth();
+  const studentUID = userDoc?.UID ?? null;
 
-  const [data, setData] = useState<{ requests: Support_Request[]; volunteers: VolunteerProfile[] }>({
-    requests: [],
-    volunteers: [],
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [requestLoad, setRequestLoad] = useState<{
+    studentUID: string | null;
+    requests: Awaited<ReturnType<typeof getRequestsByStudent>>;
+    volunteers: Record<string, StudentVolunteerSummary>;
+    error?: string;
+  } | null>(null);
+  const loading = authLoading || (!!studentUID && requestLoad?.studentUID !== studentUID);
+  const error = !authLoading && !studentUID
+    ? 'Sign in to view your requests.'
+    : requestLoad?.studentUID === studentUID
+      ? requestLoad.error ?? ''
+      : '';
+  const requests = studentUID && requestLoad?.studentUID === studentUID
+    ? requestLoad.requests
+    : EMPTY_REQUESTS;
+  const volunteers = studentUID && requestLoad?.studentUID === studentUID
+    ? requestLoad.volunteers
+    : EMPTY_VOLUNTEERS;
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!firebaseUser) { setLoading(false); return; }
+    if (authLoading || !studentUID) return;
 
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    loadStudentRequests(firebaseUser.uid)
-      .then(d => { if (!cancelled) setData(d); })
-      .catch(e => { console.error(e); if (!cancelled) setError('Could not load your requests.'); })
-      .finally(() => { if (!cancelled) setLoading(false); });
+    let isCurrent = true;
+    const loadRequests = async () => {
+      try {
+        const loadedRequests = await getRequestsByStudent(studentUID);
+        const volunteerIDs = [...new Set(loadedRequests.map(request => request.volUID))];
+        const volunteerEntries = await Promise.all(volunteerIDs.map(async volunteerID => {
+          const [user, volunteer] = await Promise.all([
+            getUser(volunteerID),
+            getVolunteer(volunteerID),
+          ]);
+          const summary: StudentVolunteerSummary = {
+            name: user?.name ?? 'Volunteer',
+            rating: volunteer?.avgRating ?? 0,
+            ratingCount: 0,
+            skills: volunteer?.skills,
+          };
+          return [volunteerID, summary] as const;
+        }));
 
-    return () => { cancelled = true; };
-  }, [authLoading, firebaseUser]);
+        if (isCurrent) {
+          setRequestLoad({
+            studentUID,
+            requests: loadedRequests,
+            volunteers: Object.fromEntries(volunteerEntries),
+          });
+        }
+      } catch (loadError) {
+        console.error('Error loading student requests:', loadError);
+        if (isCurrent) {
+          setRequestLoad({
+            studentUID,
+            requests: [],
+            volunteers: {},
+            error: 'Could not load your requests.',
+          });
+        }
+      }
+    };
+
+    void loadRequests();
+    return () => { isCurrent = false; };
+  }, [authLoading, studentUID]);
 
   const items = useMemo(
-    () => buildStudentRequestItems(
-      data.requests,
-      Object.fromEntries(data.volunteers.map(volunteer => [
-        volunteer.UID,
-        {
-          name: volunteer.name,
-          rating: volunteer.avgRating,
-          ratingCount: 0,
-          skills: volunteer.skills,
-        },
-      ]))
-    ),
-    [data]
+    () => buildStudentRequestItems(requests, volunteers),
+    [requests, volunteers]
   );
 
   const pending = items.filter(item => item.reqStatus === 'Pending');

@@ -1,5 +1,6 @@
 import { matchVolunteers } from '../request-utils.tsx';
 import type { RequestFormData } from '../request-utils.tsx';
+import type { RequestFormVolunteer } from '../request-utils.tsx';
 import { StarRating, StepNav } from '../request-ui.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 
@@ -7,6 +8,10 @@ import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 
 interface Step4Props {
   formData: Pick<RequestFormData, 'category' | 'requiredSkills' | 'availability' | 'volUID'>;
+  supportMode: RequestFormData['supportMode'];
+  volunteers: RequestFormVolunteer[];
+  volunteersLoading: boolean;
+  volunteersError: string;
   updateFormData: (data: Partial<RequestFormData>) => void;
   onPrevious: () => void;
   onSubmit: () => void;
@@ -15,9 +20,19 @@ interface Step4Props {
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function VolunteerMatchStep({ formData, updateFormData, onPrevious, onSubmit, isSubmitting }: Step4Props) {
+function VolunteerMatchStep({
+  formData,
+  supportMode,
+  volunteers,
+  volunteersLoading,
+  volunteersError,
+  updateFormData,
+  onPrevious,
+  onSubmit,
+  isSubmitting,
+}: Step4Props) {
   // Volunteers who fit the category, skills and availability chosen in the earlier steps
-  const matches = matchVolunteers(formData);
+  const matches = matchVolunteers({ ...formData, supportMode }, volunteers);
 
   // A volunteer picked earlier may no longer match after the filters changed
   const hasValidChoice = matches.some(v => v.volUID === formData.volUID);
@@ -26,7 +41,11 @@ function VolunteerMatchStep({ formData, updateFormData, onPrevious, onSubmit, is
     <>
       <h2 className="ui-card-heading">Step 4: Volunteer Match-making</h2>
 
-      {matches.length === 0 ? (
+      {volunteersLoading ? (
+        <div className="ui-card-body rf-empty"><p>Loading volunteers...</p></div>
+      ) : volunteersError ? (
+        <div className="ui-card-body rf-empty" role="alert"><p>{volunteersError}</p></div>
+      ) : matches.length === 0 ? (
         <div className="ui-card-body rf-empty">
           <p>No volunteers match your filters yet.</p>
           <p>Go back and try fewer required skills or more time slots.</p>
@@ -46,10 +65,10 @@ function VolunteerMatchStep({ formData, updateFormData, onPrevious, onSubmit, is
               >
                 <CategoryTag>{formData.category}</CategoryTag>
                 <span className="rf-volunteer-name">{volunteer.name}</span>
-                <span className="rf-volunteer-tags">{volunteer.tags.join(' • ')}</span>
+                <span className="rf-volunteer-tags">{volunteer.skills.join(' • ')}</span>
                 <span className="rf-volunteer-rating">
                   <StarRating rating={volunteer.rating} />
-                  <span className="rf-rating-text">{volunteer.rating} ({volunteer.ratingCount})</span>
+                  <span className="rf-rating-text">{volunteer.rating}</span>
                 </span>
               </button>
             );
@@ -62,7 +81,7 @@ function VolunteerMatchStep({ formData, updateFormData, onPrevious, onSubmit, is
         onNext={onSubmit}
         nextLabel={isSubmitting ? 'Submitting…' : 'Submit Request'}
         nextVariant="solid"
-        nextDisabled={!hasValidChoice || isSubmitting}
+        nextDisabled={!hasValidChoice || isSubmitting || volunteersLoading || Boolean(volunteersError)}
       />
     </>
   );

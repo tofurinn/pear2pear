@@ -1,4 +1,3 @@
-import { SKILLS } from '../request-utils.tsx';
 import type { RequestFormData, SupportMode } from '../request-utils.tsx';
 import { CheckIcon, ChevronDown, StepNav } from '../request-ui.tsx';
 
@@ -6,6 +5,9 @@ import { CheckIcon, ChevronDown, StepNav } from '../request-ui.tsx';
 
 interface Step2Props {
   formData: Pick<RequestFormData, 'supportMode' | 'requiredSkills'>;
+  availableSkills: string[];
+  volunteersLoading: boolean;
+  volunteersError: string;
   updateFormData: (data: Partial<RequestFormData>) => void;
   onPrevious: () => void;
   onNext: () => void;
@@ -13,7 +15,15 @@ interface Step2Props {
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function FilteringStep({ formData, updateFormData, onPrevious, onNext }: Step2Props) {
+function FilteringStep({
+  formData,
+  availableSkills,
+  volunteersLoading,
+  volunteersError,
+  updateFormData,
+  onPrevious,
+  onNext,
+}: Step2Props) {
   const { requiredSkills } = formData;
 
   const toggleSkill = (skill: string) =>
@@ -47,7 +57,12 @@ function FilteringStep({ formData, updateFormData, onPrevious, onNext }: Step2Pr
         <div className="ui-field">
           <span className="ui-field-label" id="skills-label">Required Skills</span>
           <div className="rf-skill-grid" role="group" aria-labelledby="skills-label">
-            {SKILLS.map(skill => {
+            {volunteersLoading ? (
+              <p className="dashboard-empty">Loading volunteer skills...</p>
+            ) : volunteersError ? (
+              <p className="ui-error" role="alert">{volunteersError}</p>
+            ) : null}
+            {availableSkills.map(skill => {
               const checked = requiredSkills.includes(skill);
               return (
                 <button
@@ -63,6 +78,9 @@ function FilteringStep({ formData, updateFormData, onPrevious, onNext }: Step2Pr
                 </button>
               );
             })}
+            {!volunteersLoading && !volunteersError && availableSkills.length === 0 && (
+              <p className="dashboard-empty">No volunteer skills are available for this support mode.</p>
+            )}
           </div>
         </div>
       </div>

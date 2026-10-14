@@ -140,6 +140,20 @@ const VOLUNTEER_REQUEST_STATUS: Record<Support_Request['reqStatus'], DashboardSt
   Cancelled: { label: 'Cancelled', tone: 'cancelled' },
 };
 
+export const toVolunteerRequestItem = (
+  request: Support_Request,
+  studentName: string,
+): VolunteerRequestItem => ({
+  reqID: request.reqID,
+  reqStatus: request.reqStatus,
+  category: request.category,
+  title: request.title,
+  personName: studentName,
+  dateLabel: formatDate(request.reqTimestamp.toDate()),
+  description: request.description,
+  status: VOLUNTEER_REQUEST_STATUS[request.reqStatus],
+});
+
 // -- Volunteer status update helpers  ---------------------------------------------------------------------------------------
 
 export const createVolunteerRequestPatch = (
