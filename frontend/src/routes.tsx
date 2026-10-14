@@ -21,7 +21,7 @@ import EmailVerificationPage from "./pages/login/2FA/2fa";
 // STUDENT PAGES -----------------------------------------------------------------------------
 import MyDashboard from "./pages/student/dashboards/dashboard";
 import MyRequests from "./pages/student/dashboards/requests/my-requests";
-import MySessions from './pages/student/dashboards/sessions/my-sessions';
+import StudentSessions from './pages/student/dashboards/sessions/my-sessions';
 import MySupportHistory from './pages/student/dashboards/support-history/my-support-history';
 import MultiStepRequestForm from './pages/student/request/request-form';
 import MultiStepSessionForm from './pages/student/session/session-form';
@@ -65,7 +65,7 @@ export const routes: RouteDefinition[] = [
   // Dashboard pages
   { path: "/student/dashboard", title: "Student Dashboard", element: <Require2FA><MyDashboard /></Require2FA> },
   { path: "/student/my-requests", title: "My Requests", element: <MyRequests /> },
-  { path: "/student/my-sessions", title: "My Sessions", element: <MySessions /> },
+  { path: "/student/my-sessions", title: "My Sessions", element: <StudentSessions /> },
   { path: "/student/my-support-history", title: "Support History", element: <MySupportHistory /> },
   { path: "/student/notifications", title: "Notifications", element: <StudentNotifications /> },
 
