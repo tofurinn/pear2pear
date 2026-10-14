@@ -17,6 +17,8 @@ import VolunteerMatchStep from './steps/step4.tsx';
 import RequestSubmittedStep from './steps/step5.tsx';
 import { createEmptyForm, buildSummary } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
+import { useAuth } from '../../../context/authContext';
+import { createSupportRequest } from '../../../services/RequestService';
 
 import '../../../components/ui.css';
 import '../../../components/page-css/request-form.css';
@@ -25,6 +27,7 @@ import '../../../components/page-css/request-form.css';
 
 function MultiStepRequestForm() {
   const navigate = useNavigate();
+  const { firebaseUser } = useAuth();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<RequestFormData>(createEmptyForm);
@@ -55,13 +58,20 @@ function MultiStepRequestForm() {
     setSubmitMessage('');
 
     try {
-      // TODO: create the Support_Request document from formData
-      //   category, title, description -> as entered
-      //   availability                 -> recurring weekday/hour preferences
-      //   volID                        -> the chosen volunteer, reqStatus: 'Pending'
-
       const submitted = buildSummary(formData);
       if (!submitted) throw new Error('Could not find the selected volunteer');
+      if (!firebaseUser) throw new Error('You must be signed in to submit a support request');
+
+      await createSupportRequest({
+        studID: firebaseUser.uid,
+        volID: formData.volID,
+        title: formData.title,
+        description: formData.description,
+        category: submitted.category,
+        reqStatus: 'Pending',
+        supportMode: formData.supportMode,
+        availability: formData.availability,
+      });
 
       setSummary(submitted);
       setSubmitMessage('success');

@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import './App.css';
+import Titled from "./components/titled";
+import { routes } from "./routes.tsx";
 
 import app from "./firebase/config";
 console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.options.projectId);
@@ -54,10 +56,7 @@ function App() {
     <div className="page-background bg-default">
       <div key={location.pathname} className="page-transition">
         <Routes location={location}>
-          {/* Public routes */}
-          <Route path="/" element={<IndexPage />} />
-
-          {/* Notifications */}
+          {/* Legacy notifications redirect (no title needed) */}
           <Route
             path="/notifications"
             element={
