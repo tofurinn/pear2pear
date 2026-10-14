@@ -64,10 +64,10 @@ export const routes: RouteDefinition[] = [
   // - - - STUDENT ROUTES - - -
   // Dashboard pages
   { path: "/student/dashboard", title: "Student Dashboard", element: <Require2FA><MyDashboard /></Require2FA> },
-  { path: "/student/my-requests", title: "My Requests", element: <MyRequests /> },
-  { path: "/student/my-sessions", title: "My Sessions", element: <StudentSessions /> },
-  { path: "/student/my-support-history", title: "Support History", element: <MySupportHistory /> },
-  { path: "/student/notifications", title: "Notifications", element: <StudentNotifications /> },
+  { path: "/student/my-requests", title: "My Requests", element: <Require2FA><MyRequests /></Require2FA> },
+  { path: "/student/my-sessions", title: "My Sessions", element: <Require2FA><StudentSessions /></Require2FA> },
+  { path: "/student/my-support-history", title: "Support History", element: <Require2FA><MySupportHistory /></Require2FA> },
+  { path: "/student/notifications", title: "Notifications", element: <Require2FA><StudentNotifications /></Require2FA> },
 
   // Student forms
   { path: "/student/request-form", title: "Request Support", element: <MultiStepRequestForm /> },

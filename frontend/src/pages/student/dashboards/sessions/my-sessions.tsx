@@ -55,18 +55,18 @@ function StudentSessions() {
         const volunteerIDs = [...new Set(
           requests
             .filter(request => sessionsRequestIDs.has(request.reqID))
-            .map(request => request.volID)
+            .map(request => request.volUID)
         )];
 
-        const volunteerEntries = await Promise.all(volunteerIDs.map(async volID => {
-          const [user, volunteer] = await Promise.all([getUser(volID), getVolunteer(volID)]);
+        const volunteerEntries = await Promise.all(volunteerIDs.map(async volUID => {
+          const [user, volunteer] = await Promise.all([getUser(volUID), getVolunteer(volUID)]);
           const summary: StudentVolunteerSummary = {
             name: user?.name ?? 'Volunteer',
             rating: volunteer?.avgRating ?? 0,
             ratingCount: 0,
             skills: volunteer?.skills,
           };
-          return [volID, summary] as const;
+          return [volUID, summary] as const;
         }));
 
         if (isCurrent) {

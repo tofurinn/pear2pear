@@ -42,7 +42,7 @@ function SelectRequestStep({ formData, updateFormData }: Step1Props) {
             >
               <CategoryTag>{request.category}</CategoryTag>
               <span className="request-title">{request.title}</span>
-              <span className="volunteer-name">{getVolunteerById(request.volID)?.name}</span>
+              <span className="volunteer-name">{getVolunteerById(request.volUID)?.name}</span>
               <span className="request-footer">
                 <span className="request-date">{formatDate(request.reqTimestamp)}</span>
                 <span className={`status-pill ${request.reqStatus.toLowerCase()}`}>

@@ -29,8 +29,8 @@ export async function getVolunteerProfiles(uids: string[]): Promise<VolunteerPro
 }
 
 /** Loads a student's support requests and the volunteer profiles referenced by those requests. */
-export async function loadStudentRequests(studID: string) {
-  const requests = await getRequestsByStudent(studID);
-  const volunteers = await getVolunteerProfiles(requests.map(r => r.volID));
+export async function loadStudentRequests(studUID: string) {
+  const requests = await getRequestsByStudent(studUID);
+  const volunteers = await getVolunteerProfiles(requests.map(r => r.volUID));
   return { requests, volunteers };
 }

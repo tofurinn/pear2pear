@@ -2,8 +2,8 @@ import type { Timestamp } from "firebase/firestore";
 
 export interface Support_Request {
     reqID: string;
-    studID: string;
-    volID: string;
+    studUID: string;
+    volUID: string;
     title: string;
     description: string;
     category: "Academic Support" | "Technology Support" | "New Student Support" | "General Student Support";

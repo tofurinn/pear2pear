@@ -113,7 +113,7 @@ export const buildStudentRequestItems = (
   volunteers: Record<string, StudentVolunteerSummary>,
 ): StudentRequestItem[] =>
   requests.map(request =>
-    toStudentRequestItem(request, volunteers[request.volID] ?? {
+    toStudentRequestItem(request, volunteers[request.volUID] ?? {
       name: 'Volunteer',
       rating: 0,
       ratingCount: 0,
@@ -195,7 +195,7 @@ export const buildStudentSessionItems = (
 ): StudentSessionItem[] =>
   sessions.flatMap(session => {
     const request = requests.find(r => r.reqID === session.reqID);
-    const volunteer = request ? volunteers[request.volID] : undefined;
+    const volunteer = request ? volunteers[request.volUID] : undefined;
     return request && volunteer ? [toStudentSessionItem(session, request, volunteer)] : [];
   });
 
@@ -253,10 +253,10 @@ const ROWS: [string, Pick<Support_Request, 'title' | 'category'>, [number, numbe
   ['vol-steve', WEBSITE, [2025, 8, 11], 'Cancelled', true, false],
 ];
 
-export const MOCK_REQUESTS: Support_Request[] = ROWS.map(([volID, topic, [y, m, d]], i) => ({
+export const MOCK_REQUESTS: Support_Request[] = ROWS.map(([volUID, topic, [y, m, d]], i) => ({
   reqID: `req-${i + 1}`,
-  studID: 'stud-1',
-  volID,
+  studUID: 'stud-1',
+  volUID,
   title: topic.title,
   description: 'Mock request for testing.',
   category: topic.category,
@@ -305,14 +305,14 @@ const BIRTHDAY = { title: 'Birthday Party Helper!!!', category: 'General Student
 
 const mockRequest = (
   n: number,
-  volID: string,
+  volUID: string,
   topic: Pick<Support_Request, 'title' | 'category'>,
   reqStatus: Support_Request['reqStatus'],
   [y, m, d]: [number, number, number]
 ): Support_Request => ({
   reqID: `my-req-${n}`,
-  studID: 'stud-1',
-  volID,
+  studUID: 'stud-1',
+  volUID,
   title: topic.title,
   description: 'Mock request for testing.',
   category: topic.category,

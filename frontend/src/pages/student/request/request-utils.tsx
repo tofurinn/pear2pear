@@ -17,7 +17,7 @@ export interface RequestFormData {
   // Step 3: Availability Filtering
   availability: string[];     // recurring weekday slot keys: 'weekday:HH:00'
   // Step 4: Volunteer Match-making
-  volID: string;
+  volUID: string;
 }
 
 // ─── Date / time helpers ───────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ export const createEmptyForm = (): RequestFormData => {
     supportMode: 'Physical',
     requiredSkills: [],
     availability: [],
-    volID: '',
+    volUID: '',
   };
 };
 
@@ -63,7 +63,7 @@ export const SKILLS = [
 // ─── Mock volunteers (replace with Firebase / API later) ───────────────────────
 
 export interface Volunteer {
-  volID: string;
+  volUID: string;
   name: string;
   rating: number;
   ratingCount: number;
@@ -72,20 +72,20 @@ export interface Volunteer {
 }
 
 export const MOCK_VOLUNTEERS: Volunteer[] = [
-  { volID: 'vol-1', name: 'Aisha Rahman', rating: 4.5, ratingCount: 10, tags: ['Tech Wiz', 'Patience', 'Cooking', 'Friendly'], categories: ['General Student Support', 'Technology Support'] },
-  { volID: 'vol-2', name: 'Daniel Lim', rating: 4.0, ratingCount: 2, tags: ['High Achiever', 'Patience', 'Cooking', 'Friendly'], categories: ['General Student Support', 'Academic Support'] },
-  { volID: 'vol-3', name: 'Priya Nair', rating: 4.5, ratingCount: 20, tags: ['High Achiever', 'Cooking', 'Friendly'], categories: ['General Student Support', 'New Student Support'] },
-  { volID: 'vol-4', name: 'Hafiz Ismail', rating: 4.5, ratingCount: 157, tags: ['Tech Wiz', 'Friendly'], categories: ['Technology Support', 'New Student Support'] },
-  { volID: 'vol-5', name: 'Mei Ling Tan', rating: 4.8, ratingCount: 31, tags: ['Smart', 'Academically Gifted', 'Patience'], categories: ['Academic Support'] },
-  { volID: 'vol-6', name: 'Arjun Menon', rating: 4.2, ratingCount: 8, tags: ['Creative', 'Organised', 'Friendly', 'Cooking'], categories: ['General Student Support', 'New Student Support'] },
-  { volID: 'vol-7', name: 'Siti Aminah', rating: 4.7, ratingCount: 44, tags: ['Tech Wiz', 'Smart', 'Patience'], categories: ['Technology Support', 'Academic Support'] },
-  { volID: 'vol-8', name: 'Jason Wong', rating: 3.9, ratingCount: 5, tags: ['Organised', 'High Achiever', 'Friendly'], categories: ['General Student Support', 'Academic Support', 'New Student Support'] },
+  { volUID: 'vol-1', name: 'Aisha Rahman', rating: 4.5, ratingCount: 10, tags: ['Tech Wiz', 'Patience', 'Cooking', 'Friendly'], categories: ['General Student Support', 'Technology Support'] },
+  { volUID: 'vol-2', name: 'Daniel Lim', rating: 4.0, ratingCount: 2, tags: ['High Achiever', 'Patience', 'Cooking', 'Friendly'], categories: ['General Student Support', 'Academic Support'] },
+  { volUID: 'vol-3', name: 'Priya Nair', rating: 4.5, ratingCount: 20, tags: ['High Achiever', 'Cooking', 'Friendly'], categories: ['General Student Support', 'New Student Support'] },
+  { volUID: 'vol-4', name: 'Hafiz Ismail', rating: 4.5, ratingCount: 157, tags: ['Tech Wiz', 'Friendly'], categories: ['Technology Support', 'New Student Support'] },
+  { volUID: 'vol-5', name: 'Mei Ling Tan', rating: 4.8, ratingCount: 31, tags: ['Smart', 'Academically Gifted', 'Patience'], categories: ['Academic Support'] },
+  { volUID: 'vol-6', name: 'Arjun Menon', rating: 4.2, ratingCount: 8, tags: ['Creative', 'Organised', 'Friendly', 'Cooking'], categories: ['General Student Support', 'New Student Support'] },
+  { volUID: 'vol-7', name: 'Siti Aminah', rating: 4.7, ratingCount: 44, tags: ['Tech Wiz', 'Smart', 'Patience'], categories: ['Technology Support', 'Academic Support'] },
+  { volUID: 'vol-8', name: 'Jason Wong', rating: 3.9, ratingCount: 5, tags: ['Organised', 'High Achiever', 'Friendly'], categories: ['General Student Support', 'Academic Support', 'New Student Support'] },
 ];
 
 // Hours the volunteer is free, per weekday (JS getDay(): 0 = Sunday ... 6 = Saturday).
 // Recurring weekly availability: later this comes from the volunteer's Firestore data.
-export const getAvailability = (volID: string): Record<number, number[]> => {
-  const n = Number(volID.replace('vol-', ''));
+export const getAvailability = (volUID: string): Record<number, number[]> => {
+  const n = Number(volUID.replace('vol-', ''));
   const hours =
     n % 3 === 0 ? [16, 17, 18, 19, 20] : n % 2 === 0 ? [10, 11, 12, 13, 14] : [12, 13, 14, 15, 16, 17];
   return { 0: hours, 1: hours, 2: hours, 3: hours, 4: hours, 5: hours, 6: hours };
@@ -106,7 +106,7 @@ export const matchVolunteers = (criteria: MatchCriteria): VolunteerMatch[] =>
     .filter(v => v.categories.includes(criteria.category))
     .filter(v => criteria.requiredSkills.every(skill => v.tags.includes(skill)))
     .map(v => {
-      const free = getAvailability(v.volID);
+      const free = getAvailability(v.volUID);
       const overlap = criteria.availability.filter(key => {
         const { weekday, hour } = parseWeekdaySlotKey(key);
         return free[weekday]?.includes(hour);
@@ -128,7 +128,7 @@ export interface RequestSummary {
 }
 
 export const buildSummary = (data: RequestFormData): RequestSummary | null => {
-  const volunteer = MOCK_VOLUNTEERS.find(v => v.volID === data.volID);
+  const volunteer = MOCK_VOLUNTEERS.find(v => v.volUID === data.volUID);
   if (!volunteer || !data.category) return null;
 
   return {

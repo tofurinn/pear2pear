@@ -6,7 +6,7 @@ import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface Step4Props {
-  formData: Pick<RequestFormData, 'category' | 'requiredSkills' | 'availability' | 'volID'>;
+  formData: Pick<RequestFormData, 'category' | 'requiredSkills' | 'availability' | 'volUID'>;
   updateFormData: (data: Partial<RequestFormData>) => void;
   onPrevious: () => void;
   onSubmit: () => void;
@@ -20,7 +20,7 @@ function VolunteerMatchStep({ formData, updateFormData, onPrevious, onSubmit, is
   const matches = matchVolunteers(formData);
 
   // A volunteer picked earlier may no longer match after the filters changed
-  const hasValidChoice = matches.some(v => v.volID === formData.volID);
+  const hasValidChoice = matches.some(v => v.volUID === formData.volUID);
 
   return (
     <>
@@ -34,15 +34,15 @@ function VolunteerMatchStep({ formData, updateFormData, onPrevious, onSubmit, is
       ) : (
         <div className="ui-card-body rf-volunteer-grid" role="radiogroup" aria-label="Select a volunteer">
           {matches.map(volunteer => {
-            const isSelected = formData.volID === volunteer.volID;
+            const isSelected = formData.volUID === volunteer.volUID;
             return (
               <button
-                key={volunteer.volID}
+                key={volunteer.volUID}
                 type="button"
                 role="radio"
                 aria-checked={isSelected}
                 className={`rf-volunteer-card ${isSelected ? 'selected' : ''}`}
-                onClick={() => updateFormData({ volID: volunteer.volID })}
+                onClick={() => updateFormData({ volUID: volunteer.volUID })}
               >
                 <CategoryTag>{formData.category}</CategoryTag>
                 <span className="rf-volunteer-name">{volunteer.name}</span>

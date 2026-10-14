@@ -126,7 +126,7 @@ export const buildVolunteerSessionItems = (
 ): VolunteerSessionItem[] =>
   sessions.flatMap(session => {
     const request = requests.find(r => r.reqID === session.reqID);
-    const student = request ? students[request.studID] : undefined;
+    const student = request ? students[request.studUID] : undefined;
     return request && student ? [toVolunteerSessionItem(session, request, student)] : [];
   });
 
