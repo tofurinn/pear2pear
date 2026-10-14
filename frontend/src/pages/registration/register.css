@@ -133,8 +133,8 @@
 .pass-card,
 .valid-card {
   width: 90%;
-  min-width: 0;
-  padding: 2rem 3rem 2rem;
+  max-width: 60rem;
+  padding: 2.4rem 2.5rem 2.5rem;
   background: #ffffff;
   border-radius: 1.2rem;
 }

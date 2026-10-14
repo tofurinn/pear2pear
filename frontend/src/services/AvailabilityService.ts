@@ -10,7 +10,7 @@ export function slotKeyToAvailability(
   slot: string,
   volUID: string
 ): Omit<Availability, "availID"> {
-  const [weekdayStr, hourStr] = slot.split("-");
+  const [weekdayStr, hourStr] = slot.split(":");
   const weekday = Number(weekdayStr);
   const hour = Number(hourStr);
 
