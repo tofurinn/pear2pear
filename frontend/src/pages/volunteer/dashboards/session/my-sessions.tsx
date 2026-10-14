@@ -7,7 +7,7 @@ import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 
-import { buildVolunteerSessionItems, getVolunteerSessionStatus, hourToSlot, toDateKey } from '../../volunteer-utils.tsx';
+import { buildVolunteerSessionItems, getVolunteerSessionStatus, hourToSlot, toDateKey } from '../../volunteer-utils.ts';
 import type { VolunteerSessionItem, VolunteerStudentSummary } from '../../volunteer-utils.ts';
 import { getRequestsByVolunteer } from '../../../../services/RequestService';
 import { getSessionsByRequestIDs, updateSessionStatus, updateSupportSession } from '../../../../services/SessionService';
