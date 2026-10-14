@@ -112,10 +112,13 @@ export const buildStudentRequestItems = (
   requests: Support_Request[],
   volunteers: Record<string, StudentVolunteerSummary>,
 ): StudentRequestItem[] =>
-  requests.flatMap(request => {
-    const volunteer = volunteers[request.volID];
-    return volunteer ? [toStudentRequestItem(request, volunteer)] : [];
-  });
+  requests.map(request =>
+    toStudentRequestItem(request, volunteers[request.volID] ?? {
+      name: 'Volunteer',
+      rating: 0,
+      ratingCount: 0,
+    })
+  );
 
 // -- Student session status and mapping ---------------------------------------------------------------------------------------
 
