@@ -6,4 +6,5 @@ export interface Notification {
     message: string;
     redirectionLink: string;
     notifTimestamp: Timestamp;
+    isRead: boolean;
 }

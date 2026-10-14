@@ -35,7 +35,7 @@ export const EMPTY_FORM: SessionFormData = {
 // ─── Mock data (replace with Firebase / API later) ─────────────────────────────
 
 export interface Volunteer {
-  volID: string;
+  volUID: string;
   name: string;
   rating: number;
   ratingCount: number;
@@ -64,7 +64,7 @@ export const MOCK_VOLUNTEERS: Record<string, Volunteer> = Object.fromEntries(
   VOLUNTEER_NAMES.map((name, i) => [
     `vol-${i + 1}`,
     {
-      volID: `vol-${i + 1}`,
+      volUID: `vol-${i + 1}`,
       name,
       rating: 4.5,
       ratingCount: 10,
@@ -75,8 +75,8 @@ export const MOCK_VOLUNTEERS: Record<string, Volunteer> = Object.fromEntries(
 
 export const MOCK_REQUESTS: Support_Request[] = VOLUNTEER_NAMES.map((_, i) => ({
   reqID: `req-${i + 1}`,
-  studID: 'stud-1',
-  volID: `vol-${i + 1}`,
+  studUID: 'stud-1',
+  volUID: `vol-${i + 1}`,
   ...REQUEST_DETAILS[i],
   description: 'Mock request for testing.',
   reqStatus: 'Accepted',
@@ -85,7 +85,7 @@ export const MOCK_REQUESTS: Support_Request[] = VOLUNTEER_NAMES.map((_, i) => ({
 
 // Hours the volunteer is free, per weekday (JS getDay(): 0 = Sunday ... 6 = Saturday).
 // Recurring weekly availability: later this comes from the volunteer's Firestore data.
-export const getAvailability = (_volID: string): Record<number, number[]> => {
+export const getAvailability = (_volUID: string): Record<number, number[]> => {
   const weekday = [10, 11, 12, 13, 16, 17];
   const weekend = [10, 11, 12, 13, 14, 15, 16, 17];
   return { 1: [10, 11, 12], 2: weekday, 3: weekday, 4: weekday, 5: weekend, 6: weekend, 0: weekend };
@@ -111,11 +111,11 @@ export interface SessionSummary {
 }
 
 export const getRequestById = (reqID: string) => MOCK_REQUESTS.find(r => r.reqID === reqID);
-export const getVolunteerById = (volID: string) => MOCK_VOLUNTEERS[volID];
+export const getVolunteerById = (volUID: string) => MOCK_VOLUNTEERS[volUID];
 
 export const buildSummary = (data: SessionFormData): SessionSummary | null => {
   const request = getRequestById(data.reqID);
-  const volunteer = request ? getVolunteerById(request.volID) : undefined;
+  const volunteer = request ? getVolunteerById(request.volUID) : undefined;
   if (!request || !volunteer) return null;
 
   return {
@@ -153,47 +153,6 @@ export const sessionToFormData = (session: Support_Session): SessionFormData => 
   meetingLocation: session.meetingLocation,
 });
 
-// Only Planned or Confirmed sessions can be changed, and only before the day of the session
-// (the time-slot grid starts tomorrow)
+// Planned or Confirmed sessions can be rearranged, including sessions whose original slot elapsed.
 export const canEditSession = (session: Support_Session): boolean =>
-  (session.sessStatus === 'Planned' || session.sessStatus === 'Confirmed') &&
-  session.sessDate >= getUpcomingDays(1)[0];
-
-// Mock sessions for the rearrangement page (delete once this comes from Firestore).
-// IDs match the My Sessions mock; dates are relative to today so they always sit inside the 7-day grid.
-const mockSession = (
-  sessID: string,
-  reqID: string,
-  daysAhead: number,           // 0 = tomorrow
-  sessStatus: Support_Session['sessStatus'],
-  studConfirmed: boolean,
-  volConfirmed: boolean,
-  supportMode: Support_Session['supportMode'],
-  meetingLocation: string
-): Support_Session => {
-  const sessDate = getUpcomingDays(7)[daysAhead];
-  const slot = new Date(sessDate);
-  slot.setHours(11, 0, 0, 0);  // 11am is free on every weekday in the mock availability
-
-  return {
-    sessID,
-    reqID,
-    sessDate,
-    sessTimeSlot: Timestamp.fromDate(slot),
-    supportMode,
-    meetingLocation,
-    sessStatus,
-    sessTimestamp: Timestamp.fromDate(slot),
-    studConfirmed,
-    volConfirmed,
-  };
-};
-
-export const MOCK_EDITABLE_SESSIONS: Support_Session[] = [
-  mockSession('sess-1', 'req-1', 1, 'Planned',   true,  false, 'Physical', 'Student Lounge 2 at the sofa'),
-  mockSession('sess-2', 'req-2', 3, 'Planned',   false, true,  'Virtual',   'Paste the meeting link here'),
-  mockSession('sess-3', 'req-3', 2, 'Confirmed', true,  true,  'Physical', 'Library entrance'),
-  mockSession('sess-4', 'req-4', 0, 'Completed', true,  true,  'Physical', 'Student Lounge 2 at the sofa'),  // not editable
-];
-
-export const getSessionById = (sessID: string) => MOCK_EDITABLE_SESSIONS.find(s => s.sessID === sessID);
+  session.sessStatus === 'Planned' || session.sessStatus === 'Confirmed';
