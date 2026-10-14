@@ -1,21 +1,23 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import { getVolunteerSessionStatus } from '../../volunteer-utils.ts';
-import { StatusPill } from '../../../../components/dashboard-components.tsx';
 import type { VolunteerSessionItem } from '../../volunteer-utils.ts';
 
 import '../../../../components/page-css/details.css';
 
-interface SessionDetailsProps {
+// ─── Modal ─────────────────────────────────────────────────────────────────────
+
+interface SessionDetailsModalProps {
   item: VolunteerSessionItem;
   onClose: () => void;
-  onConfirm: () => void;
-  onCancelSession: () => void;
-  onMarkComplete: () => void;
-  onRearrange: () => void;
+  onMarkComplete?: (item: VolunteerSessionItem) => void;
+  onCancelSession?: (item: VolunteerSessionItem) => void;
+  onRearrange?: (item: VolunteerSessionItem) => void;
+  onConfirmArrangement?: (item: VolunteerSessionItem) => void;
+  footerActions?: ReactNode;
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -23,13 +25,22 @@ const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabi
 function SessionDetailsModal({
   item,
   onClose,
-  onConfirm,
-  onCancelSession,
   onMarkComplete,
+  onCancelSession,
   onRearrange,
-}: SessionDetailsProps) {
+  onConfirmArrangement,
+  footerActions,
+}: SessionDetailsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const { tone, label } = getVolunteerSessionStatus(item);
+  const canMarkComplete = item.sessStatus === 'Confirmed' && label === 'Elapsed';
+  const canChangeArrangement = item.sessStatus === 'Planned' || item.sessStatus === 'Confirmed';
+  const needsVolunteerConfirmation =
+    item.sessStatus === 'Planned' &&
+    item.studConfirmed &&
+    !item.volConfirmed &&
+    label !== 'Elapsed';
 
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -65,16 +76,6 @@ function SessionDetailsModal({
     };
   }, [onClose]);
 
-  const dateLabel = item.dateLabel;
-  const status = getVolunteerSessionStatus(item);
-  const isPlanned = item.sessStatus === 'Planned';
-  const isConfirmed = item.sessStatus === 'Confirmed';
-  const isElapsed = isConfirmed && status.label === 'Elapsed';
-  const needsVolunteerConfirmation = isPlanned && item.studConfirmed && !item.volConfirmed;
-  const canCancel = isPlanned || isConfirmed;
-  const canRearrange = isPlanned || (isConfirmed && !isElapsed);
-  const canMarkComplete = isElapsed;
-
   return createPortal(
     <div
       className="session-modal-backdrop"
@@ -103,13 +104,13 @@ function SessionDetailsModal({
 
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
-          <span className="session-modal-topdate"><CalendarIcon /> {dateLabel}</span>
+          <span className="session-modal-topdate"><CalendarIcon /> {item.dateLabel}</span>
         </div>
 
         <dl className="session-modal-info">
           <div className="session-modal-info-row">
             <dt><CalendarIcon /> Session Date</dt>
-            <dd>{dateLabel}</dd>
+            <dd>{item.dateLabel}</dd>
           </div>
           <div className="session-modal-info-row">
             <dt><SwapIcon /> Support Mode</dt>
@@ -133,30 +134,38 @@ function SessionDetailsModal({
             {item.requesterStatus && <span className="session-modal-volunteer-status">{item.requesterStatus}</span>}
           </div>
         </section>
-
+        
         <footer className="session-modal-footer">
-          <StatusPill tone={status.tone} label={status.label} />
-          {canCancel && (
-            <button type="button" className="ui-chip-btn ui-chip-btn--danger session-modal-action" onClick={onCancelSession}>
-              Cancel
-            </button>
+          <span className={`ui-status-pill ui-status-pill--${tone}`}>
+            {tone === 'planned' ? <ClockIcon /> : tone === 'to-confirm' ? <AlertIcon /> : tone === 'confirmed' ? <CheckIcon /> : <CalendarIcon />} {label}
+          </span>
+          {canChangeArrangement && (
+            <div className="session-modal-actions">
+              {onCancelSession && (
+                <button type="button" className="ui-chip-btn ui-chip-btn--danger session-modal-action" onClick={() => onCancelSession(item)}>
+                  Cancel
+                </button>
+              )}
+              {onRearrange && (
+                <button type="button" className="ui-chip-btn ui-chip-btn--info session-modal-action" onClick={() => onRearrange(item)}>
+                  Rearrange
+                </button>
+              )}
+              {needsVolunteerConfirmation && onConfirmArrangement && (
+                <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={() => onConfirmArrangement(item)}>
+                  Confirm Arrangement
+                </button>
+              )}
+            </div>
           )}
-          {canRearrange && (
-            <button type="button" className="ui-chip-btn ui-chip-btn--info session-modal-action" onClick={onRearrange}>
-              Rearrange
-            </button>
-          )}
-          {needsVolunteerConfirmation && (
-            <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={onConfirm}>
-              Confirm Arrangement
-            </button>
-          )}
+          {footerActions}
           {canMarkComplete && (
-            <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={onMarkComplete}>
+            <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={() => onMarkComplete?.(item)}>
               Mark Complete
             </button>
           )}
         </footer>
+
       </div>
     </div>,
     document.body,
