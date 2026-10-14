@@ -43,8 +43,8 @@ function TimeSlotStep({ formData, updateFormData }: Step2Props) {
   const [hovered, setHovered] = useState<SlotRef | null>(null);
 
   const request = getRequestById(formData.reqID);
-  const volunteer = request ? getVolunteerById(request.volID) : undefined;
-  const availability = request ? getAvailability(request.volID) : {};
+  const volunteer = request ? getVolunteerById(request.volUID) : undefined;
+  const availability = request ? getAvailability(request.volUID) : {};
 
   const selected: SlotRef | null =
     formData.sessDate && formData.sessTimeSlot
