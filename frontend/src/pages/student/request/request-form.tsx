@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 //state objects: currentStep - which step is showing
 //state object: formData - holds all form input values across steps
@@ -19,9 +19,13 @@ import { createEmptyForm, buildSummary } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
 import { useAuth } from '../../../context/authContext';
 import { createSupportRequest } from '../../../services/RequestService';
+import { loadRequestFormVolunteers } from '../../../services/StudentRequestService';
+import type { StudentRequestVolunteer } from '../../../types/StudentRequestVolunteer';
 
 import '../../../components/ui.css';
 import '../../../components/page-css/request-form.css';
+
+const NO_VOLUNTEERS: StudentRequestVolunteer[] = [];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
@@ -36,8 +40,57 @@ function MultiStepRequestForm() {
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
+  const [volunteerLoad, setVolunteerLoad] = useState<{
+    supportMode: RequestFormData['supportMode'];
+    status: 'loading' | 'loaded' | 'error';
+    volunteers: StudentRequestVolunteer[];
+    error: string;
+  }>({
+    supportMode: 'Physical',
+    status: 'loading',
+    volunteers: [],
+    error: '',
+  });
 
   const totalSteps = 4; // the confirmation page is not a numbered step
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    loadRequestFormVolunteers(formData.supportMode)
+      .then(data => {
+        if (isCurrent) {
+          setVolunteerLoad({ supportMode: formData.supportMode, status: 'loaded', volunteers: data, error: '' });
+        }
+      })
+      .catch(error => {
+        console.error('Error loading request form volunteers:', error);
+        if (isCurrent) {
+          setVolunteerLoad({
+            supportMode: formData.supportMode,
+            status: 'error',
+            volunteers: [],
+            error: 'Could not load volunteers. Please try again.',
+          });
+        }
+      });
+
+    return () => { isCurrent = false; };
+  }, [formData.supportMode]);
+
+  const isCurrentVolunteerLoad = volunteerLoad.supportMode === formData.supportMode;
+  const volunteers = isCurrentVolunteerLoad && volunteerLoad.status === 'loaded'
+    ? volunteerLoad.volunteers
+    : NO_VOLUNTEERS;
+  const volunteersLoading = !isCurrentVolunteerLoad || volunteerLoad.status === 'loading';
+  const volunteersError = isCurrentVolunteerLoad && volunteerLoad.status === 'error'
+    ? volunteerLoad.error
+    : '';
+
+  const availableSkills = useMemo(
+    () => [...new Set(volunteers.flatMap(volunteer => volunteer.skills))].sort(),
+    [volunteers],
+  );
 
   const updateFormData = (data: Partial<RequestFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
@@ -58,7 +111,7 @@ function MultiStepRequestForm() {
     setSubmitMessage('');
 
     try {
-      const submitted = buildSummary(formData);
+      const submitted = buildSummary(formData, volunteers);
       if (!submitted) throw new Error('Could not find the selected volunteer');
       if (!firebaseUser) throw new Error('You must be signed in to submit a support request');
 
@@ -110,6 +163,9 @@ function MultiStepRequestForm() {
               supportMode: formData.supportMode,
               requiredSkills: formData.requiredSkills,
             }}
+            availableSkills={availableSkills}
+            volunteersLoading={volunteersLoading}
+            volunteersError={volunteersError}
             updateFormData={updateFormData}
             onPrevious={handlePrevious}
             onNext={handleNext}
@@ -135,6 +191,10 @@ function MultiStepRequestForm() {
               availability: formData.availability,
               volUID: formData.volUID,
             }}
+            supportMode={formData.supportMode}
+            volunteers={volunteers}
+            volunteersLoading={volunteersLoading}
+            volunteersError={volunteersError}
             updateFormData={updateFormData}
             onPrevious={handlePrevious}
             onSubmit={() => setShowConfirm(true)}

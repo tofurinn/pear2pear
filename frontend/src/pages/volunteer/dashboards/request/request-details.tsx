@@ -14,11 +14,20 @@ interface RequestDetailsModalProps {
   onReject: () => void;
   onSchedule: () => void;
   onViewSession: () => void;
+  isUpdating?: boolean;
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-function RequestDetailsModal({ item, onClose, onAccept, onReject, onSchedule, onViewSession }: RequestDetailsModalProps) {
+function RequestDetailsModal({
+  item,
+  onClose,
+  onAccept,
+  onReject,
+  onSchedule,
+  onViewSession,
+  isUpdating = false,
+}: RequestDetailsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -97,8 +106,8 @@ function RequestDetailsModal({ item, onClose, onAccept, onReject, onSchedule, on
         <footer className="session-modal-footer">
           {item.reqStatus === 'Pending' && (
             <div className="vol-modal-actions">
-              <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={onAccept}>Accept</button>
-              <button type="button" className="ui-chip-btn ui-chip-btn--danger session-modal-action" onClick={onReject}>Reject</button>
+              <button type="button" className="ui-chip-btn ui-chip-btn--success session-modal-action" onClick={onAccept} disabled={isUpdating}>Accept</button>
+              <button type="button" className="ui-chip-btn ui-chip-btn--danger session-modal-action" onClick={onReject} disabled={isUpdating}>Reject</button>
             </div>
           )}
           {item.reqStatus === 'Accepted' && (
