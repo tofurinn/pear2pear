@@ -35,7 +35,7 @@ export const EMPTY_FORM: SessionFormData = {
 // ─── Mock data (replace with Firebase / API later) ─────────────────────────────
 
 export interface Volunteer {
-  volID: string;
+  volUID: string;
   name: string;
   rating: number;
   ratingCount: number;
@@ -64,7 +64,7 @@ export const MOCK_VOLUNTEERS: Record<string, Volunteer> = Object.fromEntries(
   VOLUNTEER_NAMES.map((name, i) => [
     `vol-${i + 1}`,
     {
-      volID: `vol-${i + 1}`,
+      volUID: `vol-${i + 1}`,
       name,
       rating: 4.5,
       ratingCount: 10,
@@ -75,8 +75,8 @@ export const MOCK_VOLUNTEERS: Record<string, Volunteer> = Object.fromEntries(
 
 export const MOCK_REQUESTS: Support_Request[] = VOLUNTEER_NAMES.map((_, i) => ({
   reqID: `req-${i + 1}`,
-  studID: 'stud-1',
-  volID: `vol-${i + 1}`,
+  studUID: 'stud-1',
+  volUID: `vol-${i + 1}`,
   ...REQUEST_DETAILS[i],
   description: 'Mock request for testing.',
   reqStatus: 'Accepted',
@@ -85,7 +85,7 @@ export const MOCK_REQUESTS: Support_Request[] = VOLUNTEER_NAMES.map((_, i) => ({
 
 // Hours the volunteer is free, per weekday (JS getDay(): 0 = Sunday ... 6 = Saturday).
 // Recurring weekly availability: later this comes from the volunteer's Firestore data.
-export const getAvailability = (_volID: string): Record<number, number[]> => {
+export const getAvailability = (_volUID: string): Record<number, number[]> => {
   const weekday = [10, 11, 12, 13, 16, 17];
   const weekend = [10, 11, 12, 13, 14, 15, 16, 17];
   return { 1: [10, 11, 12], 2: weekday, 3: weekday, 4: weekday, 5: weekend, 6: weekend, 0: weekend };
@@ -111,11 +111,11 @@ export interface SessionSummary {
 }
 
 export const getRequestById = (reqID: string) => MOCK_REQUESTS.find(r => r.reqID === reqID);
-export const getVolunteerById = (volID: string) => MOCK_VOLUNTEERS[volID];
+export const getVolunteerById = (volUID: string) => MOCK_VOLUNTEERS[volUID];
 
 export const buildSummary = (data: SessionFormData): SessionSummary | null => {
   const request = getRequestById(data.reqID);
-  const volunteer = request ? getVolunteerById(request.volID) : undefined;
+  const volunteer = request ? getVolunteerById(request.volUID) : undefined;
   if (!request || !volunteer) return null;
 
   return {

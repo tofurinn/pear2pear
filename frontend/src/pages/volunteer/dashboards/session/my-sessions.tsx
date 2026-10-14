@@ -57,15 +57,15 @@ function VolunteerSessions() {
         const studentIDs = [...new Set(
           requests
             .filter(request => sessionsRequestIDs.has(request.reqID))
-            .map(request => request.studID)
+            .map(request => request.studUID)
         )];
 
-        const studentEntries = await Promise.all(studentIDs.map(async studID => {
-          const user = await getUser(studID);
+        const studentEntries = await Promise.all(studentIDs.map(async studUID => {
+          const user = await getUser(studUID);
           const summary: VolunteerStudentSummary = {
             name: user?.name ?? 'Student'
           };
-          return [studID, summary] as const;
+          return [studUID, summary] as const;
         }));
 
         if (isCurrent) {

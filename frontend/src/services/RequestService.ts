@@ -39,55 +39,55 @@ export const getSupportRequest = async (reqID: string): Promise<Support_Request 
 };
 
 // Get all requests made by a student (My Requests)
-export const getRequestsByStudent = async (studID: string): Promise<Support_Request[]> => {
+export const getRequestsByStudent = async (studUID: string): Promise<Support_Request[]> => {
   try {
-    const snap = await getDocs(query(collection(db, COLLECTION), where('studID', '==', studID)));
+    const snap = await getDocs(query(collection(db, COLLECTION), where('studUID', '==', studUID)));
     return snap.docs.map(d => d.data() as Support_Request).sort(newestFirst);
   } catch (error) {
-    console.error(`Error getting requests for student "${studID}":`, error);
+    console.error(`Error getting requests for student "${studUID}":`, error);
     throw error;
   }
 };
 
 // Get all requests sent to a volunteer (Incoming Requests)
-export const getRequestsByVolunteer = async (volID: string): Promise<Support_Request[]> => {
+export const getRequestsByVolunteer = async (volUID: string): Promise<Support_Request[]> => {
   try {
-    const snap = await getDocs(query(collection(db, COLLECTION), where('volID', '==', volID)));
+    const snap = await getDocs(query(collection(db, COLLECTION), where('volUID', '==', volUID)));
     return snap.docs.map(d => d.data() as Support_Request).sort(newestFirst);
   } catch (error) {
-    console.error(`Error getting requests for volunteer "${volID}":`, error);
+    console.error(`Error getting requests for volunteer "${volUID}":`, error);
     throw error;
   }
 };
 
 // Get a student's requests with a given status
 export const getRequestsByStudentAndStatus = async (
-  studID: string,
+  studUID: string,
   reqStatus: Support_Request['reqStatus']
 ): Promise<Support_Request[]> => {
   try {
     const snap = await getDocs(
-      query(collection(db, COLLECTION), where('studID', '==', studID), where('reqStatus', '==', reqStatus))
+      query(collection(db, COLLECTION), where('studUID', '==', studUID), where('reqStatus', '==', reqStatus))
     );
     return snap.docs.map(d => d.data() as Support_Request).sort(newestFirst);
   } catch (error) {
-    console.error(`Error getting "${reqStatus}" requests for student "${studID}":`, error);
+    console.error(`Error getting "${reqStatus}" requests for student "${studUID}":`, error);
     throw error;
   }
 };
 
 // Get a volunteer's requests with a given status
 export const getRequestsByVolunteerAndStatus = async (
-  volID: string,
+  volUID: string,
   reqStatus: Support_Request['reqStatus']
 ): Promise<Support_Request[]> => {
   try {
     const snap = await getDocs(
-      query(collection(db, COLLECTION), where('volID', '==', volID), where('reqStatus', '==', reqStatus))
+      query(collection(db, COLLECTION), where('volUID', '==', volUID), where('reqStatus', '==', reqStatus))
     );
     return snap.docs.map(d => d.data() as Support_Request).sort(newestFirst);
   } catch (error) {
-    console.error(`Error getting "${reqStatus}" requests for volunteer "${volID}":`, error);
+    console.error(`Error getting "${reqStatus}" requests for volunteer "${volUID}":`, error);
     throw error;
   }
 };

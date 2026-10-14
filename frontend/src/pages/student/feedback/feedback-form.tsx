@@ -20,7 +20,7 @@ import '../../../components/page-css/feedback-form.css';
 const MAX_RATING = 5;
 const STAR_VALUES = Array.from({ length: MAX_RATING }, (_, i) => i + 1);
 
-// TODO: look the volunteer up from sessID -> Support_Session.reqID -> Support_Request.volID
+// TODO: look the volunteer up from sessID -> Support_Session.reqID -> Support_Request.volUID
 const MOCK_VOLUNTEER: { name: string; avatarUrl?: string } = { name: 'Chiikawa' };
 
 // ─── Component ─────────────────────────────────────────────────────────────────

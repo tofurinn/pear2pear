@@ -98,12 +98,12 @@ function SessionRearrangement() {
         }
 
         const [volunteer, volunteerUser] = await Promise.all([
-          getVolunteer(ownedRequest.volID),
-          getUser(ownedRequest.volID),
+          getVolunteer(ownedRequest.volUID),
+          getUser(ownedRequest.volUID),
         ]);
 
         const mappedVolunteer: SessionVolunteer = {
-          volID: ownedRequest.volID,
+          volUID: ownedRequest.volUID,
           name: volunteerUser?.name ?? 'Volunteer',
           rating: volunteer?.avgRating ?? 0,
           ratingCount: 0,

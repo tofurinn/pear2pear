@@ -60,17 +60,17 @@ const availability = [
 // plus one "Scheduled" request per session below (req005 to req009)
 // All from the Active student (user004) to the Active volunteer (user001).
 const supportRequests = [
-  { reqID: "req001", studID: "user004", volID: "user001", title: "Help with calculus revision", description: "I'm struggling with integration before my midterm and could use a walkthrough.", category: "Academic Support", reqStatus: "Pending", reqTimestamp: new Date("2026-10-06T09:00:00+08:00") },
-  { reqID: "req002", studID: "user004", volID: "user001", title: "Statistics homework walkthrough", description: "Need help understanding hypothesis testing for this week's homework.", category: "Academic Support", reqStatus: "Accepted", reqTimestamp: new Date("2026-10-05T09:00:00+08:00") },
-  { reqID: "req003", studID: "user004", volID: "user001", title: "Last-minute thesis proofreading", description: "Could someone proofread my thesis introduction before tomorrow?", category: "Academic Support", reqStatus: "Rejected", reqTimestamp: new Date("2026-10-04T09:00:00+08:00") },
-  { reqID: "req004", studID: "user004", volID: "user001", title: "Study group for physics", description: "Looking for someone to study mechanics with this week.", category: "Academic Support", reqStatus: "Cancelled", reqTimestamp: new Date("2026-10-03T09:00:00+08:00") },
+  { reqID: "req001", studUID: "user004", volUID: "user001", title: "Help with calculus revision", description: "I'm struggling with integration before my midterm and could use a walkthrough.", category: "Academic Support", reqStatus: "Pending", reqTimestamp: new Date("2026-10-06T09:00:00+08:00") },
+  { reqID: "req002", studUID: "user004", volUID: "user001", title: "Statistics homework walkthrough", description: "Need help understanding hypothesis testing for this week's homework.", category: "Academic Support", reqStatus: "Accepted", reqTimestamp: new Date("2026-10-05T09:00:00+08:00") },
+  { reqID: "req003", studUID: "user004", volUID: "user001", title: "Last-minute thesis proofreading", description: "Could someone proofread my thesis introduction before tomorrow?", category: "Academic Support", reqStatus: "Rejected", reqTimestamp: new Date("2026-10-04T09:00:00+08:00") },
+  { reqID: "req004", studUID: "user004", volUID: "user001", title: "Study group for physics", description: "Looking for someone to study mechanics with this week.", category: "Academic Support", reqStatus: "Cancelled", reqTimestamp: new Date("2026-10-03T09:00:00+08:00") },
 
   // Requests that have a session
-  { reqID: "req005", studID: "user004", volID: "user001", title: "Essay structure feedback", description: "Want feedback on how I structure my argumentative essays.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-10-02T09:00:00+08:00") },
-  { reqID: "req006", studID: "user004", volID: "user001", title: "Exam revision plan", description: "Help me plan my revision for the final exams.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-10-01T09:00:00+08:00") },
-  { reqID: "req007", studID: "user004", volID: "user001", title: "Tips for time management", description: "Looking for ways to balance classes and part-time work.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-09-25T09:00:00+08:00") },
-  { reqID: "req008", studID: "user004", volID: "user001", title: "Choosing electives", description: "Not sure which electives to take next semester.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-09-22T09:00:00+08:00") },
-  { reqID: "req009", studID: "user004", volID: "user001", title: "Statistics study session", description: "Would like to review statistics with someone before the quiz.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-09-28T09:00:00+08:00") },
+  { reqID: "req005", studUID: "user004", volUID: "user001", title: "Essay structure feedback", description: "Want feedback on how I structure my argumentative essays.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-10-02T09:00:00+08:00") },
+  { reqID: "req006", studUID: "user004", volUID: "user001", title: "Exam revision plan", description: "Help me plan my revision for the final exams.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-10-01T09:00:00+08:00") },
+  { reqID: "req007", studUID: "user004", volUID: "user001", title: "Tips for time management", description: "Looking for ways to balance classes and part-time work.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-09-25T09:00:00+08:00") },
+  { reqID: "req008", studUID: "user004", volUID: "user001", title: "Choosing electives", description: "Not sure which electives to take next semester.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-09-22T09:00:00+08:00") },
+  { reqID: "req009", studUID: "user004", volUID: "user001", title: "Statistics study session", description: "Would like to review statistics with someone before the quiz.", category: "Academic Support", reqStatus: "Scheduled", reqTimestamp: new Date("2026-09-28T09:00:00+08:00") },
 ];
 
 // ---------- Support sessions: Planned, Confirmed, Completed, Rated, Cancelled ----------

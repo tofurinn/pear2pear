@@ -63,8 +63,8 @@ function MultiStepRequestForm() {
       if (!firebaseUser) throw new Error('You must be signed in to submit a support request');
 
       await createSupportRequest({
-        studID: firebaseUser.uid,
-        volID: formData.volID,
+        studUID: firebaseUser.uid,
+        volUID: formData.volUID,
         title: formData.title,
         description: formData.description,
         category: submitted.category,
@@ -133,7 +133,7 @@ function MultiStepRequestForm() {
               category: formData.category,
               requiredSkills: formData.requiredSkills,
               availability: formData.availability,
-              volID: formData.volID,
+              volUID: formData.volUID,
             }}
             updateFormData={updateFormData}
             onPrevious={handlePrevious}
