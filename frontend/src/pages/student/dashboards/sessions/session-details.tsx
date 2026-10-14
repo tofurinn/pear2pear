@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 
 import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
+import { getStudentSessionStatus } from '../../student-utils.tsx';
 import type { StudentSessionItem } from '../../student-utils.tsx';
 
 import '../../../../components/page-css/details.css';
@@ -80,12 +81,17 @@ function SessionDetailsModal({
 }: SessionDetailsModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const { tone, label } = item.status;
+  const { tone, label } = getStudentSessionStatus(item);
   const volunteer = item.volunteer;
   const student = item.studentDetails;
+  
   const canGiveFeedback = item.sessStatus === 'Completed' && !!onSubmitFeedback;
   const canChangeArrangement = item.sessStatus === 'Planned' || item.sessStatus === 'Confirmed';
-  const needsStudentConfirmation = item.sessStatus === 'Planned' && !item.studConfirmed && item.volConfirmed;
+  const needsStudentConfirmation =
+    item.sessStatus === 'Planned' &&
+    !item.studConfirmed &&
+    item.volConfirmed &&
+    label !== 'Elapsed';
 
   // Escape to close, Tab stays inside the dialog, page behind doesn't scroll,
   // and focus returns to the "View Details" button afterwards.

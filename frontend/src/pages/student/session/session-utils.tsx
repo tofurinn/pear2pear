@@ -153,47 +153,6 @@ export const sessionToFormData = (session: Support_Session): SessionFormData => 
   meetingLocation: session.meetingLocation,
 });
 
-// Only Planned or Confirmed sessions can be changed, and only before the day of the session
-// (the time-slot grid starts tomorrow)
+// Planned or Confirmed sessions can be rearranged, including sessions whose original slot elapsed.
 export const canEditSession = (session: Support_Session): boolean =>
-  (session.sessStatus === 'Planned' || session.sessStatus === 'Confirmed') &&
-  session.sessDate >= getUpcomingDays(1)[0];
-
-// Mock sessions for the rearrangement page (delete once this comes from Firestore).
-// IDs match the My Sessions mock; dates are relative to today so they always sit inside the 7-day grid.
-const mockSession = (
-  sessID: string,
-  reqID: string,
-  daysAhead: number,           // 0 = tomorrow
-  sessStatus: Support_Session['sessStatus'],
-  studConfirmed: boolean,
-  volConfirmed: boolean,
-  supportMode: Support_Session['supportMode'],
-  meetingLocation: string
-): Support_Session => {
-  const sessDate = getUpcomingDays(7)[daysAhead];
-  const slot = new Date(sessDate);
-  slot.setHours(11, 0, 0, 0);  // 11am is free on every weekday in the mock availability
-
-  return {
-    sessID,
-    reqID,
-    sessDate,
-    sessTimeSlot: Timestamp.fromDate(slot),
-    supportMode,
-    meetingLocation,
-    sessStatus,
-    sessTimestamp: Timestamp.fromDate(slot),
-    studConfirmed,
-    volConfirmed,
-  };
-};
-
-export const MOCK_EDITABLE_SESSIONS: Support_Session[] = [
-  mockSession('sess-1', 'req-1', 1, 'Planned',   true,  false, 'Physical', 'Student Lounge 2 at the sofa'),
-  mockSession('sess-2', 'req-2', 3, 'Planned',   false, true,  'Virtual',   'Paste the meeting link here'),
-  mockSession('sess-3', 'req-3', 2, 'Confirmed', true,  true,  'Physical', 'Library entrance'),
-  mockSession('sess-4', 'req-4', 0, 'Completed', true,  true,  'Physical', 'Student Lounge 2 at the sofa'),  // not editable
-];
-
-export const getSessionById = (sessID: string) => MOCK_EDITABLE_SESSIONS.find(s => s.sessID === sessID);
+  session.sessStatus === 'Planned' || session.sessStatus === 'Confirmed';

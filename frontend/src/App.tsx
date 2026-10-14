@@ -26,7 +26,7 @@ import EmailVerificationPage from "./pages/login/2FA/2fa";
 import MyDashboard from "./pages/student/dashboards/dashboard";
 
 import MyRequests from "./pages/student/dashboards/requests/my-requests";
-import MySessions from './pages/student/dashboards/sessions/my-sessions';
+import StudentSessions from './pages/student/dashboards/sessions/my-sessions';
 import MySupportHistory from './pages/student/dashboards/support-history/my-support-history';
 
 import MultiStepRequestForm from './pages/student/request/request-form';
@@ -87,7 +87,7 @@ function App() {
           {/* Dashboard Forms */}
           <Route path="/student/dashboard" element={<Require2FA><MyDashboard /></Require2FA>} />
           <Route path="/student/my-requests" element={<MyRequests />} />
-          <Route path="/student/my-sessions" element={<MySessions />} />
+          <Route path="/student/my-sessions" element={<StudentSessions />} />
           <Route path="/student/my-support-history" element={<MySupportHistory />} />
           <Route path="/student/notifications" element={<StudentNotifications />} />
 
