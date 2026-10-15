@@ -4,7 +4,7 @@ import Titled from "./components/titled";
 import { routes } from "./routes.tsx";
 
 import app from "./firebase/config";
-console.log("YOUR FIREBASE IS GG FURKIN WORKINNNNN... PROJECT ID IS:", app.options.projectId);
+console.log("YOUR FIREBASE IS WORKING: ", app.options.projectId);
 
 function App() {
   const location = useLocation();
