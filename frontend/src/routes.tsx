@@ -24,8 +24,8 @@ import MyRequests from "./pages/student/dashboards/requests/my-requests";
 import StudentSessions from './pages/student/dashboards/sessions/my-sessions';
 import MySupportHistory from './pages/student/dashboards/support-history/my-support-history';
 import MultiStepRequestForm from './pages/student/request/request-form';
-import MultiStepSessionForm from './pages/student/session/session-form';
-import SessionRearrangement from './pages/student/session/session-rearrangement';
+import StudentMultiStepSessionForm from './pages/student/session/session-form';
+import StudentSessionRearrangement from './pages/student/session/session-rearrangement';
 import FeedbackForm from './pages/student/feedback/feedback-form';
 import StudentNotifications from './pages/student/notifications/notifications';
 import StudentSettings from './pages/student/settings/student-settings';
@@ -35,6 +35,8 @@ import VolunteerDashboard from "./pages/volunteer/dashboards/dashboard";
 import VolunteerRequests from "./pages/volunteer/dashboards/request/my-requests";
 import VolunteerSessions from "./pages/volunteer/dashboards/session/my-sessions";
 import VolunteerHistory from "./pages/volunteer/dashboards/support-history/my-support-history";
+import VolunteerMultiStepSessionForm from './pages/volunteer/session/session-form';
+import VolunteerSessionRearrangement from './pages/volunteer/session/session-rearrangement';
 import VolunteerNotifications from "./pages/volunteer/notifications/notifications";
 import VolunteerSettings from "./pages/volunteer/settings/volunteer-settings";
 
@@ -71,9 +73,9 @@ export const routes: RouteDefinition[] = [
 
   // Student forms
   { path: "/student/request-form", title: "Request Support", element: <MultiStepRequestForm /> },
-  { path: "/student/session-form", title: "Schedule a Session", element: <MultiStepSessionForm /> },
+  { path: "/student/session-form", title: "Schedule a Session", element: <StudentMultiStepSessionForm /> },
   { path: "/student/feedback-form/:sessID", title: "Feedback", element: <FeedbackForm /> },
-  { path: "/student/session-edit/:sessID", title: "Edit Session", element: <SessionRearrangement /> },
+  { path: "/student/session-edit/:sessID", title: "Edit Session", element: <StudentSessionRearrangement /> },
   { path: "/student/settings", title: "Settings", element: <StudentSettings /> },
 
   // - - - VOLUNTEER ROUTES - - -
@@ -85,7 +87,7 @@ export const routes: RouteDefinition[] = [
   { path: "/become-volunteer", title: "Become a Volunteer", element: <VolunteerRegisterPage flow="upgrade" /> },
 
   // Volunteer forms
-  { path: "/volunteer/session-form", title: "Schedule a Session", element: <MultiStepSessionForm /> },
-  { path: "/volunteer/session-edit/:sessID", title: "Edit Session", element: <SessionRearrangement /> },
+  { path: "/volunteer/session-form", title: "Schedule a Session", element: <VolunteerMultiStepSessionForm /> },
+  { path: "/volunteer/session-edit/:sessID", title: "Edit Session", element: <VolunteerSessionRearrangement /> },
   { path: "/volunteer/settings", title: "Settings", element: <VolunteerSettings /> },
 ];

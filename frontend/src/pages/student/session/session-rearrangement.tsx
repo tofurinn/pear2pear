@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 //state object: currentStep - 2 or 3 (step 1, the request, is already fixed for an existing session)
 //state object: formData - starts as the session's current arrangement
 //state objects: showConfirm / isSaving / errorMessage - the save flow
@@ -43,15 +43,10 @@ const totalSteps = 3;
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function SessionRearrangement() {
+function StudentSessionRearrangement() {
   const { sessID = '' } = useParams<{ sessID: string }>(); // route e.g. /sessions/:sessID/edit
   const navigate = useNavigate();
-  const location = useLocation();
   const { userDoc, loading: authLoading } = useAuth();
-  const isVolunteerRoute = location.pathname.startsWith('/volunteer/');
-  const dashboardPath = isVolunteerRoute ? '/volunteer/dashboard' : '/student/dashboard';
-  const pageBackgroundClass = isVolunteerRoute ? 'ui-page-volunteer-background' : 'ui-page-student-background';
-  const sessionsPath = isVolunteerRoute ? '/volunteer/my-sessions' : '/student/my-sessions';
 
   const [session, setSession] = useState<Support_Session | null>(null);
   const [request, setRequest] = useState<Support_Request | null>(null);
@@ -79,7 +74,7 @@ function SessionRearrangement() {
       try {
         const [loadedSession, ownedRequests] = await Promise.all([
           getSupportSession(sessID),
-          isVolunteerRoute ? getRequestsByVolunteer(userDoc.UID) : getRequestsByStudent(userDoc.UID),
+          getRequestsByStudent(userDoc.UID),
         ]);
 
         const ownedRequest = loadedSession
@@ -128,7 +123,7 @@ function SessionRearrangement() {
     return () => {
       isCurrent = false;
     };
-  }, [authLoading, isVolunteerRoute, sessID, userDoc?.UID]);
+  }, [authLoading, sessID, userDoc?.UID]);
 
   const isLastStep = currentStep === LAST_STEP;
   const isTimeSlotValid = isSessionSlotBookable(
@@ -197,15 +192,15 @@ function SessionRearrangement() {
   if (summary) {
     return (
       <div className="ui-page">
-        <Navbar dashboardPath={dashboardPath} />
-        <main className={pageBackgroundClass}>
+        <Navbar dashboardPath={"/student/dashboard"} />
+        <main className={"ui-page-student-background"}>
           <section className="ui-card ui-card--centered">
             <SessionConfirmationStep
               summary={summary}
               title="Your Support Session Has Been Rearranged!"
               message="Sit tight, you will receive a notification once your matched Volunteer confirms the new arrangement"
-              onReturnToDashboard={() => navigate(dashboardPath)}
-              onViewSession={() => navigate(sessionsPath)}
+              onReturnToDashboard={() => navigate("/student/dashboard")}
+              onViewSession={() => navigate("/student/my-sessions")}
             />
           </section>
         </main>
@@ -216,8 +211,8 @@ function SessionRearrangement() {
   if (isLoadingSession) {
     return (
       <div className="ui-page">
-        <Navbar dashboardPath={dashboardPath} />
-        <main className={pageBackgroundClass}>
+        <Navbar dashboardPath={"/student/dashboard"} />
+        <main className={"ui-page-student-background"}>
           <section className="ui-card">
             <p className="ui-card-heading" role="status">Loading session...</p>
           </section>
@@ -231,8 +226,8 @@ function SessionRearrangement() {
   if (!session || !canEditSession(session)) {
     return (
       <div className="ui-page">
-        <Navbar dashboardPath={dashboardPath} />
-        <main className={pageBackgroundClass}>
+        <Navbar dashboardPath={"/student/dashboard"} />
+        <main className={"ui-page-student-background"}>
           <section className="ui-card">
             <h1 className="ui-card-title">Rearrange Session</h1>
             <hr className="ui-card-divider" />
@@ -256,8 +251,8 @@ function SessionRearrangement() {
 
   return (
     <div className="ui-page">
-      <Navbar dashboardPath={dashboardPath} />
-      <main className={pageBackgroundClass}>
+      <Navbar dashboardPath={"/student/dashboard"} />
+      <main className={"ui-page-student-background"}>
         <section className="ui-card">
           <h1 className="ui-card-title">Rearrange Session</h1>
           <hr className="ui-card-divider" />
@@ -326,4 +321,4 @@ function SessionRearrangement() {
   );
 }
 
-export default SessionRearrangement;
+export default StudentSessionRearrangement;
