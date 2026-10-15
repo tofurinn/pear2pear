@@ -43,7 +43,7 @@ const totalSteps = 3;
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function SessionRearrangement() {
+function StudentSessionRearrangement() {
   const { sessID = '' } = useParams<{ sessID: string }>(); // route e.g. /sessions/:sessID/edit
   const navigate = useNavigate();
   const { userDoc, loading: authLoading } = useAuth();
@@ -321,4 +321,4 @@ function SessionRearrangement() {
   );
 }
 
-export default SessionRearrangement;
+export default StudentSessionRearrangement;

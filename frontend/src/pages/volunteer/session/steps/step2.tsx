@@ -8,7 +8,7 @@ import {
   toDateKey,
 } from '../../volunteer-utils.tsx';
 import { getUpcomingDays, isSessionSlotBookable, isSessionSlotOccupied } from '../session-utils.tsx';
-import type { SessionFormData, Volunteer } from '../session-utils.tsx';
+import type { SessionFormData } from '../session-utils.tsx';
 import type { Support_Session } from '../../../../types/Support_Session';
 import { CheckIcon } from '../../../../components/icons.tsx';
 
@@ -17,7 +17,6 @@ import { CheckIcon } from '../../../../components/icons.tsx';
 interface Step2Props {
   formData: Pick<SessionFormData, 'reqID' | 'sessDate' | 'sessTimeSlot'>;
   updateFormData: (data: Partial<SessionFormData>) => void;
-  volunteer?: Volunteer;
   availability: Record<number, number[]>;
   sessions: Support_Session[];
   isLoading: boolean;
@@ -39,7 +38,6 @@ const describeSlot = ({ date, hour }: SlotRef) =>
 function TimeSlotStep({
   formData,
   updateFormData,
-  volunteer,
   availability,
   sessions,
   isLoading,
@@ -63,9 +61,7 @@ function TimeSlotStep({
 
   return (
     <>
-      <h2 className="ui-card-heading">
-        Step 2: Select <span className="ui-accent">{volunteer?.name ?? 'Volunteer'}'s</span> Available Time Slot
-      </h2>
+      <h2 className="ui-card-heading">Step 2: Select From Your Available Time Slot</h2>
 
       {isLoading && <p role="status">Loading availability...</p>}
 

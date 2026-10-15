@@ -42,7 +42,7 @@ const STEP_KEYS: SessionStepKey[] = ['request', 'timeSlot', 'meetup'];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function MultiStepSessionForm() {
+function StudentMultiStepSessionForm() {
   const navigate = useNavigate();
   const { userDoc, loading: authLoading } = useAuth();
   const studentUID = userDoc?.UID ?? null;
@@ -348,4 +348,4 @@ function MultiStepSessionForm() {
   );
 }
 
-export default MultiStepSessionForm;
+export default StudentMultiStepSessionForm;

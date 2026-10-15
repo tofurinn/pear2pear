@@ -33,12 +33,10 @@ export const EMPTY_FORM: SessionFormData = {
   meetingLocation: '',
 };
 
-export interface Volunteer {
-  volUID: string;
+// The student on the other side of a request (the volunteer is the signed-in user)
+export interface Student {
+  studUID: string;
   name: string;
-  rating: number;
-  ratingCount: number;
-  tags: string[];
 }
 
 export const toWeeklyAvailability = (records: Availability[]): Record<number, number[]> =>
@@ -64,13 +62,13 @@ export interface SessionSummary {
   timeslotLabel: string;
   supportMode: SessionFormData['supportMode'];
   meetingLocation: string;
-  volunteer: Volunteer;
+  student: Student;
 }
 
 export const buildSessionSummary = (
   data: SessionFormData,
   request: Support_Request,
-  volunteer: Volunteer,
+  student: Student,
 ): SessionSummary => ({
     category: request.category,
     title: request.title,
@@ -78,8 +76,8 @@ export const buildSessionSummary = (
     timeslotLabel: formatTimeslotRange(slotToHour(data.sessTimeSlot)),
     supportMode: data.supportMode,
     meetingLocation: data.meetingLocation.trim(),
-    volunteer,
-  });
+    student,
+});
 
 export const isSessionSlotBookable = (
   dateKey: string,
@@ -117,7 +115,7 @@ export const isSessionSlotOccupied = (
 
 export type SessionStepKey = 'request' | 'timeSlot' | 'meetup';
 
-// Whether a step has what it needs before the student can move on
+// Whether a step has what it needs before the volunteer can move on
 export const isStepValid = (step: SessionStepKey, data: SessionFormData): boolean => {
   switch (step) {
     case 'request':  return data.reqID !== '';

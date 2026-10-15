@@ -24,14 +24,13 @@ import {
   toWeeklyAvailability,
 } from './session-utils.tsx';
 import type { SessionStepKey } from './session-utils.tsx';
-import type { SessionFormData, SessionSummary, Volunteer } from './session-utils.tsx';
+import type { SessionFormData, SessionSummary, Student } from './session-utils.tsx';
 import type { Support_Request } from '../../../types/Support_Request';
 import type { Support_Session } from '../../../types/Support_Session';
-import { getRequestsByStudentAndStatus, getRequestsByVolunteer } from '../../../services/RequestService';
+import { getRequestsByVolunteerAndStatus, getRequestsByVolunteer } from '../../../services/RequestService';
 import { updateRequestStatus } from '../../../services/RequestService';
 import { getAvailabilityByVolunteer } from '../../../services/AvailabilityService';
 import { createSupportSession, getSessionsByRequestIDs } from '../../../services/SessionService';
-import { getVolunteer } from '../../../services/VolunteerService';
 import { getUser } from '../../../services/UserService';
 import { parseDateKey, slotToHour } from '../volunteer-utils.tsx';
 
@@ -42,10 +41,10 @@ const STEP_KEYS: SessionStepKey[] = ['request', 'timeSlot', 'meetup'];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function MultiStepSessionForm() {
+function VolunteerMultiStepSessionForm() {
   const navigate = useNavigate();
   const { userDoc, loading: authLoading } = useAuth();
-  const studentUID = userDoc?.UID ?? null;
+  const volunteerUID = userDoc?.UID ?? null;
   
   const location = useLocation();
   const requestedReqID = (location.state as { reqID?: unknown } | null)?.reqID;
@@ -58,8 +57,8 @@ function MultiStepSessionForm() {
   const [errorMessage, setErrorMessage] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [requests, setRequests] = useState<Support_Request[]>([]);
-  const [volunteers, setVolunteers] = useState<Record<string, Volunteer>>({});
-  const [loadedRequestsStudentUID, setLoadedRequestsStudentUID] = useState<string | null>(null);
+  const [students, setStudents] = useState<Record<string, Student>>({});
+  const [loadedRequestsVolunteerUID, setLoadedRequestsVolunteerUID] = useState<string | null>(null);
   const [loadError, setLoadError] = useState('');
   const [availability, setAvailability] = useState<Record<number, number[]>>({});
   const [bookedSessions, setBookedSessions] = useState<Support_Session[]>([]);
@@ -67,55 +66,53 @@ function MultiStepSessionForm() {
 
   const initialRequest = requests.find(request => request.reqID === requestedReqID);
   const selectedRequest = requests.find(request => request.reqID === formData.reqID) ?? initialRequest;
-  const selectedVolunteer = selectedRequest ? volunteers[selectedRequest.volUID] : undefined;
-  const isLoadingRequests = authLoading || (!!studentUID && loadedRequestsStudentUID !== studentUID);
-  const isLoadingAvailability = !!selectedRequest && loadedAvailabilityVolunteerUID !== selectedRequest.volUID;
-  const visibleLoadError = loadError || (!authLoading && !studentUID ? 'Sign in to arrange a session.' : '');
+  const selectedStudent = selectedRequest ? students[selectedRequest.studUID] : undefined;
+  const isLoadingRequests = authLoading || (!!volunteerUID && loadedRequestsVolunteerUID !== volunteerUID);
+  const isLoadingAvailability = !!volunteerUID && loadedAvailabilityVolunteerUID !== volunteerUID;
+  const visibleLoadError = loadError || (!authLoading && !volunteerUID ? 'Sign in to arrange a session.' : '');
 
   useEffect(() => {
-    if (authLoading || !studentUID) return;
+    if (authLoading || !volunteerUID) return;
 
     let isCurrent = true;
     const loadRequests = async () => {
       try {
-        const acceptedRequests = await getRequestsByStudentAndStatus(studentUID, 'Accepted');
-        const volunteerIDs = [...new Set(acceptedRequests.map(request => request.volUID))];
-        const volunteerEntries = await Promise.all(volunteerIDs.map(async volUID => {
-          const [user, volunteer] = await Promise.all([getUser(volUID), getVolunteer(volUID)]);
-          const summary: Volunteer = {
-            volUID,
-            name: user?.name ?? 'Volunteer',
-            rating: volunteer?.avgRating ?? 0,
-            ratingCount: 0,
-            tags: volunteer?.skills ?? [],
+        const acceptedRequests = await getRequestsByVolunteerAndStatus(volunteerUID, 'Accepted');
+        const studentIDs = [...new Set(acceptedRequests.map(request => request.studUID))];
+        const studentEntries = await Promise.all(studentIDs.map(async studUID => {
+          const user = await getUser(studUID);
+          const student: Student = {
+            studUID,
+            name: user?.name ?? 'Student',
           };
-          return [volUID, summary] as const;
+          return [studUID, student] as const;
         }));
         if (isCurrent) {
           setRequests(acceptedRequests);
-          setVolunteers(Object.fromEntries(volunteerEntries));
+          setStudents(Object.fromEntries(studentEntries));
           setLoadError('');
         }
       } catch (error) {
         console.error('Error loading accepted requests:', error);
         if (isCurrent) setLoadError('Could not load your accepted requests. Please try again.');
       } finally {
-        if (isCurrent) setLoadedRequestsStudentUID(studentUID);
+        if (isCurrent) setLoadedRequestsVolunteerUID(volunteerUID);
       }
     };
     void loadRequests();
     return () => { isCurrent = false; };
-  }, [authLoading, studentUID]);
+  }, [authLoading, volunteerUID]);
 
+  // The slot grid is the signed-in volunteer's own availability, so it doesn't depend on which request is picked
   useEffect(() => {
-    if (!selectedRequest) return;
+    if (authLoading || !volunteerUID) return;
 
     let isCurrent = true;
     const loadVolunteerSlots = async () => {
       try {
         const [availabilityRecords, volunteerRequests] = await Promise.all([
-          getAvailabilityByVolunteer(selectedRequest.volUID),
-          getRequestsByVolunteer(selectedRequest.volUID),
+          getAvailabilityByVolunteer(volunteerUID),
+          getRequestsByVolunteer(volunteerUID),
         ]);
         const sessions = await getSessionsByRequestIDs(volunteerRequests.map(request => request.reqID));
         if (isCurrent) {
@@ -125,14 +122,14 @@ function MultiStepSessionForm() {
         }
       } catch (error) {
         console.error('Error loading volunteer availability:', error);
-        if (isCurrent) setLoadError('Could not load this volunteer’s availability. Please try again.');
+        if (isCurrent) setLoadError('Could not load your availability. Please try again.');
       } finally {
-        if (isCurrent) setLoadedAvailabilityVolunteerUID(selectedRequest.volUID);
+        if (isCurrent) setLoadedAvailabilityVolunteerUID(volunteerUID);
       }
     };
     void loadVolunteerSlots();
     return () => { isCurrent = false; };
-  }, [selectedRequest]);
+  }, [authLoading, volunteerUID]);
 
   const totalSteps = 3; // the confirmation page is not a numbered step
   const isLastStep = currentStep === totalSteps;
@@ -170,7 +167,7 @@ function MultiStepSessionForm() {
     setSubmitMessage('');
 
     try {
-      if (!selectedRequest || !selectedVolunteer) throw new Error('REQUEST_NOT_FOUND');
+      if (!selectedRequest || !selectedStudent) throw new Error('REQUEST_NOT_FOUND');
 
       if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, availability, bookedSessions)) {
         throw new Error('SLOT_UNAVAILABLE');
@@ -189,12 +186,12 @@ function MultiStepSessionForm() {
         supportMode: formData.supportMode,
         meetingLocation: formData.meetingLocation.trim(),
         sessStatus: 'Planned',
-        studConfirmed: true,
-        volConfirmed: false,
+        studConfirmed: false, // the volunteer is arranging it, so the student is the one who still has to confirm
+        volConfirmed: true,
       });
       await updateRequestStatus(formData.reqID, 'Scheduled');
 
-      setSummary(buildSessionSummary(formData, selectedRequest, selectedVolunteer));
+      setSummary(buildSessionSummary(formData, selectedRequest, selectedStudent));
       setSubmitMessage('success');
 
       // Reset form (the summary above keeps what the confirmation page needs)
@@ -225,7 +222,7 @@ function MultiStepSessionForm() {
             formData={{ reqID: formData.reqID || initialRequest?.reqID || '' }}
             updateFormData={updateFormData}
             requests={requests}
-            volunteers={volunteers}
+            students={students}
             isLoading={isLoadingRequests}
           />
         );
@@ -238,7 +235,6 @@ function MultiStepSessionForm() {
               sessTimeSlot: formData.sessTimeSlot,
             }}
             updateFormData={updateFormData}
-            volunteer={selectedVolunteer}
             availability={availability}
             sessions={bookedSessions}
             isLoading={isLoadingAvailability}
@@ -263,15 +259,15 @@ function MultiStepSessionForm() {
 
   return (
     <div className="ui-page">
-      <Navbar dashboardPath={"/student/dashboard"} />
-      <main className={"student-dashboard-background"}>
+      <Navbar dashboardPath={"/volunteer/dashboard"} />
+      <main className={"ui-page-volunteer-background"}>
         <section className={`ui-card ${isConfirmed ? 'ui-card--centered' : ''}`}>
           {isConfirmed ? (
             // Confirmation has its own heading, so no "Support Session" title/divider
             <SessionConfirmationStep
               summary={summary}
-              onReturnToDashboard={() => navigate("/student/dashboard")}
-              onViewSession={() => navigate("/student/my-sessions")}
+              onReturnToDashboard={() => navigate("/volunteer/dashboard")}
+              onViewSession={() => navigate("/volunteer/my-sessions")}
             />
           ) : (
             <>
@@ -337,7 +333,7 @@ function MultiStepSessionForm() {
       <ConfirmPopup
         open={showConfirm}
         title="Arrange this session?"
-        message="Your volunteer will be asked to confirm the session."
+        message="Your student will be asked to confirm the session."
         confirmLabel="Arrange Session"
         busy={isSubmitting}
         busyLabel="Arranging…"
@@ -348,4 +344,4 @@ function MultiStepSessionForm() {
   );
 }
 
-export default MultiStepSessionForm;
+export default VolunteerMultiStepSessionForm;

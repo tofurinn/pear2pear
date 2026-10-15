@@ -13,7 +13,6 @@ import { useAuth } from '../../../context/authContext';
 import { getRequestsByVolunteer } from '../../../services/RequestService';
 import { getSessionsByRequestIDs, getSupportSession, updateSupportSession } from '../../../services/SessionService';
 import { getAvailabilityByVolunteer } from '../../../services/AvailabilityService';
-import { getVolunteer } from '../../../services/VolunteerService';
 import { getUser } from '../../../services/UserService';
 import { Timestamp } from 'firebase/firestore';
 import type { Support_Request } from '../../../types/Support_Request';
@@ -29,7 +28,7 @@ import {
   sessionToFormData,
   toWeeklyAvailability,
 } from './session-utils.tsx';
-import type { SessionFormData, SessionSummary, Volunteer as SessionVolunteer } from './session-utils.tsx';
+import type { SessionFormData, SessionSummary, Student } from './session-utils.tsx';
 import { formatLongDate, formatTimeslotRange, parseDateKey, slotToHour } from '../volunteer-utils.tsx';
 
 import '../../../components/ui.css';
@@ -42,14 +41,14 @@ const totalSteps = 3;
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function SessionRearrangement() {
+function VolunteerSessionRearrangement() {
   const { sessID = '' } = useParams<{ sessID: string }>(); // route e.g. /sessions/:sessID/edit
   const navigate = useNavigate();
   const { userDoc, loading: authLoading } = useAuth();
 
   const [session, setSession] = useState<Support_Session | null>(null);
   const [request, setRequest] = useState<Support_Request | null>(null);
-  const [sessionVolunteer, setSessionVolunteer] = useState<SessionVolunteer | null>(null);
+  const [sessionStudent, setSessionStudent] = useState<Student | null>(null);
   const [loadedSessionKey, setLoadedSessionKey] = useState<string | null>(null);
   const [sessionLoadError, setSessionLoadError] = useState('');
 
@@ -85,27 +84,23 @@ function SessionRearrangement() {
           return;
         }
 
-        const [volunteer, volunteerUser, availabilityRecords, volunteerRequests] = await Promise.all([
-          getVolunteer(ownedRequest.volUID),
-          getUser(ownedRequest.volUID),
+        const [studentUser, availabilityRecords, volunteerRequests] = await Promise.all([
+          getUser(ownedRequest.studUID),
           getAvailabilityByVolunteer(ownedRequest.volUID),
           getRequestsByVolunteer(ownedRequest.volUID),
         ]);
         const bookedSessions = await getSessionsByRequestIDs(volunteerRequests.map(candidate => candidate.reqID));
 
-        const mappedVolunteer: SessionVolunteer = {
-          volUID: ownedRequest.volUID,
-          name: volunteerUser?.name ?? 'Volunteer',
-          rating: volunteer?.avgRating ?? 0,
-          ratingCount: 0,
-          tags: volunteer?.skills ?? [],
+        const mappedStudent: Student = {
+          studUID: ownedRequest.studUID,
+          name: studentUser?.name ?? 'Student',
         };
 
         if (isCurrent) {
           setSessionLoadError('');
           setSession(loadedSession);
           setRequest(ownedRequest);
-          setSessionVolunteer(mappedVolunteer);
+          setSessionStudent(mappedStudent);
           setAvailability(toWeeklyAvailability(availabilityRecords));
           setBookedSessions(bookedSessions);
           setFormData(sessionToFormData(loadedSession));
@@ -145,7 +140,7 @@ function SessionRearrangement() {
     setErrorMessage('');
 
     try {
-      if (!session || !request || !sessionVolunteer) throw new Error('Could not load the session details');
+      if (!session || !request || !sessionStudent) throw new Error('Could not load the session details');
       if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, availability, bookedSessions, session.sessID)) {
         throw new Error('Choose an available future time slot.');
       }
@@ -162,8 +157,8 @@ function SessionRearrangement() {
         supportMode: formData.supportMode,
         meetingLocation: formData.meetingLocation.trim(),
         sessStatus: 'Planned',
-        studConfirmed: true,
-        volConfirmed: false,
+        studConfirmed: false, // the volunteer made the change, so the student has to confirm again
+        volConfirmed: true,
       });
 
       const rearranged: SessionSummary = {
@@ -173,7 +168,7 @@ function SessionRearrangement() {
         timeslotLabel: formatTimeslotRange(hour),
         supportMode: formData.supportMode,
         meetingLocation: formData.meetingLocation.trim(),
-        volunteer: sessionVolunteer,
+        student: sessionStudent,
       };
 
       setSummary(rearranged); // switches the page to the confirmation screen
@@ -197,7 +192,7 @@ function SessionRearrangement() {
             <SessionConfirmationStep
               summary={summary}
               title="Your Support Session Has Been Rearranged!"
-              message="Sit tight, you will receive a notification once your matched Volunteer confirms the new arrangement"
+              message="Sit tight, you will receive a notification once your matched Student confirms the new arrangement"
               onReturnToDashboard={() => navigate("/volunteer/dashboard")}
               onViewSession={() => navigate("/volunteer/my-sessions")}
             />
@@ -272,7 +267,6 @@ function SessionRearrangement() {
             <TimeSlotStep
               formData={{ reqID: formData.reqID, sessDate: formData.sessDate, sessTimeSlot: formData.sessTimeSlot }}
               updateFormData={updateFormData}
-              volunteer={sessionVolunteer ?? undefined}
               availability={availability}
               sessions={bookedSessions}
               isLoading={isLoadingSession}
@@ -309,7 +303,7 @@ function SessionRearrangement() {
       <ConfirmPopup
         open={showConfirm}
         title="Save these changes?"
-        message="Your volunteer will need to confirm the new arrangement again."
+        message="Your student will need to confirm the new arrangement again."
         confirmLabel="Save Changes"
         busy={isSaving}
         busyLabel="Saving…"
@@ -320,4 +314,4 @@ function SessionRearrangement() {
   );
 }
 
-export default SessionRearrangement;
+export default VolunteerSessionRearrangement;

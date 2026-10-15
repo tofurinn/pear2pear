@@ -4,7 +4,6 @@ import {
   ChevronRight,
   ClockIcon,
   PinIcon,
-  StarRating,
   SwapIcon,
 } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
@@ -41,11 +40,11 @@ interface Step4Props {
 function SessionConfirmationStep({
   summary,
   title = 'Your Support Session Has Been Arranged!',
-  message = 'Sit tight, you will receive a notification once your matched Volunteer confirms the session',
+  message = 'Sit tight, you will receive a notification once your matched Student confirms the session',
   onReturnToDashboard,
   onViewSession,
 }: Step4Props) {
-  const { volunteer } = summary;
+  const { student } = summary;
 
   return (
     <div className="ui-confirmation">
@@ -79,11 +78,8 @@ function SessionConfirmationStep({
 
         <div className="volunteer-card">
           <div className="volunteer-card-header">
-            <span className="volunteer-card-name">{volunteer.name}</span>
-            <StarRating rating={volunteer.rating} />
-            <span className="rating-text">{volunteer.rating} ({volunteer.ratingCount})</span>
+            <span className="volunteer-card-name">{student.name}</span>
           </div>
-          <p className="volunteer-tags">{volunteer.tags.join(' • ')}</p>
         </div>
       </div>
 

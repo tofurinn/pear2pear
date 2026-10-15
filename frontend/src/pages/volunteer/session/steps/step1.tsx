@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore';
 import type { Support_Request } from '../../../../types/Support_Request';
-import type { Volunteer } from '../session-utils.tsx';
+import type { Student } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
 import { CheckIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
@@ -12,7 +12,7 @@ interface Step1Props {
   formData: Pick<SessionFormData, 'reqID'>;
   updateFormData: (data: Partial<SessionFormData>) => void;
   requests: Support_Request[];
-  volunteers: Record<string, Volunteer>;
+  students: Record<string, Student>;
   isLoading: boolean;
 }
 
@@ -21,10 +21,10 @@ const formatDate = (ts: Timestamp) =>
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function SelectRequestStep({ formData, updateFormData, requests, volunteers, isLoading }: Step1Props) {
+function SelectRequestStep({ formData, updateFormData, requests, students, isLoading }: Step1Props) {
   const selectRequest = (reqID: string) => {
     if (reqID === formData.reqID) return;
-    // A different request means a different volunteer, so clear any chosen slot
+    // The volunteer's own slots don't change with the request, but a slot picked earlier may no longer suit, so clear it
     updateFormData({ reqID, sessDate: '', sessTimeSlot: '' });
   };
 
@@ -51,7 +51,7 @@ function SelectRequestStep({ formData, updateFormData, requests, volunteers, isL
             >
               <CategoryTag>{request.category}</CategoryTag>
               <span className="request-title">{request.title}</span>
-              <span className="volunteer-name">{volunteers[request.volUID]?.name ?? 'Volunteer'}</span>
+              <span className="volunteer-name">{students[request.studUID]?.name ?? 'Student'}</span>
               <span className="request-footer">
                 <span className="request-date">{formatDate(request.reqTimestamp)}</span>
                 <span className={`status-pill ${request.reqStatus.toLowerCase()}`}>
