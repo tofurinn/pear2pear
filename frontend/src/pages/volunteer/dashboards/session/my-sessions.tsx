@@ -145,7 +145,7 @@ function VolunteerSessions() {
   };
   
   const handleRearrangeSession = (item: VolunteerSessionItem) => {
-    navigate(`/volunteer/session/${item.sessID}/edit`, {
+    navigate(`/volunteer/session-edit/${item.sessID}`, {
       state: {
         formData: {
           reqID: item.reqID,
