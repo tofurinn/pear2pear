@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
+import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon, RatedIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
+import { StatusPill } from '../../../../components/dashboard-components.tsx';
 import type { StudentSessionItem } from '../../student-utils.tsx';
 
 import '../../../../components/page-css/details.css';
@@ -44,8 +45,6 @@ function SupportDetailsModal({ item, feedback, onClose }: SupportDetailsModalPro
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const volunteer = item.volunteer;
-  const statusTone = item.sessStatus === 'Cancelled' ? item.status.tone : 'completed';
-  const statusLabel = item.sessStatus === 'Cancelled' ? item.status.label : 'Completed';
 
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -113,7 +112,7 @@ function SupportDetailsModal({ item, feedback, onClose }: SupportDetailsModalPro
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
           <span className="session-modal-topdate">
-            <CalendarIcon /> {item.dateLabel}
+            <CalendarIcon /> {item.createdLabel}
           </span>
         </div>
 
@@ -166,9 +165,11 @@ function SupportDetailsModal({ item, feedback, onClose }: SupportDetailsModalPro
         )}
 
         <footer className="session-modal-footer">
-          <span className={`ui-status-pill ui-status-pill--${statusTone}`}>
-            {item.sessStatus === 'Cancelled' ? <CloseIcon /> : <CalendarIcon />} {statusLabel}
-          </span>
+          <StatusPill
+            tone={item.status.tone}
+            label={item.status.label}
+            icon={item.sessStatus === 'Cancelled' ? <CloseIcon /> : <RatedIcon />}
+          />
         </footer>
       </div>
     </div>,
