@@ -9,6 +9,7 @@ import type {
 // --- Shared date and time helpers ---------------------------------------------------------------------------------------
 
 export const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+export const dayOfWeekIndex = (dayName: string) => DAY_NAMES.indexOf(dayName);
 
 export const formatHour = (hour: number) => `${hour % 12 || 12}${hour < 12 ? 'am' : 'pm'}`;
 export const hourToSlot = (hour: number) => `${String(hour).padStart(2, '0')}:00`;

@@ -1,21 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   DAY_NAMES,
   formatDayMonth,
   formatHour,
   formatTimeslotRange,
   hourToSlot,
-  parseDateKey,
-  slotToHour,
   toDateKey,
 } from '../../student-utils.tsx';
-import {
-  getAvailability,
-  getRequestById,
-  getUpcomingDays,
-  getVolunteerById,
-} from '../session-utils.tsx';
-import type { SessionFormData } from '../session-utils.tsx';
+import { getUpcomingDays, isSessionSlotBookable, isSessionSlotOccupied } from '../session-utils.tsx';
+import type { SessionFormData, Volunteer } from '../session-utils.tsx';
+import type { Support_Session } from '../../../../types/Support_Session';
 import { CheckIcon } from '../../../../components/icons.tsx';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -23,6 +17,11 @@ import { CheckIcon } from '../../../../components/icons.tsx';
 interface Step2Props {
   formData: Pick<SessionFormData, 'reqID' | 'sessDate' | 'sessTimeSlot'>;
   updateFormData: (data: Partial<SessionFormData>) => void;
+  volunteer?: Volunteer;
+  availability: Record<number, number[]>;
+  sessions: Support_Session[];
+  isLoading: boolean;
+  excludedSessionID?: string;
 }
 
 interface SlotRef {
@@ -37,25 +36,38 @@ const describeSlot = ({ date, hour }: SlotRef) =>
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function TimeSlotStep({ formData, updateFormData }: Step2Props) {
-  // The 7 days after today, from the device clock (fixed when the step opens)
-  const days = useMemo(() => getUpcomingDays(7), []);
+function TimeSlotStep({
+  formData,
+  updateFormData,
+  volunteer,
+  availability,
+  sessions,
+  isLoading,
+  excludedSessionID,
+}: Step2Props) {
+  const days = useMemo(() => getUpcomingDays(7, new Date()), []);
   const [hovered, setHovered] = useState<SlotRef | null>(null);
 
-  const request = getRequestById(formData.reqID);
-  const volunteer = request ? getVolunteerById(request.volUID) : undefined;
-  const availability = request ? getAvailability(request.volUID) : {};
+  useEffect(() => {
+    if (isLoading || !formData.sessDate || !formData.sessTimeSlot) return;
+    if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, availability, sessions, excludedSessionID)) {
+      updateFormData({ sessDate: '', sessTimeSlot: '' });
+    }
+  }, [availability, excludedSessionID, formData.sessDate, formData.sessTimeSlot, isLoading, sessions, updateFormData]);
 
-  const selected: SlotRef | null =
-    formData.sessDate && formData.sessTimeSlot
-      ? { date: parseDateKey(formData.sessDate), hour: slotToHour(formData.sessTimeSlot) }
-      : null;
+  const selectedDay = days.find(day => toDateKey(day) === formData.sessDate);
+  const selectedHour = Number.parseInt(formData.sessTimeSlot, 10);
+  const selected = selectedDay && Number.isInteger(selectedHour)
+    ? { date: selectedDay, hour: selectedHour }
+    : null;
 
   return (
     <>
       <h2 className="ui-card-heading">
         Step 2: Select <span className="ui-accent">{volunteer?.name ?? 'Volunteer'}'s</span> Available Time Slot
       </h2>
+
+      {isLoading && <p role="status">Loading availability...</p>}
 
       <div className="ui-card-body slot-scroll">
         <div className="slot-grid" role="radiogroup" aria-label="Available time slots">
@@ -76,7 +88,9 @@ function TimeSlotStep({ formData, updateFormData }: Step2Props) {
                 const dateKey = toDateKey(day);
                 const isAvailable = availability[day.getDay()]?.includes(hour) ?? false;
                 const isSelected = formData.sessDate === dateKey && formData.sessTimeSlot === hourToSlot(hour);
-                const preview = () => isAvailable && setHovered({ date: day, hour });
+                const isOccupied = isSessionSlotOccupied(dateKey, hour, sessions, excludedSessionID);
+                const canSelect = isAvailable && !isOccupied && !isLoading;
+                const preview = () => canSelect && setHovered({ date: day, hour });
                 return (
                   <div
                     className="slot-cell"
@@ -88,12 +102,13 @@ function TimeSlotStep({ formData, updateFormData }: Step2Props) {
                       type="button"
                       role="radio"
                       aria-checked={isSelected}
-                      aria-label={`${DAY_NAMES[day.getDay()]} ${formatDayMonth(day)}, ${formatHour(hour)}${isAvailable ? '' : ' (unavailable)'}`}
-                      className={`slot ${isSelected ? 'selected' : isAvailable ? 'available' : ''}`}
-                      disabled={!isAvailable}
+                      aria-label={`${DAY_NAMES[day.getDay()]} ${formatDayMonth(day)}, ${formatHour(hour)}${isOccupied ? ' (booked)' : canSelect ? '' : ' (unavailable)'}`}
+                      aria-disabled={!canSelect}
+                      className={`slot ${isOccupied ? 'occupied' : isSelected ? 'selected' : canSelect ? 'available' : ''}`}
+                      disabled={!canSelect}
                       onFocus={preview}
                       onBlur={() => setHovered(null)}
-                      onClick={() => updateFormData({ sessDate: dateKey, sessTimeSlot: hourToSlot(hour) })}
+                      onClick={() => canSelect && updateFormData({ sessDate: dateKey, sessTimeSlot: hourToSlot(hour) })}
                     >
                       {isSelected && <CheckIcon size={16} />}
                     </button>
