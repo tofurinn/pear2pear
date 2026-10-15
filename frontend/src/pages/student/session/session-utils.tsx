@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore';
+import type { Availability } from '../../../types/Availability';
 import type { Support_Request } from '../../../types/Support_Request';
 import type { Support_Session } from '../../../types/Support_Session';
 import {
@@ -8,6 +8,7 @@ import {
   parseDateKey,
   slotToHour,
   toDateKey,
+  dayOfWeekIndex,
 } from '../student-utils.tsx';
 
 // ─── Form types ────────────────────────────────────────────────────────────────
@@ -32,8 +33,6 @@ export const EMPTY_FORM: SessionFormData = {
   meetingLocation: '',
 };
 
-// ─── Mock data (replace with Firebase / API later) ─────────────────────────────
-
 export interface Volunteer {
   volUID: string;
   name: string;
@@ -42,54 +41,12 @@ export interface Volunteer {
   tags: string[];
 }
 
-const VOLUNTEER_NAMES = [
-  'Aisha Rahman', 'Daniel Lim', 'Priya Nair', 'Hafiz Ismail', 'Mei Ling Tan',
-  'Arjun Menon', 'Siti Aminah', 'Jason Wong', 'Nurul Huda', 'Kevin Raj',
-];
-
-const REQUEST_DETAILS: Pick<Support_Request, 'title' | 'category'>[] = [
-  { title: 'Grass Cutting Helper', category: 'General Student Support' },
-  { title: 'Calculus Revision Buddy', category: 'Academic Support' },
-  { title: 'Laptop Setup Help', category: 'Technology Support' },
-  { title: 'Campus Tour Guide', category: 'New Student Support' },
-  { title: 'Essay Proofreading', category: 'Academic Support' },
-  { title: 'Wi-Fi Troubleshooting', category: 'Technology Support' },
-  { title: 'Moving Boxes Helper', category: 'General Student Support' },
-  { title: 'Course Registration Guide', category: 'New Student Support' },
-  { title: 'Python Debugging Session', category: 'Technology Support' },
-  { title: 'Need of Backup Guitarist', category: 'Academic Support' },
-];
-
-export const MOCK_VOLUNTEERS: Record<string, Volunteer> = Object.fromEntries(
-  VOLUNTEER_NAMES.map((name, i) => [
-    `vol-${i + 1}`,
-    {
-      volUID: `vol-${i + 1}`,
-      name,
-      rating: 4.5,
-      ratingCount: 10,
-      tags: ['Tech Wiz', 'Patience', 'Cooking', 'Friendly', 'Smart', 'Academically Gifted'],
-    },
-  ])
-);
-
-export const MOCK_REQUESTS: Support_Request[] = VOLUNTEER_NAMES.map((_, i) => ({
-  reqID: `req-${i + 1}`,
-  studUID: 'stud-1',
-  volUID: `vol-${i + 1}`,
-  ...REQUEST_DETAILS[i],
-  description: 'Mock request for testing.',
-  reqStatus: 'Accepted',
-  reqTimestamp: Timestamp.fromDate(new Date(2026, 9, 4 + i)),
-}));
-
-// Hours the volunteer is free, per weekday (JS getDay(): 0 = Sunday ... 6 = Saturday).
-// Recurring weekly availability: later this comes from the volunteer's Firestore data.
-export const getAvailability = (_volUID: string): Record<number, number[]> => {
-  const weekday = [10, 11, 12, 13, 16, 17];
-  const weekend = [10, 11, 12, 13, 14, 15, 16, 17];
-  return { 1: [10, 11, 12], 2: weekday, 3: weekday, 4: weekday, 5: weekend, 6: weekend, 0: weekend };
-};
+export const toWeeklyAvailability = (records: Availability[]): Record<number, number[]> =>
+  records.reduce<Record<number, number[]>>((weekly, record) => {
+    const weekday = dayOfWeekIndex(record.dayOfWeek);
+    if (weekday >= 0) weekly[weekday] = [...(weekly[weekday] ?? []), record.availTimeSlot];
+    return weekly;
+  }, {});
 
 // The next `count` days starting from tomorrow, based on the device's clock.
 // Today is excluded, so there are no same-day or past slots to worry about.
@@ -110,24 +67,51 @@ export interface SessionSummary {
   volunteer: Volunteer;
 }
 
-export const getRequestById = (reqID: string) => MOCK_REQUESTS.find(r => r.reqID === reqID);
-export const getVolunteerById = (volUID: string) => MOCK_VOLUNTEERS[volUID];
-
-export const buildSummary = (data: SessionFormData): SessionSummary | null => {
-  const request = getRequestById(data.reqID);
-  const volunteer = request ? getVolunteerById(request.volUID) : undefined;
-  if (!request || !volunteer) return null;
-
-  return {
+export const buildSessionSummary = (
+  data: SessionFormData,
+  request: Support_Request,
+  volunteer: Volunteer,
+): SessionSummary => ({
     category: request.category,
     title: request.title,
     dateLabel: formatLongDate(parseDateKey(data.sessDate)),
     timeslotLabel: formatTimeslotRange(slotToHour(data.sessTimeSlot)),
     supportMode: data.supportMode,
-    meetingLocation: data.meetingLocation,
+    meetingLocation: data.meetingLocation.trim(),
     volunteer,
-  };
+  });
+
+export const isSessionSlotBookable = (
+  dateKey: string,
+  slot: string,
+  availability: Record<number, number[]>,
+  sessions: Support_Session[],
+  excludedSessionID?: string,
+  now = new Date(),
+): boolean => {
+  if (!dateKey || !slot || !/^\d{2}:00$/.test(slot)) return false;
+
+  const eligibleDays = new Set(getUpcomingDays(7, now).map(toDateKey));
+  const hour = slotToHour(slot);
+  const date = parseDateKey(dateKey);
+  if (!eligibleDays.has(dateKey) || !availability[date.getDay()]?.includes(hour)) return false;
+
+  const slotTime = new Date(date);
+  slotTime.setHours(hour, 0, 0, 0);
+  if (slotTime <= now) return false;
+
+  return !isSessionSlotOccupied(dateKey, hour, sessions, excludedSessionID);
 };
+
+export const isSessionSlotOccupied = (
+  dateKey: string,
+  hour: number,
+  sessions: Support_Session[],
+  excludedSessionID?: string,
+): boolean => sessions.some(session => {
+  if (session.sessID === excludedSessionID || !['Planned', 'Confirmed'].includes(session.sessStatus)) return false;
+  return toDateKey(session.sessDate) === dateKey && session.sessTimeSlot.toDate().getHours() === hour;
+});
 
 // ─── Step rules (shared by the booking form and the rearrangement page) ───────
 
@@ -144,14 +128,18 @@ export const isStepValid = (step: SessionStepKey, data: SessionFormData): boolea
 
 // ─── Rearranging an existing session ───────────────────────────────────────────
 
-// Starts the form from the session's current arrangement, so its slot is preselected in step 2
-export const sessionToFormData = (session: Support_Session): SessionFormData => ({
-  reqID: session.reqID,
-  sessDate: toDateKey(session.sessDate),
-  sessTimeSlot: hourToSlot(session.sessTimeSlot.toDate().getHours()),
-  supportMode: session.supportMode,
-  meetingLocation: session.meetingLocation,
-});
+// Keep a selection only if it is inside the same upcoming window shown by the slot grid.
+export const sessionToFormData = (session: Support_Session, now = new Date()): SessionFormData => {
+  const sessDate = toDateKey(session.sessDate);
+  const isUpcoming = getUpcomingDays(7, now).some(day => toDateKey(day) === sessDate);
+  return {
+    reqID: session.reqID,
+    sessDate: isUpcoming ? sessDate : '',
+    sessTimeSlot: isUpcoming ? hourToSlot(session.sessTimeSlot.toDate().getHours()) : '',
+    supportMode: session.supportMode,
+    meetingLocation: session.meetingLocation,
+  };
+};
 
 // Planned or Confirmed sessions can be rearranged, including sessions whose original slot elapsed.
 export const canEditSession = (session: Support_Session): boolean =>

@@ -12,7 +12,8 @@ import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 import { useAuth } from '../../../context/authContext';
 import { getRequestsByStudent } from '../../../services/RequestService';
 import { getRequestsByVolunteer } from '../../../services/RequestService';
-import { getSupportSession, updateSupportSession } from '../../../services/SessionService';
+import { getSessionsByRequestIDs, getSupportSession, updateSupportSession } from '../../../services/SessionService';
+import { getAvailabilityByVolunteer } from '../../../services/AvailabilityService';
 import { getVolunteer } from '../../../services/VolunteerService';
 import { getUser } from '../../../services/UserService';
 import { Timestamp } from 'firebase/firestore';
@@ -24,11 +25,13 @@ import SessionConfirmationStep from './steps/step4.tsx';
 import {
   EMPTY_FORM,
   canEditSession,
+  isSessionSlotBookable,
   isStepValid,
   sessionToFormData,
+  toWeeklyAvailability,
 } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary, Volunteer as SessionVolunteer } from './session-utils.tsx';
-import { formatLongDate, formatTimeslotRange, parseDateKey } from '../student-utils.tsx';
+import { formatLongDate, formatTimeslotRange, parseDateKey, slotToHour } from '../student-utils.tsx';
 
 import '../../../components/ui.css';
 import './../../../components/page-css/session-form.css';
@@ -38,17 +41,12 @@ const FIRST_STEP = 2;
 const LAST_STEP = 3;
 const totalSteps = 3;
 
-interface SessionRearrangementLocationState {
-  formData?: SessionFormData;
-}
-
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 function SessionRearrangement() {
   const { sessID = '' } = useParams<{ sessID: string }>(); // route e.g. /sessions/:sessID/edit
   const navigate = useNavigate();
   const location = useLocation();
-  const navigationState = location.state as SessionRearrangementLocationState | null;
   const { userDoc, loading: authLoading } = useAuth();
   const isVolunteerRoute = location.pathname.startsWith('/volunteer/');
   const dashboardPath = isVolunteerRoute ? '/volunteer/dashboard' : '/student/dashboard';
@@ -58,28 +56,24 @@ function SessionRearrangement() {
   const [session, setSession] = useState<Support_Session | null>(null);
   const [request, setRequest] = useState<Support_Request | null>(null);
   const [sessionVolunteer, setSessionVolunteer] = useState<SessionVolunteer | null>(null);
-  const [isLoadingSession, setIsLoadingSession] = useState(true);
+  const [loadedSessionKey, setLoadedSessionKey] = useState<string | null>(null);
   const [sessionLoadError, setSessionLoadError] = useState('');
 
   const [currentStep, setCurrentStep] = useState(FIRST_STEP);
-  const [formData, setFormData] = useState<SessionFormData>(() => navigationState?.formData ?? EMPTY_FORM);
+  const [formData, setFormData] = useState<SessionFormData>(EMPTY_FORM);
+  const [availability, setAvailability] = useState<Record<number, number[]>>({});
+  const [bookedSessions, setBookedSessions] = useState<Support_Session[]>([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [summary, setSummary] = useState<SessionSummary | null>(null);
+  const isLoadingSession = authLoading || (!!userDoc?.UID && !!sessID && loadedSessionKey !== `${userDoc.UID}:${sessID}`);
 
   useEffect(() => {
     if (authLoading) return;
-
-    if (!userDoc?.UID || !sessID) {
-      setSessionLoadError('Sign in to rearrange this session.');
-      setIsLoadingSession(false);
-      return;
-    }
+    if (!userDoc?.UID || !sessID) return;
 
     let isCurrent = true;
-    setIsLoadingSession(true);
-    setSessionLoadError('');
 
     const loadSession = async () => {
       try {
@@ -97,10 +91,13 @@ function SessionRearrangement() {
           return;
         }
 
-        const [volunteer, volunteerUser] = await Promise.all([
+        const [volunteer, volunteerUser, availabilityRecords, volunteerRequests] = await Promise.all([
           getVolunteer(ownedRequest.volUID),
           getUser(ownedRequest.volUID),
+          getAvailabilityByVolunteer(ownedRequest.volUID),
+          getRequestsByVolunteer(ownedRequest.volUID),
         ]);
+        const bookedSessions = await getSessionsByRequestIDs(volunteerRequests.map(candidate => candidate.reqID));
 
         const mappedVolunteer: SessionVolunteer = {
           volUID: ownedRequest.volUID,
@@ -111,16 +108,19 @@ function SessionRearrangement() {
         };
 
         if (isCurrent) {
+          setSessionLoadError('');
           setSession(loadedSession);
           setRequest(ownedRequest);
           setSessionVolunteer(mappedVolunteer);
-          if (!navigationState?.formData) setFormData(sessionToFormData(loadedSession));
+          setAvailability(toWeeklyAvailability(availabilityRecords));
+          setBookedSessions(bookedSessions);
+          setFormData(sessionToFormData(loadedSession));
         }
       } catch (error) {
         console.error('Error loading session for rearrangement:', error);
         if (isCurrent) setSessionLoadError('Could not load this session. Please try again.');
       } finally {
-        if (isCurrent) setIsLoadingSession(false);
+        if (isCurrent) setLoadedSessionKey(`${userDoc.UID}:${sessID}`);
       }
     };
 
@@ -128,10 +128,17 @@ function SessionRearrangement() {
     return () => {
       isCurrent = false;
     };
-  }, [authLoading, isVolunteerRoute, navigationState?.formData, sessID, userDoc?.UID]);
+  }, [authLoading, isVolunteerRoute, sessID, userDoc?.UID]);
 
   const isLastStep = currentStep === LAST_STEP;
-  const canGoNext = isStepValid(isLastStep ? 'meetup' : 'timeSlot', formData) && !isSaving;
+  const isTimeSlotValid = isSessionSlotBookable(
+    formData.sessDate,
+    formData.sessTimeSlot,
+    availability,
+    bookedSessions,
+    session?.sessID,
+  );
+  const canGoNext = (isLastStep ? isStepValid('meetup', formData) : isTimeSlotValid) && !isSaving;
 
   const updateFormData = (data: Partial<SessionFormData>) => {
     setFormData(prev => ({ ...prev, ...data }));
@@ -145,21 +152,24 @@ function SessionRearrangement() {
 
     try {
       if (!session || !request || !sessionVolunteer) throw new Error('Could not load the session details');
+      if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, availability, bookedSessions, session.sessID)) {
+        throw new Error('Choose an available future time slot.');
+      }
 
       const sessDate = parseDateKey(formData.sessDate);
-      const [hour, minute] = formData.sessTimeSlot.split(':').map(Number);
+      const hour = slotToHour(formData.sessTimeSlot);
       const sessTimeSlot = new Date(sessDate);
-      sessTimeSlot.setHours(hour, minute, 0, 0);
+      sessTimeSlot.setHours(hour, 0, 0, 0);
       if (sessTimeSlot <= new Date()) throw new Error('Choose a future time slot.');
 
       await updateSupportSession(sessID, {
         sessDate,
         sessTimeSlot: Timestamp.fromDate(sessTimeSlot),
         supportMode: formData.supportMode,
-        meetingLocation: formData.meetingLocation,
+        meetingLocation: formData.meetingLocation.trim(),
         sessStatus: 'Planned',
-        studConfirmed: !isVolunteerRoute,
-        volConfirmed: isVolunteerRoute,
+        studConfirmed: true,
+        volConfirmed: false,
       });
 
       const rearranged: SessionSummary = {
@@ -168,7 +178,7 @@ function SessionRearrangement() {
         dateLabel: formatLongDate(sessDate),
         timeslotLabel: formatTimeslotRange(hour),
         supportMode: formData.supportMode,
-        meetingLocation: formData.meetingLocation,
+        meetingLocation: formData.meetingLocation.trim(),
         volunteer: sessionVolunteer,
       };
 
@@ -229,7 +239,7 @@ function SessionRearrangement() {
             <div className="ui-error" role="alert">
               <p>
                 {sessionLoadError || (!session
-                  ? 'We couldn’t find this session.'
+                  ? userDoc?.UID ? 'We couldn’t find this session.' : 'Sign in to rearrange this session.'
                   : 'Only Planned or Confirmed sessions can be rearranged.')}
               </p>
               <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate(-1)}>
@@ -268,6 +278,11 @@ function SessionRearrangement() {
             <TimeSlotStep
               formData={{ reqID: formData.reqID, sessDate: formData.sessDate, sessTimeSlot: formData.sessTimeSlot }}
               updateFormData={updateFormData}
+              volunteer={sessionVolunteer ?? undefined}
+              availability={availability}
+              sessions={bookedSessions}
+              isLoading={isLoadingSession}
+              excludedSessionID={session.sessID}
             />
           )}
 
