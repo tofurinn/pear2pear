@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
+import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon, RatedIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import { StatusPill } from '../../../../components/dashboard-components.tsx';
 import type { VolunteerSessionItem } from '../../volunteer-utils.ts';
@@ -146,7 +146,11 @@ function SupportDetailsModal({ item, onClose }: SupportDetailsProps) {
         </section>
 
         <footer className="session-modal-footer">
-          <StatusPill tone={item.status.tone} label={item.status.label} />
+          <StatusPill
+            tone={item.status.tone}
+            label={item.status.label}
+            icon={item.sessStatus === 'Cancelled' ? <CloseIcon /> : <RatedIcon />}
+          />
         </footer>
       </div>
     </div>,

@@ -104,7 +104,7 @@ function SessionDetailsModal({
 
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
-          <span className="session-modal-topdate"><CalendarIcon /> {item.dateLabel}</span>
+          <span className="session-modal-topdate"><CalendarIcon /> {item.createdLabel}</span>
         </div>
 
         <dl className="session-modal-info">

@@ -1,39 +1,108 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../../context/authContext';
 
 import SupportDetailsModal from './support-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
-import { ChevronLeft } from '../../../../components/icons.tsx';
+import { ChevronLeft, RatedIcon } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
-import { MOCK_REQUESTS, MOCK_SESSIONS, MOCK_SESSION_FEEDBACK, MOCK_VOLUNTEERS, buildStudentSessionItems } from '../../student-utils.tsx';
+import { buildStudentSessionItems } from '../../student-utils.tsx';
 import type { StudentSessionItem } from '../../student-utils.tsx';
+import type { Feedback } from '../../../../types/Feedback';
+import { getRequestsByStudent } from '../../../../services/RequestService';
+import { getFeedbackBySession } from '../../../../services/FeedbackService';
+import { getSessionsByRequestIDs } from '../../../../services/SessionService';
+import { getUser } from '../../../../services/UserService';
+import { getVolunteer } from '../../../../services/VolunteerService';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
-// ─── History card ──────────────────────────────────────────────────────────────
-
-// Outline star so the Rated pill's icon takes the pill colour like the other pill icons
-const StarOutlineIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="M12 2.6l2.8 6 6.6.8-4.9 4.5 1.3 6.5L12 17.1l-5.8 3.3 1.3-6.5L2.6 9.4l6.6-.8z" />
-  </svg>
-);
-
-// ─── Page ──────────────────────────────────────────────────────────────────────
 
 function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
   const navigate = useNavigate();
+  const { userDoc, loading: authLoading } = useAuth();
+  const studentUID = userDoc?.UID ?? null;
 
-  // TODO: load this student's finished sessions from Firestore
-  // History = sessions that are over: rated (completed unrated ones stay in My Sessions) or cancelled
-  const history = useMemo(
-    () =>
-      buildStudentSessionItems(MOCK_SESSIONS, MOCK_REQUESTS, MOCK_VOLUNTEERS)
-        .filter(item => item.sessStatus === 'Rated' || item.sessStatus === 'Cancelled')
-        .sort((a, b) => b.sessDate.getTime() - a.sessDate.getTime()), // newest first
-    []
-  );
+  const [historyLoad, setHistoryLoad] = useState<{
+    studentUID: string;
+    items: StudentSessionItem[];
+    feedback: Record<string, Feedback>; // keyed by sessID
+    error?: string;
+  } | null>(null);
+  const isLoading = authLoading || (!!studentUID && historyLoad?.studentUID !== studentUID);
+  const loadError = !authLoading && !studentUID
+    ? 'Sign in to view your support history.'
+    : historyLoad?.studentUID === studentUID
+      ? historyLoad.error ?? ''
+      : '';
+  const history = studentUID && historyLoad?.studentUID === studentUID ? historyLoad.items : [];
+  const feedbackBySession = studentUID && historyLoad?.studentUID === studentUID ? historyLoad.feedback : {};
+
+  useEffect(() => {
+    if (authLoading || !studentUID) return;
+
+    let isCurrent = true;
+
+    const loadHistory = async () => {
+      try {
+        const requests = await getRequestsByStudent(studentUID);
+        const sessions = await getSessionsByRequestIDs(requests.map(request => request.reqID));
+
+        // History = sessions that are over: rated (completed unrated ones stay in My Sessions) or cancelled
+        const finished = sessions.filter(session => session.sessStatus === 'Rated' || session.sessStatus === 'Cancelled');
+        const finishedRequestIDs = new Set(finished.map(session => session.reqID));
+        const volunteerIDs = [...new Set(
+          requests
+            .filter(request => finishedRequestIDs.has(request.reqID))
+            .map(request => request.volUID)
+        )];
+
+        const volunteerEntries = await Promise.all(volunteerIDs.map(async volUID => {
+          const [user, volunteer] = await Promise.all([getUser(volUID), getVolunteer(volUID)]);
+          const summary = {
+            volUID,
+            name: user?.name ?? 'Volunteer',
+            rating: volunteer?.avgRating ?? 0,
+            ratingCount: 0,
+            tags: volunteer?.skills ?? [],
+          };
+          return [volUID, summary] as const;
+        }));
+
+        // Only rated sessions have feedback; cancelled ones never will
+        const feedbackEntries = (await Promise.all(
+          finished
+            .filter(session => session.sessStatus === 'Rated')
+            .map(async session => [session.sessID, await getFeedbackBySession(session.sessID)] as const)
+        )).flatMap(([sessID, feedback]) => feedback ? [[sessID, feedback] as const] : []);
+
+        if (isCurrent) {
+          setHistoryLoad({
+            studentUID,
+            items: buildStudentSessionItems(finished, requests, Object.fromEntries(volunteerEntries))
+              .sort((a, b) => b.sessDate.getTime() - a.sessDate.getTime()), // newest first
+            feedback: Object.fromEntries(feedbackEntries),
+          });
+        }
+      } catch (error) {
+        console.error('Error loading support history:', error);
+        if (isCurrent) {
+          setHistoryLoad({
+            studentUID,
+            items: [],
+            feedback: {},
+            error: 'Could not load your support history. Please try again.',
+          });
+        }
+      }
+    };
+
+    void loadHistory();
+    return () => {
+      isCurrent = false;
+    };
+  }, [authLoading, studentUID]);
 
   const [selected, setSelected] = useState<StudentSessionItem | null>(null);
   const handleViewDetails = (item: StudentSessionItem) => setSelected(item);
@@ -55,7 +124,10 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
               </div>
             </header>
 
-            <div className="dashboard-board dashboard-board--single dashboard-board--scroll-columns">
+            {loadError && <p className="ui-error" role="alert">{loadError}</p>}
+            {isLoading && <p className="dashboard-empty" role="status">Loading history...</p>}
+
+            <div className="dashboard-board dashboard-board--single dashboard-board--scroll-columns" aria-busy={isLoading}>
               <div className="dashboard-cards dashboard-cards--scroll">
                 {history.map(item => (
                   <ItemCard
@@ -63,18 +135,18 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
                     category={item.category}
                     title={item.title}
                     personName={item.personName}
-                    dateLabel={item.dateLabel}
+                    dateLabel={item.createdLabel}
                     pill={(
                       <StatusPill
                         tone={item.status.tone}
                         label={item.status.label}
-                        icon={item.status.tone === 'rated' ? <StarOutlineIcon /> : undefined}
+                        icon={item.status.tone === 'rated' ? <RatedIcon /> : undefined}
                       />
                     )}
                     onViewDetails={() => handleViewDetails(item)}
                   />
                 ))}
-                {history.length === 0 && <p className="dashboard-empty">No past sessions yet</p>}
+                {!isLoading && history.length === 0 && <p className="dashboard-empty">No past sessions yet</p>}
               </div>
             </div>
           </section>
@@ -84,7 +156,7 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
       {selected && (
         <SupportDetailsModal
           item={selected}
-          feedback={MOCK_SESSION_FEEDBACK[selected.sessID]}
+          feedback={feedbackBySession[selected.sessID]}
           onClose={() => setSelected(null)}
         />
       )}

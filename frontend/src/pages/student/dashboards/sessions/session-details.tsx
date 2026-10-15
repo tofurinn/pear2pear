@@ -14,7 +14,7 @@ import '../../../../components/page-css/details.css';
 
 export interface SessionDetailsExtras {
   description?: string;
-  sessionDateLabel?: string; // e.g. "11 Aug 2025" (falls back to item.dateLabel)
+  createdLabel?: string;
   supportMode?: string; // e.g. "Physical"
   timeslot?: string; // e.g. "3PM – 4PM"
   location?: string; // e.g. "Help's Founder's Library Discussion Room 1"
@@ -84,7 +84,7 @@ function SessionDetailsModal({
   const { tone, label } = getStudentSessionStatus(item);
   const volunteer = item.volunteer;
   const student = item.studentDetails;
-  
+
   const canGiveFeedback = item.sessStatus === 'Completed' && !!onSubmitFeedback;
   const canChangeArrangement = item.sessStatus === 'Planned' || item.sessStatus === 'Confirmed';
   const needsStudentConfirmation =
@@ -162,14 +162,14 @@ function SessionDetailsModal({
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
           <span className="session-modal-topdate">
-            <CalendarIcon /> {item.sessionDateLabel ?? item.dateLabel}
+            <CalendarIcon /> {item.createdLabel}
           </span>
         </div>
 
         <dl className="session-modal-info">
           <div className="session-modal-info-row">
             <dt><CalendarIcon /> Session Date</dt>
-            <dd>{item.sessionDateLabel ?? item.dateLabel}</dd>
+            <dd>{item.dateLabel}</dd>
           </div>
           <div className="session-modal-info-row">
             <dt><SwapIcon /> Support Mode</dt>

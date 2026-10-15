@@ -56,6 +56,7 @@ export interface StudentVolunteerSummary {
 export interface StudentSessionItem extends DashboardSessionItem {
   reqID: string;
   sessTimeSlot: Support_Session['sessTimeSlot'];
+  createdLabel: string;   // (sessTimestamp)
   volunteer?: {
     name: string;
     rating: number;
@@ -173,8 +174,9 @@ export const toStudentSessionItem = (
   personName: volunteer.name,
   rating: { value: volunteer.rating, count: volunteer.ratingCount },
   sessDate: session.sessDate,
-  sessTimeSlot: session.sessTimeSlot,
+  sessTimeSlot: session.sessTimeSlot,  
   dateLabel: formatDate(session.sessDate),
+  createdLabel: formatDate(session.sessTimestamp.toDate()),
   status: getStudentSessionStatus(session),
   description: request.description,
   supportMode: session.supportMode,

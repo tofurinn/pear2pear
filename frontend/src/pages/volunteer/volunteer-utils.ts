@@ -51,6 +51,7 @@ export type VolunteerRequestItem = DashboardRequestItem;
 export type VolunteerSessionItem = DashboardSessionItem & {
   reqID: string;
   sessTimeSlot: Support_Session['sessTimeSlot'];
+  createdLabel: string;
   volunteerRating?: number;
   requesterStatus?: string;
   studentFeedback?: { rating: number; comments: string };
@@ -111,8 +112,9 @@ export const toVolunteerSessionItem = (
   personName: student.name,
   rating: { value: 0, count: 0 },
   sessDate: session.sessDate,
-  sessTimeSlot: session.sessTimeSlot,
+  sessTimeSlot: session.sessTimeSlot,  
   dateLabel: formatDate(session.sessDate),
+  createdLabel: formatDate(session.sessTimestamp.toDate()),
   status: getVolunteerSessionStatus(session),
   description: request.description,
   supportMode: session.supportMode,
@@ -203,8 +205,9 @@ function createVolunteerMockSession(
     category,
     title,
     personName,
-    rating: { value: 0, count: 0 },
+    rating: { value: 0, count: 0 },    
     dateLabel,
+    createdLabel: dateLabel,
     status: VOLUNTEER_SESSION_STATUS[sessStatus],
     supportMode: 'Physical',
     timeslot: '11AM – 12PM',

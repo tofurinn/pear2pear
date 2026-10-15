@@ -84,3 +84,10 @@ export const AlertIcon = (p: IconProps) => (
     <path d="M12 7.5v5.5M12 16.5h.01" />
   </Icon>
 );
+
+// Outline star so the Rated pill's icon takes the pill colour like the other pill icons
+export const RatedIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    <path d="M12 2.6l2.8 6 6.6.8-4.9 4.5 1.3 6.5L12 17.1l-5.8 3.3 1.3-6.5L2.6 9.4l6.6-.8z" />
+  </svg>
+);
