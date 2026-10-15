@@ -6,7 +6,7 @@ import {
   formatTimeslotRange,
   hourToSlot,
   toDateKey,
-} from '../../volunteer-utils.tsx';
+} from '../../volunteer-utils.ts';
 import { getUpcomingDays, isSessionSlotBookable, isSessionSlotOccupied } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
 import type { Support_Session } from '../../../../types/Support_Session';

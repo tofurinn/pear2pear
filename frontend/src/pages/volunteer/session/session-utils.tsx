@@ -9,7 +9,7 @@ import {
   slotToHour,
   toDateKey,
   dayOfWeekIndex,
-} from '../volunteer-utils.tsx';
+} from '../volunteer-utils.ts';
 
 // ─── Form types ────────────────────────────────────────────────────────────────
 

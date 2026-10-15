@@ -32,7 +32,7 @@ import { updateRequestStatus } from '../../../services/RequestService';
 import { getAvailabilityByVolunteer } from '../../../services/AvailabilityService';
 import { createSupportSession, getSessionsByRequestIDs } from '../../../services/SessionService';
 import { getUser } from '../../../services/UserService';
-import { parseDateKey, slotToHour } from '../volunteer-utils.tsx';
+import { parseDateKey, slotToHour } from '../volunteer-utils.ts';
 
 import '../../../components/ui.css';
 import './../../../components/page-css/session-form.css';

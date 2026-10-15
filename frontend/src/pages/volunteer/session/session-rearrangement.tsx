@@ -29,7 +29,7 @@ import {
   toWeeklyAvailability,
 } from './session-utils.tsx';
 import type { SessionFormData, SessionSummary, Student } from './session-utils.tsx';
-import { formatLongDate, formatTimeslotRange, parseDateKey, slotToHour } from '../volunteer-utils.tsx';
+import { formatLongDate, formatTimeslotRange, parseDateKey, slotToHour } from '../volunteer-utils.ts';
 
 import '../../../components/ui.css';
 import './../../../components/page-css/session-form.css';
