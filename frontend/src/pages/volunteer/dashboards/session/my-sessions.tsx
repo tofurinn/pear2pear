@@ -207,7 +207,7 @@ function VolunteerSessions() {
                       category={item.category}
                       title={item.title}
                       personName={item.personName}
-                      dateLabel={item.dateLabel}
+                      dateLabel={item.createdLabel}
                       pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
                       onViewDetails={() => handleViewDetails(item)}
                     />
@@ -225,7 +225,7 @@ function VolunteerSessions() {
                       category={item.category}
                       title={item.title}
                       personName={item.personName}
-                      dateLabel={item.dateLabel}
+                      dateLabel={item.createdLabel}
                       pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
                       onViewDetails={() => handleViewDetails(item)}
                     />
@@ -243,7 +243,7 @@ function VolunteerSessions() {
                       category={item.category}
                       title={item.title}
                       personName={item.personName}
-                      dateLabel={item.dateLabel}
+                      dateLabel={item.createdLabel}
                       pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
                       onViewDetails={() => handleViewDetails(item)}
                     />
