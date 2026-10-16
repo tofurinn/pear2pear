@@ -70,13 +70,13 @@ export const buildSessionSummary = (
   request: Support_Request,
   student: Student,
 ): SessionSummary => ({
-    category: request.category,
-    title: request.title,
-    dateLabel: formatLongDate(parseDateKey(data.sessDate)),
-    timeslotLabel: formatTimeslotRange(slotToHour(data.sessTimeSlot)),
-    supportMode: data.supportMode,
-    meetingLocation: data.meetingLocation.trim(),
-    student,
+  category: request.category,
+  title: request.title,
+  dateLabel: formatLongDate(parseDateKey(data.sessDate)),
+  timeslotLabel: formatTimeslotRange(slotToHour(data.sessTimeSlot)),
+  supportMode: data.supportMode,
+  meetingLocation: data.meetingLocation.trim(),
+  student,
 });
 
 export const isSessionSlotBookable = (
@@ -113,14 +113,15 @@ export const isSessionSlotOccupied = (
 
 // ─── Step rules (shared by the booking form and the rearrangement page) ───────
 
+export const MAX_MEETING_LOCATION_LENGTH = 100;
 export type SessionStepKey = 'request' | 'timeSlot' | 'meetup';
 
 // Whether a step has what it needs before the volunteer can move on
 export const isStepValid = (step: SessionStepKey, data: SessionFormData): boolean => {
   switch (step) {
-    case 'request':  return data.reqID !== '';
+    case 'request': return data.reqID !== '';
     case 'timeSlot': return data.sessDate !== '' && data.sessTimeSlot !== '';
-    case 'meetup':   return data.meetingLocation.trim() !== '';
+    case 'meetup': return data.meetingLocation.trim() !== '' && data.meetingLocation.trim().length <= MAX_MEETING_LOCATION_LENGTH;
   }
 };
 
