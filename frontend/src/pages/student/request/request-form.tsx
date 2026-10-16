@@ -123,7 +123,6 @@ function MultiStepRequestForm() {
         category: submitted.category,
         reqStatus: 'Pending',
         supportMode: formData.supportMode,
-        availability: formData.availability,
       });
 
       setSummary(submitted);

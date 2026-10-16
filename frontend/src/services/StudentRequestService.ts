@@ -15,7 +15,7 @@ export async function loadRequestFormVolunteers(
       getAvailabilityByVolunteer(volunteer.UID),
     ]);
 
-    if (!user || !user.isVolunteer || user.accStatus !== 'Active') return null;
+    if (!user || !user.isVolunteer) return null;
 
     return {
       volUID: volunteer.UID,

@@ -91,7 +91,6 @@ const SetPasswordPage: React.FC = () => {
         email: pending.stepOne.email,
         studentID: pending.stepOne.studentID,
         isVolunteer: Boolean(pending.volunteerProfile),
-        accStatus: "Active"
       });
 
       // 3. If they came through the volunteer flow, write the volunteer doc too

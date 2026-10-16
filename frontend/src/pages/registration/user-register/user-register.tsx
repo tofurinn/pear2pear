@@ -18,7 +18,7 @@ const MAX_LENGTH = {
 } as const;
 
 // Subset of the USER entity collected in step 1.
-// UID, accStatus, isVolunteer and passwordHash are set by the backend / later steps.
+// UID, isVolunteer and passwordHash are set by the backend / later steps.
 export interface StudentStepOneData {
   name: string;
   email: string;
