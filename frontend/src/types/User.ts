@@ -3,6 +3,5 @@ export interface User {
     email: string;
     studentID: string;
     name: string;
-    accStatus: 'Pending' | 'Inactive' | 'Active';
     isVolunteer: boolean;
 }

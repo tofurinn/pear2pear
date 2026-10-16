@@ -62,17 +62,6 @@ export const getAllUsers = async (): Promise<User[]> => {
   }
 };
 
-// Get all users by account status (e.g. the 'Pending' ones waiting for admin approval)
-export const getUsersByStatus = async (accStatus: User['accStatus']): Promise<User[]> => {
-  try {
-    const snap = await getDocs(query(collection(db, COLLECTION), where('accStatus', '==', accStatus)));
-    return snap.docs.map(d => d.data() as User);
-  } catch (error) {
-    console.error(`Error getting "${accStatus}" users:`, error);
-    throw error;
-  }
-};
-
 // Get all users who are also volunteers
 export const getVolunteerUsers = async (): Promise<User[]> => {
   try {

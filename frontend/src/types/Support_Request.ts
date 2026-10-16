@@ -10,5 +10,4 @@ export interface Support_Request {
     reqStatus: "Pending" | "Accepted" | "Rejected" | "Cancelled" | "Scheduled";
     reqTimestamp: Timestamp;
     supportMode?: "Physical" | "Virtual";
-    availability?: string[];
 }

@@ -95,7 +95,6 @@ export interface RequestSummary {
   title: string;
   description: string;
   supportMode: SupportMode;
-  slotCount: number;
   volunteer: RequestFormVolunteer;
 }
 
@@ -111,7 +110,6 @@ export const buildSummary = (
     title: data.title,
     description: data.description,
     supportMode: data.supportMode,
-    slotCount: data.availability.length,
     volunteer,
   };
 };
