@@ -264,6 +264,16 @@
   border-radius: 999px;
 }
 
+.ui-field-control--error {
+  border-color: #d93025;
+}
+
+.ui-field-error {
+  font-size: var(--fs-label);
+  color: #d93025;
+  margin: 4px 0 0;
+}
+
 .ui-field-control::placeholder {
   color: rgba(68, 36, 33, 0.45);
 }

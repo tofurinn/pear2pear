@@ -1,4 +1,5 @@
 import type { SessionFormData } from '../session-utils.tsx';
+import { MAX_MEETING_LOCATION_LENGTH } from '../session-utils.tsx';
 import { ChevronDown } from '../../../../components/icons.tsx';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -11,6 +12,8 @@ interface Step3Props {
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 function MeetupDetailsStep({ formData, updateFormData }: Step3Props) {
+  const locationLength = formData.meetingLocation.trim().length;
+  const isTooLong = locationLength > MAX_MEETING_LOCATION_LENGTH;
   return (
     <>
       <h2 className="ui-card-heading">Step 3: Meetup Details</h2>
@@ -37,11 +40,18 @@ function MeetupDetailsStep({ formData, updateFormData }: Step3Props) {
           <input
             id="meetingLocation"
             type="text"
-            className="ui-field-control"
+            className={`ui-field-control ${isTooLong ? 'ui-field-control--error' : ''}`.trim()}
             value={formData.meetingLocation}
             placeholder={formData.supportMode === 'Virtual' ? 'Paste the meeting link' : 'e.g. Student Lounge 2 at the sofa'}
+            aria-invalid={isTooLong}
+            aria-describedby={isTooLong ? 'meetingLocation-error' : undefined}
             onChange={e => updateFormData({ meetingLocation: e.target.value })}
           />
+          {isTooLong && (
+            <p id="meetingLocation-error" className="ui-field-error" role="alert">
+              Please keep this under {MAX_MEETING_LOCATION_LENGTH} characters ({locationLength}/{MAX_MEETING_LOCATION_LENGTH})
+            </p>
+          )}
         </div>
       </div>
     </>

@@ -116,13 +116,13 @@ export const isSessionSlotOccupied = (
 // ─── Step rules (shared by the booking form and the rearrangement page) ───────
 
 export type SessionStepKey = 'request' | 'timeSlot' | 'meetup';
+export const MAX_MEETING_LOCATION_LENGTH = 100;
 
-// Whether a step has what it needs before the student can move on
 export const isStepValid = (step: SessionStepKey, data: SessionFormData): boolean => {
   switch (step) {
     case 'request':  return data.reqID !== '';
     case 'timeSlot': return data.sessDate !== '' && data.sessTimeSlot !== '';
-    case 'meetup':   return data.meetingLocation.trim() !== '';
+    case 'meetup': return data.meetingLocation.trim() !== '' && data.meetingLocation.trim().length <= MAX_MEETING_LOCATION_LENGTH;
   }
 };
 
