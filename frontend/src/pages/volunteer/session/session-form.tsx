@@ -260,7 +260,7 @@ function VolunteerMultiStepSessionForm() {
   return (
     <div className="ui-page">
       <Navbar dashboardPath={"/volunteer/dashboard"} />
-      <main className={"ui-page-volunteer-background"}>
+      <main className={"volunteer-dashboard-background"}>
         <section className={`ui-card ${isConfirmed ? 'ui-card--centered' : ''}`}>
           {isConfirmed ? (
             // Confirmation has its own heading, so no "Support Session" title/divider
