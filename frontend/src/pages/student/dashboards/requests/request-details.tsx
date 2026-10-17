@@ -99,7 +99,6 @@ function RequestDetailsModal({ item, onClose, onSchedule }: RequestDetailsModalP
             <span className="session-modal-volunteer-rating">
               {volunteer.rating} ({volunteer.reviewCount})
             </span>
-            <span className="session-modal-volunteer-status">{volunteer.requestStatusLabel}</span>
           </div>
           {volunteer.skills && volunteer.skills.length > 0 && (
             <p className="session-modal-skills">{volunteer.skills.join(' • ')}</p>
