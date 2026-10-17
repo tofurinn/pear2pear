@@ -60,7 +60,6 @@ export interface StudentSessionItem extends DashboardSessionItem {
   volunteer?: {
     name: string;
     rating: number;
-    reviewCount: number;
     skills?: string[];
     requestStatusLabel?: string;
   };
@@ -70,7 +69,6 @@ export interface StudentRequestItem extends DashboardRequestItem {
   volunteer: {
     name: string;
     rating: number;
-    reviewCount: number;
     skills?: string[];
     requestStatusLabel: string;
   };
@@ -104,7 +102,6 @@ export const toStudentRequestItem = (
   volunteer: {
     name: volunteer.name,
     rating: volunteer.rating,
-    reviewCount: volunteer.ratingCount,
     skills: volunteer.skills,
     requestStatusLabel: request.reqStatus,
   },
@@ -118,7 +115,6 @@ export const buildStudentRequestItems = (
     toStudentRequestItem(request, volunteers[request.volUID] ?? {
       name: 'Volunteer',
       rating: 0,
-      ratingCount: 0,
     })
   );
 
@@ -185,7 +181,6 @@ export const toStudentSessionItem = (
   volunteer: {
     name: volunteer.name,
     rating: volunteer.rating,
-    reviewCount: volunteer.ratingCount,
     skills: volunteer.skills,
     requestStatusLabel: request.reqStatus,
   },

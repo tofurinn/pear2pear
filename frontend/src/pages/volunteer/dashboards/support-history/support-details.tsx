@@ -130,7 +130,6 @@ function SupportDetailsModal({ item, onClose }: SupportDetailsProps) {
         <section className="session-modal-volunteer session-modal-requester" aria-label="Requesting student">
           <div className="session-modal-volunteer-head">
             <span className="session-modal-requested-by">Requested by <strong>{item.personName}</strong></span>
-            {item.requesterStatus && <span className="session-modal-volunteer-status">{item.requesterStatus}</span>}
           </div>
           {item.studentFeedback && (
             <div className="session-modal-feedback">
