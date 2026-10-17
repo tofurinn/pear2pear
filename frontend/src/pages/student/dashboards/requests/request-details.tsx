@@ -97,7 +97,7 @@ function RequestDetailsModal({ item, onClose, onSchedule }: RequestDetailsModalP
             <span className="session-modal-volunteer-name">{volunteer.name}</span>
             <StarRating rating={volunteer.rating} className="session-modal-stars" />
             <span className="session-modal-volunteer-rating">
-              {volunteer.rating} ({volunteer.reviewCount})
+              {volunteer.rating}
             </span>
           </div>
           {volunteer.skills && volunteer.skills.length > 0 && (

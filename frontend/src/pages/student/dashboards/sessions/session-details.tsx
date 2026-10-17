@@ -26,7 +26,6 @@ export interface SessionDetailsExtras {
   volunteer?: {
     name: string;
     rating: number;
-    reviewCount: number;
     skills?: string[];
     requestStatusLabel?: string; // e.g. "Accepted"
   };
@@ -213,7 +212,7 @@ function SessionDetailsModal({
               <span className="session-modal-volunteer-name">{volunteer.name}</span>
               <Stars rating={volunteer.rating} />
               <span className="session-modal-volunteer-rating">
-                {volunteer.rating} ({volunteer.reviewCount})
+                {volunteer.rating}
               </span>
             </div>
             {volunteer.skills && volunteer.skills.length > 0 && (
