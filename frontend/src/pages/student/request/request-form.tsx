@@ -29,7 +29,7 @@ const NO_VOLUNTEERS: StudentRequestVolunteer[] = [];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function MultiStepRequestForm() {
+function StudentMultiStepRequestForm() {
   const navigate = useNavigate();
   const { firebaseUser } = useAuth();
 
@@ -269,4 +269,4 @@ function MultiStepRequestForm() {
   );
 }
 
-export default MultiStepRequestForm;
+export default StudentMultiStepRequestForm;

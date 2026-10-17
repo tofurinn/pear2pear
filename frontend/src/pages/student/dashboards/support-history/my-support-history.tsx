@@ -19,7 +19,7 @@ import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
 
-function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
+function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
   const navigate = useNavigate();
   const { userDoc, loading: authLoading } = useAuth();
   const studentUID = userDoc?.UID ?? null;
@@ -164,4 +164,4 @@ function SupportHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
   );
 }
 
-export default SupportHistory;
+export default StudentHistory;
