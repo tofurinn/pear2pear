@@ -22,7 +22,7 @@ const EMPTY_VOLUNTEERS: Record<string, StudentVolunteerSummary> = {};
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
-function MyRequests() {
+function StudentRequests() {
   const navigate = useNavigate();
   const { userDoc, loading: authLoading } = useAuth();
   const studentUID = userDoc?.UID ?? null;
@@ -201,4 +201,4 @@ function MyRequests() {
   );
 }
 
-export default MyRequests;
+export default StudentRequests;
