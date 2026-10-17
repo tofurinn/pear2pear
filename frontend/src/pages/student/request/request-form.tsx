@@ -80,7 +80,7 @@ function StudentMultiStepRequestForm() {
 
   const isCurrentVolunteerLoad = volunteerLoad.supportMode === formData.supportMode;
   const volunteers = isCurrentVolunteerLoad && volunteerLoad.status === 'loaded'
-    ? volunteerLoad.volunteers
+    ? volunteerLoad.volunteers.filter(volunteer => volunteer.volUID !== firebaseUser?.uid)
     : NO_VOLUNTEERS;
   const volunteersLoading = !isCurrentVolunteerLoad || volunteerLoad.status === 'loading';
   const volunteersError = isCurrentVolunteerLoad && volunteerLoad.status === 'error'
@@ -111,9 +111,11 @@ function StudentMultiStepRequestForm() {
     setSubmitMessage('');
 
     try {
+      if (!firebaseUser) throw new Error('You must be signed in to submit a support request');
+      if (formData.volUID === firebaseUser.uid) throw new Error('You cannot send a support request to yourself');
+
       const submitted = buildSummary(formData, volunteers);
       if (!submitted) throw new Error('Could not find the selected volunteer');
-      if (!firebaseUser) throw new Error('You must be signed in to submit a support request');
 
       await createSupportRequest({
         studUID: firebaseUser.uid,
@@ -123,7 +125,6 @@ function StudentMultiStepRequestForm() {
         category: submitted.category,
         reqStatus: 'Pending',
         supportMode: formData.supportMode,
-        availability: formData.availability,
       });
 
       setSummary(submitted);

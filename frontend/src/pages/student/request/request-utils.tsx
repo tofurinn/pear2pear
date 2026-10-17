@@ -5,6 +5,24 @@ import { DAY_NAMES, hourToSlot, slotToHour } from '../student-utils.tsx';
 // ─── Form types ────────────────────────────────────────────────────────────────
 
 export type SupportMode = 'Physical' | 'Virtual';
+export const MAX_REQUEST_TITLE_LENGTH = 35;
+export const MAX_REQUEST_DESCRIPTION_LENGTH = 255;
+
+export type RequestStepKey = 'supportType';
+
+export const isStepValid = (
+  step: RequestStepKey,
+  data: Pick<RequestFormData, 'category' | 'title' | 'description'>,
+): boolean => {
+  switch (step) {
+    case 'supportType':
+      return data.category !== '' &&
+        data.title.trim() !== '' &&
+        data.title.length <= MAX_REQUEST_TITLE_LENGTH &&
+        data.description.trim() !== '' &&
+        data.description.length <= MAX_REQUEST_DESCRIPTION_LENGTH;
+  }
+};
 
 // Combined form data across all steps
 export interface RequestFormData {
@@ -95,7 +113,6 @@ export interface RequestSummary {
   title: string;
   description: string;
   supportMode: SupportMode;
-  slotCount: number;
   volunteer: RequestFormVolunteer;
 }
 
@@ -111,7 +128,6 @@ export const buildSummary = (
     title: data.title,
     description: data.description,
     supportMode: data.supportMode,
-    slotCount: data.availability.length,
     volunteer,
   };
 };
