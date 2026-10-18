@@ -30,7 +30,19 @@ export function ItemCard({
   onViewDetails,
 }: ItemCardProps) {
   return (
-    <article className="ui-item-card">
+    <article
+      className="ui-item-card"
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${title}`}
+      onClick={onViewDetails}
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onViewDetails();
+        }
+      }}
+    >
       <CategoryTag>{category}</CategoryTag>
       <h3 className="ui-item-card-title">{title}</h3>
       <p className="ui-item-card-person">{personName}</p>
@@ -45,9 +57,6 @@ export function ItemCard({
         <span className="ui-item-card-date">{dateLabel}</span>
         <div className="dashboard-item-actions">
           {pill}
-          <button type="button" className="ui-chip-btn ui-chip-btn--info" onClick={onViewDetails}>
-            Details
-          </button>
         </div>
       </div>
     </article>

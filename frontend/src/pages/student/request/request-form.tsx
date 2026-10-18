@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 //state objects: currentStep - which step is showing
 //state object: formData - holds all form input values across steps
 //state object: summary - snapshot of the submitted request, shown on the confirmation page
@@ -18,7 +18,7 @@ import RequestSubmittedStep from './steps/step5.tsx';
 import { createEmptyForm, buildSummary } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
 import { useAuth } from '../../../context/authContext';
-import { createSupportRequest } from '../../../services/RequestService';
+import { createSupportRequest, getSupportRequest, resubmitPendingSupportRequest } from '../../../services/RequestService';
 import { loadRequestFormVolunteers } from '../../../services/StudentRequestService';
 import type { StudentRequestVolunteer } from '../../../types/StudentRequestVolunteer';
 
@@ -31,10 +31,18 @@ const NO_VOLUNTEERS: StudentRequestVolunteer[] = [];
 
 function StudentMultiStepRequestForm() {
   const navigate = useNavigate();
-  const { firebaseUser } = useAuth();
+  const location = useLocation();
+  const { firebaseUser, loading: authLoading } = useAuth();
+  const routeState = location.state as { resubmitReqID?: unknown } | null;
+  const resubmitReqID = typeof routeState?.resubmitReqID === 'string' ? routeState.resubmitReqID : null;
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(resubmitReqID ? 2 : 1);
   const [formData, setFormData] = useState<RequestFormData>(createEmptyForm);
+  const [resubmitLoad, setResubmitLoad] = useState<{
+    reqID: string;
+    status: 'ready' | 'error';
+    error?: string;
+  } | null>(null);
   const [summary, setSummary] = useState<RequestSummary | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
@@ -53,6 +61,45 @@ function StudentMultiStepRequestForm() {
   });
 
   const totalSteps = 4; // the confirmation page is not a numbered step
+
+  useEffect(() => {
+    if (!resubmitReqID || authLoading) return;
+
+    let isCurrent = true;
+    const loadRequestForResubmission = async () => {
+      try {
+        if (!firebaseUser) throw new Error('Sign in to resubmit this support request.');
+
+        const request = await getSupportRequest(resubmitReqID);
+        if (!request || request.studUID !== firebaseUser.uid || request.reqStatus !== 'Pending') {
+          throw new Error('This support request is no longer available for resubmission.');
+        }
+
+        if (isCurrent) {
+          setFormData(previous => ({
+            ...previous,
+            category: request.category,
+            title: request.title,
+            description: request.description,
+          }));
+          setCurrentStep(2);
+          setResubmitLoad({ reqID: resubmitReqID, status: 'ready' });
+        }
+      } catch (error) {
+        console.error('Error loading support request for resubmission:', error);
+        if (isCurrent) {
+          setResubmitLoad({
+            reqID: resubmitReqID,
+            status: 'error',
+            error: error instanceof Error ? error.message : 'Could not load this request. Please try again.',
+          });
+        }
+      }
+    };
+
+    void loadRequestForResubmission();
+    return () => { isCurrent = false; };
+  }, [authLoading, firebaseUser, resubmitReqID]);
 
   useEffect(() => {
     let isCurrent = true;
@@ -117,14 +164,18 @@ function StudentMultiStepRequestForm() {
       const submitted = buildSummary(formData, volunteers);
       if (!submitted) throw new Error('Could not find the selected volunteer');
 
-      await createSupportRequest({
-        studUID: firebaseUser.uid,
-        volUID: formData.volUID,
-        title: formData.title,
-        description: formData.description,
-        category: submitted.category,
-        reqStatus: 'Pending',
-      });
+      if (resubmitReqID) {
+        await resubmitPendingSupportRequest(resubmitReqID, firebaseUser.uid, formData.volUID);
+      } else {
+        await createSupportRequest({
+          studUID: firebaseUser.uid,
+          volUID: formData.volUID,
+          title: formData.title,
+          description: formData.description,
+          category: submitted.category,
+          reqStatus: 'Pending',
+        });
+      }
 
       setSummary(submitted);
       setSubmitMessage('success');
@@ -167,7 +218,7 @@ function StudentMultiStepRequestForm() {
             volunteersLoading={volunteersLoading}
             volunteersError={volunteersError}
             updateFormData={updateFormData}
-            onPrevious={handlePrevious}
+            onPrevious={resubmitReqID ? undefined : handlePrevious}
             onNext={handleNext}
           />
         );
@@ -217,12 +268,22 @@ function StudentMultiStepRequestForm() {
             // Confirmation has its own heading, so no "Support Request" title/divider
             <RequestSubmittedStep
               summary={summary}
+              isResubmission={Boolean(resubmitReqID)}
               onReturnToDashboard={() => navigate('/student/dashboard')}
               onViewRequests={() => navigate('/student/my-requests')}
             />
+          ) : resubmitReqID && resubmitLoad?.reqID !== resubmitReqID ? (
+            <p className="dashboard-empty" role="status">Loading request details...</p>
+          ) : resubmitReqID && resubmitLoad?.status === 'error' ? (
+            <div className="ui-error" role="alert">
+              <p>{resubmitLoad.error}</p>
+              <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate('/student/my-requests')}>
+                Return to My Requests
+              </button>
+            </div>
           ) : (
             <>
-              <h1 className="ui-card-title">Support Request</h1>
+              <h1 className="ui-card-title">{resubmitReqID ? 'Find Another Volunteer' : 'Support Request'}</h1>
               <hr className="ui-card-divider" />
 
               {submitMessage === 'error' ? (

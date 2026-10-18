@@ -9,7 +9,7 @@ interface Step2Props {
   volunteersLoading: boolean;
   volunteersError: string;
   updateFormData: (data: Partial<RequestFormData>) => void;
-  onPrevious: () => void;
+  onPrevious?: () => void;
   onNext: () => void;
 }
 

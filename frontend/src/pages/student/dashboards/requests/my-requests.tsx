@@ -5,12 +5,13 @@ import RequestDetailsModal from './request-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
+import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
 import { buildStudentRequestItems } from '../../student-utils.tsx';
 import type { StudentRequestItem } from '../../student-utils.tsx';
 import type { StudentVolunteerSummary } from '../../student-utils.tsx';
 
 import { useAuth } from '../../../../context/authContext';
-import { getRequestsByStudent } from '../../../../services/RequestService';
+import { cancelPendingSupportRequest, getRequestsByStudent } from '../../../../services/RequestService';
 import { getUser } from '../../../../services/UserService';
 import { getVolunteer } from '../../../../services/VolunteerService';
 
@@ -103,7 +104,39 @@ function StudentRequests() {
   const inactive = items.filter(item => ['Scheduled', 'Rejected', 'Cancelled'].includes(item.reqStatus));
 
   const [selected, setSelected] = useState<StudentRequestItem | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<StudentRequestItem | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [actionError, setActionError] = useState('');
   const handleViewDetails = (item: StudentRequestItem) => setSelected(item);
+
+  const handleCancelRequest = async () => {
+    if (!cancelTarget || !studentUID) return;
+
+    setIsCancelling(true);
+    setActionError('');
+    try {
+      await cancelPendingSupportRequest(cancelTarget.reqID, studentUID);
+      setRequestLoad(previous => previous?.studentUID === studentUID
+        ? {
+            ...previous,
+            requests: previous.requests.map(request => request.reqID === cancelTarget.reqID
+              ? { ...request, reqStatus: 'Cancelled' }
+              : request
+            ),
+          }
+        : previous
+      );
+      setSelected(null);
+      setCancelTarget(null);
+    } catch (error) {
+      console.error('Error cancelling student support request:', error);
+      setActionError(error instanceof Error ? error.message : 'Could not cancel this request. Please try again.');
+      setCancelTarget(null);
+      setSelected(null);
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   return (
     <div className="ui-page">
@@ -130,6 +163,8 @@ function StudentRequests() {
             ) : error ? (
               <p className="dashboard-empty">{error}</p>
             ) : (
+              <>
+              {actionError && <p className="ui-error" role="alert">{actionError}</p>}
               <div className="dashboard-board dashboard-board--three dashboard-board--scroll-columns">
                 <section>
                   <h2 className="dashboard-section-title">Pending</h2>
@@ -185,6 +220,7 @@ function StudentRequests() {
                   </div>
                 </section>
               </div>
+              </>
             )}
           </section>
         </div>
@@ -195,8 +231,21 @@ function StudentRequests() {
           item={selected}
           onClose={() => setSelected(null)}
           onSchedule={() => navigate('/student/session-form', { state: { reqID: selected.reqID } })}
+          onCancelRequest={() => setCancelTarget(selected)}
+          onResubmitRequest={() => navigate('/student/request-form', { state: { resubmitReqID: selected.reqID } })}
         />
       )}
+
+      <ConfirmPopup
+        open={cancelTarget !== null}
+        title="Cancel this support request?"
+        message="This request will move to Inactive and the volunteer will no longer be able to respond."
+        confirmLabel="Cancel Request"
+        busy={isCancelling}
+        busyLabel="Cancelling..."
+        onConfirm={() => void handleCancelRequest()}
+        onCancel={() => setCancelTarget(null)}
+      />
     </div>
   );
 }

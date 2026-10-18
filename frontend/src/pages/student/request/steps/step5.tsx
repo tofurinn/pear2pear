@@ -5,6 +5,7 @@ import CategoryTag from "../../../../components/category-tag/category-tag.tsx";
 
 type StepConfirmationProps = {
   summary: RequestSummary;
+  isResubmission?: boolean;
   onReturnToDashboard: () => void;
   onViewRequests: () => void;
 };
@@ -31,6 +32,7 @@ function Stars({ rating }: { rating: number }) {
 
 export default function StepConfirmation({
   summary,
+  isResubmission = false,
   onReturnToDashboard,
   onViewRequests,
 }: StepConfirmationProps) {
@@ -40,10 +42,13 @@ export default function StepConfirmation({
     <div className="ui-confirmation">
       <img className="ui-confirmation-icon" src={heartFinger} alt="" />
 
-      <h1 className="ui-confirmation-title">Your Support Request Is Submitted!</h1>
+      <h1 className="ui-confirmation-title">
+        {isResubmission ? 'Your Volunteer Request Is Updated!' : 'Your Support Request Is Submitted!'}
+      </h1>
       <p className="ui-confirmation-message">
-        Sit tight, you will receive a notification once your matched Volunteer
-        accepts the request
+        {isResubmission
+          ? 'Your request is pending with the new volunteer. You will receive a notification when they respond.'
+          : 'Sit tight, you will receive a notification once your matched Volunteer accepts the request'}
       </p>
 
       <section className="rf-summary" aria-labelledby="rf-summary-heading">

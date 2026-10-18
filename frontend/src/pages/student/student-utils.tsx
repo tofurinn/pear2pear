@@ -66,6 +66,7 @@ export interface StudentSessionItem extends DashboardSessionItem {
 }
 
 export interface StudentRequestItem extends DashboardRequestItem {
+  reqTimestamp: Support_Request['reqTimestamp'];
   volunteer: {
     name: string;
     rating: number;
@@ -92,6 +93,7 @@ export const toStudentRequestItem = (
   volunteer: StudentVolunteerSummary,
 ): StudentRequestItem => ({
   reqID: request.reqID,
+  reqTimestamp: request.reqTimestamp,
   reqStatus: request.reqStatus,
   category: request.category,
   title: request.title,
@@ -196,4 +198,3 @@ export const buildStudentSessionItems = (
     const volunteer = request ? volunteers[request.volUID] : undefined;
     return request && volunteer ? [toStudentSessionItem(session, request, volunteer)] : [];
   });
-

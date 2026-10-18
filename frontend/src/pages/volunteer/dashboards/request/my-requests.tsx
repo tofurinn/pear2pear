@@ -8,7 +8,7 @@ import { ChevronLeft } from '../../../../components/icons.tsx';
 import { BoardSection, ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import { createVolunteerRequestPatch, toVolunteerRequestItem } from '../../volunteer-utils.ts';
 import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
-import { getRequestsByVolunteer, updateRequestStatus } from '../../../../services/RequestService';
+import { getRequestsByVolunteer, respondToPendingSupportRequest } from '../../../../services/RequestService';
 import { getUser } from '../../../../services/UserService';
 
 import '../../../../components/ui.css';
@@ -91,7 +91,7 @@ function VolunteerRequests() {
     setActionError('');
 
     try {
-      await updateRequestStatus(item.reqID, reqStatus);
+      await respondToPendingSupportRequest(item.reqID, volunteerUID, reqStatus);
       setRequestLoad(previous => previous?.volunteerUID === volunteerUID
         ? {
             ...previous,
