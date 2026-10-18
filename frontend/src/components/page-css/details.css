@@ -347,6 +347,7 @@
 
 .session-modal .ui-status-pill {
   height: 28px;
+  gap: 8px;
   padding: 0 14px;
   line-height: 1;
 }

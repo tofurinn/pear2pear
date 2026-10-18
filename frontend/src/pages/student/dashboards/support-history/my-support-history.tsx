@@ -18,6 +18,13 @@ import { getVolunteer } from '../../../../services/VolunteerService';
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
 
+type HistoryFilter = 'all' | 'Rated' | 'Cancelled';
+
+const HISTORY_FILTERS: { value: HistoryFilter; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'Rated', label: 'Rated' },
+  { value: 'Cancelled', label: 'Cancelled' },
+];
 
 function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPath?: string }) {
   const navigate = useNavigate();
@@ -105,6 +112,10 @@ function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
   }, [authLoading, studentUID]);
 
   const [selected, setSelected] = useState<StudentSessionItem | null>(null);
+  const [statusFilter, setStatusFilter] = useState<HistoryFilter>('all');
+  const visibleHistory = statusFilter === 'all'
+    ? history
+    : history.filter(item => item.sessStatus === statusFilter);
   const handleViewDetails = (item: StudentSessionItem) => setSelected(item);
 
   return (
@@ -127,9 +138,23 @@ function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
             {loadError && <p className="ui-error" role="alert">{loadError}</p>}
             {isLoading && <p className="dashboard-empty" role="status">Loading history...</p>}
 
+            <div className="dashboard-status-filters" role="group" aria-label="Filter support history by status">
+              {HISTORY_FILTERS.map(filter => (
+                <button
+                  key={filter.value}
+                  type="button"
+                  className="dashboard-status-filter"
+                  aria-pressed={statusFilter === filter.value}
+                  onClick={() => setStatusFilter(filter.value)}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+
             <div className="dashboard-board dashboard-board--single dashboard-board--scroll-columns" aria-busy={isLoading}>
               <div className="dashboard-cards dashboard-cards--scroll">
-                {history.map(item => (
+                {visibleHistory.map(item => (
                   <ItemCard
                     key={item.sessID}
                     category={item.category}
@@ -147,6 +172,9 @@ function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
                   />
                 ))}
                 {!isLoading && history.length === 0 && <p className="dashboard-empty">No past sessions yet</p>}
+                {!isLoading && history.length > 0 && visibleHistory.length === 0 && (
+                  <p className="dashboard-empty">No {statusFilter.toLowerCase()} sessions in your history</p>
+                )}
               </div>
             </div>
           </section>

@@ -34,12 +34,7 @@
 }
 
 .dashboard-card {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: calc(900 * var(--u));
-  padding: calc(30 * var(--u));
-  background: #fff;
-  border-radius: calc(46 * var(--u));
+  flex: none;
 }
 
 .dashboard-card--volunteer-sessions,
@@ -152,6 +147,44 @@
 .dashboard-empty {
   font-size: var(--fs-body);
   color: rgba(68, 36, 33, 0.45);
+}
+
+/* ---------- Support history status filters ---------- */
+.dashboard-status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: calc(14 * var(--u)) 0;
+}
+
+.dashboard-status-filter {
+  padding: 3px 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  background: #fff;
+  color: #b8b8b8;
+  font: inherit;
+  font-size: var(--fs-small);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.dashboard-status-filter:hover,
+.dashboard-status-filter[aria-pressed="true"] {
+  border-color: var(--color-green1);
+  color: var(--color-green1);
+}
+
+.dashboard-status-filter[aria-pressed="true"] {
+  background: var(--color-green1);
+  color: #fff;
+}
+
+.dashboard-status-filter:focus-visible {
+  outline: 3px solid #3d1f1f;
+  outline-offset: 2px;
 }
 
 /* ---------- Item card ---------- */
@@ -343,12 +376,6 @@
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
-  .dashboard-card {
-    min-height: 900px;
-    padding: 20px;
-    border-radius: 28px;
-  }
-
   .dashboard-banner {
     flex-direction: column;
     align-items: flex-start;
@@ -364,7 +391,7 @@
   .dashboard-card--volunteer-sessions,
   .dashboard-card--scroll-columns {
     height: auto;
-    min-height: 900px;
+    min-height: 0;
   }
 
   .dashboard-board--scroll-columns {
@@ -384,7 +411,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ui-item-card {
+  .ui-item-card,
+  .dashboard-status-filter {
     transition: none;
   }
 }
