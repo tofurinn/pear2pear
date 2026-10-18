@@ -93,7 +93,7 @@ function SessionDetailsModal({
     label !== 'Elapsed';
 
   // Escape to close, Tab stays inside the dialog, page behind doesn't scroll,
-  // and focus returns to the "View Details" button afterwards.
+  // and focus returns to the card that opened the dialog.
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;

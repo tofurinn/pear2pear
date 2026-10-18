@@ -140,7 +140,7 @@
 .dashboard-cards {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: calc(11 * var(--u)) calc(12 * var(--u));
+  gap: calc(24 * var(--u)) calc(16 * var(--u));
 }
 
 
@@ -198,12 +198,18 @@
   border: 1px solid var(--color-border);
   border-radius: calc(12 * var(--u));
   box-shadow: 0 1px 4px rgba(68, 36, 33, 0.1);
+  cursor: pointer;
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .ui-item-card:hover {
   border-color: #cfd6d6;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ui-item-card:focus-visible {
+  outline: 3px solid #3d1f1f;
+  outline-offset: 2px;
 }
 
 .ui-item-card-title {
@@ -322,7 +328,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/* ---------- Card footer: status pill + action chips (+ View Details) ---------- */
+/* ---------- Card footer: date and status pill ---------- */
 .dashboard-item-actions {
   display: flex;
   flex-wrap: wrap;
