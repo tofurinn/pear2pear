@@ -1,12 +1,12 @@
 .global-navbar {
 	align-items: center;
 	display: flex;
-	gap: 36px;
-	height: 60px;
+	gap: clamp(16px, 2vw, 36px);
+	min-height: 60px;
 	justify-content: flex-start;
 	margin: 0;
 	max-width: 1920px;
-	padding: 10px 50px 10px;
+	padding: 8px clamp(16px, 2.6vw, 50px);
 	width: 100%;
 	background: #ffffff;
 	position: -webkit-sticky;
@@ -18,24 +18,25 @@
 .global-navbar__brand {
 	align-items: center;
 	display: flex;
-	flex: 0 0 135px;
-	height: 104px;
+	flex: 0 0 160px;
+	height: 56px;
 	text-decoration: none;
 }
 
 .global-navbar__brand img {
 	display: block;
-	height: 150px;
+	height: 56px;
+	max-width: 100%;
 	object-fit: contain;
-	width: 200px;
+	width: 160px;
 }
 
 .global-navbar__actions {
 	align-items: center;
 	display: flex;
-	gap: 36px;
+	gap: clamp(14px, 1.9vw, 36px);
 	margin-left: auto;
-	padding: 15px 22px;
+	padding: 8px 0;
 }
 
 .global-navbar__actions a {
@@ -124,6 +125,7 @@
 	border-radius: 8px;
 	box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
 	min-width: 150px;
+	overflow: hidden;
 	padding: 6px;
 	position: absolute;
 	right: 0;
@@ -135,8 +137,10 @@
 	background: transparent;
 	border: 0;
 	border-radius: 5px;
+	box-sizing: border-box;
 	color: #000;
 	cursor: pointer;
+	display: block;
 	font: inherit;
 	padding: 8px 10px;
 	text-align: left;
@@ -154,6 +158,22 @@
 	font-weight: 700;
 }
 
+.global-navbar__logout {
+	border-top: 1px solid #e6e6e6 !important;
+	margin-top: 4px;
+	padding-top: 10px !important;
+}
+
+.global-navbar__logout-popup {
+	--s: 0.5;
+	--u: 0.5px;
+	--fs-btn: 14px;
+}
+
+.global-navbar__logout-popup [role='alert'] {
+	color: var(--color-error);
+}
+
 .global-navbar__actions a:hover {
 	color: #4f9e59;
 }
@@ -165,49 +185,53 @@
 	outline-offset: 4px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 	.global-navbar {
-		gap: 12px;
-		height: 96px;
-		padding: 8px 20px;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 4px 12px;
+		padding: 8px 16px;
 	}
 
 	.global-navbar__brand {
-		flex-basis: 90px;
-		height: 80px;
+		flex: 0 0 100px;
+		height: 48px;
 	}
 
 	.global-navbar__brand img {
-		height: 80px;
-		width: 90px;
+		height: 48px;
+		width: 100px;
 	}
 
 	.global-navbar__actions {
-		gap: 20px;
-		padding: 10px 0;
+		flex: 1 1 180px;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 4px 14px;
+		padding: 4px 0;
 	}
 
 	.global-navbar__actions a {
-		font-size: 20px;
-		line-height: 28px;
+		font-size: 14px;
+		line-height: 24px;
 	}
 
 	.global-navbar__notification svg {
-		width: 22px;
-		height: 22px;
+		width: 20px;
+		height: 20px;
 	}
 }
 
 @media (max-width: 420px) {
 	.global-navbar {
-		padding-inline: 14px;
+		padding-inline: 12px;
 	}
 
 	.global-navbar__actions {
-		gap: 14px;
+		gap: 4px 10px;
 	}
 
 	.global-navbar__actions a {
-		font-size: 18px;
+		font-size: 13px;
 	}
 }

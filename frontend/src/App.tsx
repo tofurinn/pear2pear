@@ -13,31 +13,29 @@ function App() {
 
   return (
     <div className="page-background bg-default">
-      <div key={location.pathname} className="page-transition">
-        <Routes location={location}>
-          {/* Legacy notifications redirect (no title needed) */}
-          <Route
-            path="/notifications"
-            element={
-              <Navigate
-                to={legacyNotificationDashboardPath === '/volunteer/dashboard'
-                  ? '/volunteer/notifications'
-                  : '/student/notifications'}
-                replace
-              />
-            }
-          />
-
-          {/* All other routes (and their titles) live in routes.tsx */}
-          {routes.map(({ path, title, element }) => (
-            <Route
-              key={path}
-              path={path}
-              element={<Titled title={title}>{element}</Titled>}
+      <Routes location={location}>
+        {/* Legacy notifications redirect (no title needed) */}
+        <Route
+          path="/notifications"
+          element={
+            <Navigate
+              to={legacyNotificationDashboardPath === '/volunteer/dashboard'
+                ? '/volunteer/notifications'
+                : '/student/notifications'}
+              replace
             />
-          ))}
-        </Routes>
-      </div>
+          }
+        />
+
+        {/* All other routes (and their titles) live in routes.tsx */}
+        {routes.map(({ path, title, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={<Titled title={title}>{element}</Titled>}
+          />
+        ))}
+      </Routes>
     </div>
   );
 }

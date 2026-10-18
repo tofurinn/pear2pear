@@ -112,7 +112,6 @@ export interface RequestSummary {
   category: Support_Request['category'];
   title: string;
   description: string;
-  supportMode: SupportMode;
   volunteer: RequestFormVolunteer;
 }
 
@@ -127,7 +126,6 @@ export const buildSummary = (
     category: data.category,
     title: data.title,
     description: data.description,
-    supportMode: data.supportMode,
     volunteer,
   };
 };

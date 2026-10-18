@@ -124,7 +124,6 @@ function MultiStepRequestForm() {
         description: formData.description,
         category: submitted.category,
         reqStatus: 'Pending',
-        supportMode: formData.supportMode,
       });
 
       setSummary(submitted);
