@@ -19,14 +19,14 @@ import ForgotPasswordPage from "./pages/login/forgot-password/input-email";
 import EmailVerificationPage from "./pages/login/2FA/2fa";
 
 // STUDENT PAGES -----------------------------------------------------------------------------
-import MyDashboard from "./pages/student/dashboards/dashboard";
-import MyRequests from "./pages/student/dashboards/requests/my-requests";
+import StudentDashboard from "./pages/student/dashboards/dashboard";
+import StudentRequests from "./pages/student/dashboards/requests/my-requests";
 import StudentSessions from './pages/student/dashboards/sessions/my-sessions';
-import MySupportHistory from './pages/student/dashboards/support-history/my-support-history';
-import MultiStepRequestForm from './pages/student/request/request-form';
+import StudentHistory from './pages/student/dashboards/support-history/my-support-history';
+import StudentMultiStepRequestForm from './pages/student/request/request-form';
 import StudentMultiStepSessionForm from './pages/student/session/session-form';
 import StudentSessionRearrangement from './pages/student/session/session-rearrangement';
-import FeedbackForm from './pages/student/feedback/feedback-form';
+import StudentFeedbackForm from './pages/student/feedback/feedback-form';
 import StudentNotifications from './pages/student/notifications/notifications';
 import StudentSettings from './pages/student/settings/student-settings';
 
@@ -65,16 +65,16 @@ export const routes: RouteDefinition[] = [
 
   // - - - STUDENT ROUTES - - -
   // Dashboard pages
-  { path: "/student/dashboard", title: "Student Dashboard", element: <Require2FA><MyDashboard /></Require2FA> },
-  { path: "/student/my-requests", title: "My Requests", element: <Require2FA><MyRequests /></Require2FA> },
+  { path: "/student/dashboard", title: "Student Dashboard", element: <Require2FA><StudentDashboard /></Require2FA> },
+  { path: "/student/my-requests", title: "My Requests", element: <Require2FA><StudentRequests /></Require2FA> },
   { path: "/student/my-sessions", title: "My Sessions", element: <Require2FA><StudentSessions /></Require2FA> },
-  { path: "/student/my-support-history", title: "Support History", element: <Require2FA><MySupportHistory /></Require2FA> },
+  { path: "/student/my-support-history", title: "Support History", element: <Require2FA><StudentHistory /></Require2FA> },
   { path: "/student/notifications", title: "Notifications", element: <Require2FA><StudentNotifications /></Require2FA> },
 
   // Student forms
-  { path: "/student/request-form", title: "Request Support", element: <MultiStepRequestForm /> },
+  { path: "/student/request-form", title: "Request Support", element: <StudentMultiStepRequestForm /> },
   { path: "/student/session-form", title: "Schedule a Session", element: <StudentMultiStepSessionForm /> },
-  { path: "/student/feedback-form/:sessID", title: "Feedback", element: <FeedbackForm /> },
+  { path: "/student/feedback-form/:sessID", title: "Feedback", element: <StudentFeedbackForm /> },
   { path: "/student/session-edit/:sessID", title: "Edit Session", element: <StudentSessionRearrangement /> },
   { path: "/student/settings", title: "Settings", element: <StudentSettings /> },
 

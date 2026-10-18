@@ -46,7 +46,7 @@ export function ItemCard({
         <div className="dashboard-item-actions">
           {pill}
           <button type="button" className="ui-chip-btn ui-chip-btn--info" onClick={onViewDetails}>
-            View Details
+            Details
           </button>
         </div>
       </div>

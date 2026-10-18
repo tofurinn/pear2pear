@@ -96,7 +96,7 @@ function GearIcon() {
 
 /* ---------- Page ---------- */
 
-export default function Dashboard({
+export default function StudentDashboard({
   onRequestSupport,
   onScheduleSession,
   onOpenSessions,

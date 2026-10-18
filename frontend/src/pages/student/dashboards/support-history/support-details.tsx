@@ -143,11 +143,8 @@ function SupportDetailsModal({ item, feedback, onClose }: SupportDetailsModalPro
               <span className="session-modal-volunteer-name">{volunteer.name}</span>
               <Stars rating={volunteer.rating} />
               <span className="session-modal-volunteer-rating">
-                {volunteer.rating} ({volunteer.reviewCount})
+                {volunteer.rating}
               </span>
-              {volunteer.requestStatusLabel && (
-                <span className="session-modal-volunteer-status">{volunteer.requestStatusLabel}</span>
-              )}
             </div>
             {volunteer.skills && volunteer.skills.length > 0 && (
               <p className="session-modal-skills">{volunteer.skills.join(' • ')}</p>

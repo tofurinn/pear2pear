@@ -25,7 +25,7 @@ const MOCK_VOLUNTEER: { name: string; avatarUrl?: string } = { name: 'Chiikawa' 
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-function FeedbackForm() {
+function StudentFeedbackForm() {
   const { sessID = '' } = useParams<{ sessID: string }>(); // route e.g. /feedback/:sessID
   const navigate = useNavigate();
 
@@ -158,4 +158,4 @@ function FeedbackForm() {
   );
 }
 
-export default FeedbackForm;
+export default StudentFeedbackForm;

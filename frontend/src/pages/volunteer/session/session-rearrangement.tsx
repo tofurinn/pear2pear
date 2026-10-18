@@ -229,7 +229,7 @@ function VolunteerSessionRearrangement() {
               <p>
                 {sessionLoadError || (!session
                   ? userDoc?.UID ? 'We couldn’t find this session.' : 'Sign in to rearrange this session.'
-                  : 'Only Planned or Confirmed sessions can be rearranged.')}
+                  : <>Only Planned or Confirmed<br />sessions can be rearranged.</>)}
               </p>
               <button type="button" className="ui-btn ui-btn-outline" onClick={() => navigate(-1)}>
                 <ChevronLeft /> Go Back

@@ -26,7 +26,6 @@ export interface SessionDetailsExtras {
   volunteer?: {
     name: string;
     rating: number;
-    reviewCount: number;
     skills?: string[];
     requestStatusLabel?: string; // e.g. "Accepted"
   };
@@ -191,7 +190,6 @@ function SessionDetailsModal({
           <section className="session-modal-volunteer session-modal-requester" aria-label="Requesting student">
             <div className="session-modal-volunteer-head">
               <span className="session-modal-requested-by">Requested by <strong>{student.name}</strong></span>
-              <span className="session-modal-volunteer-status">{student.requestStatus}</span>
             </div>
             {student.feedback && (
               <div className="session-modal-feedback">
@@ -214,11 +212,8 @@ function SessionDetailsModal({
               <span className="session-modal-volunteer-name">{volunteer.name}</span>
               <Stars rating={volunteer.rating} />
               <span className="session-modal-volunteer-rating">
-                {volunteer.rating} ({volunteer.reviewCount})
+                {volunteer.rating}
               </span>
-              {volunteer.requestStatusLabel && (
-                <span className="session-modal-volunteer-status">{volunteer.requestStatusLabel}</span>
-              )}
             </div>
             {volunteer.skills && volunteer.skills.length > 0 && (
               <p className="session-modal-skills">{volunteer.skills.join(' • ')}</p>
