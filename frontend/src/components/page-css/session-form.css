@@ -5,39 +5,6 @@
    Sections: tags & pills · step 1 · step 2 · step 4 (confirmation) · responsive
    ============================================================================= */
 
-/* ---------- Status pills (step 1) ---------- */
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: calc(7 * var(--u));
-  padding: 1px calc(13 * var(--u));
-  font-size: var(--fs-small);
-  color: var(--color-green1);
-  border: 1px solid var(--color-green1);
-  border-radius: 999px;
-}
-
-.status-pill svg {
-  width: 1em;
-  height: 1em;
-}
-
-.status-pill.pending {
-  color: var(--color-warning);
-  border-color: var(--color-warning);
-}
-
-.status-pill.scheduled {
-  color: var(--color-blue2);
-  border-color: var(--color-blue2);
-}
-
-.status-pill.rejected,
-.status-pill.cancelled {
-  color: var(--color-error);
-  border-color: var(--color-error);
-}
-
 /* ---------- Step 1: request cards (2 x 2 per page, scrolls sideways beyond 4) ---------- */
 .request-grid {
   display: grid;
@@ -53,62 +20,52 @@
   scrollbar-color: var(--color-blue1) transparent;
 }
 
-.request-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+.request-grid .ui-item-card {
   width: 100%;
   padding: calc(10 * var(--u)) calc(10 * var(--u)) calc(8 * var(--u)) calc(12 * var(--u));
   text-align: left;
-  font-family: var(--font-sans);
   color: var(--color-text);
-  background: #fff;
-  border: 1px solid var(--color-border);
   border-radius: calc(10 * var(--u));
   box-shadow: 0 1px 4px rgba(68, 36, 33, 0.08);
-  cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.request-card:hover {
+.request-grid .ui-item-card:hover {
   border-color: var(--color-blue1);
 }
 
-.request-card:focus-visible,
+.request-grid .ui-item-card:focus-visible,
 .slot:focus-visible {
   outline: 2px solid #d96245;
   outline-offset: 2px;
 }
 
-.request-card.selected {
+.request-grid .ui-item-card.selected {
   border: 2px solid var(--color-blue2);
   /* 1px less padding on each side so the thicker border doesn't change the size */
   padding: calc(10 * var(--u) - 1px) calc(10 * var(--u) - 1px) calc(8 * var(--u) - 1px) calc(12 * var(--u) - 1px);
   box-shadow: 0 2px 6px rgba(117, 201, 200, 0.45);
 }
 
-.request-title {
+.request-grid .ui-item-card-title {
   margin-top: 2px;
-  font-size: var(--font-size-small);
+  font-size: var(--fs-small);
   line-height: 1.3;
 }
 
-.volunteer-name {
+.request-grid .ui-item-card-person {
   margin-top: calc(10 * var(--u));
   font-size: var(--fs-body);
   font-weight: var(--font-weight-bold);
   color: var(--color-green1);
 }
 
-.request-footer {
-  display: flex;
-  align-items: flex-end;
+.request-grid .ui-item-card-footer {
   justify-content: space-between;
-  width: 100%;
+  margin-top: calc(6 * var(--u));
 }
 
-.request-date {
+.request-grid .ui-item-card-date {
+  margin-right: 0;
   font-size: var(--fs-small);
   color: var(--color-text-muted);
 }
@@ -319,7 +276,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .request-card {
+  .request-grid .ui-item-card {
     grid-row: 1;
     grid-column: auto;
   }

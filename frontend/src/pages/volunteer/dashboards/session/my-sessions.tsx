@@ -6,6 +6,7 @@ import SessionDetailsModal from './session-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
+import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
 
 import { buildVolunteerSessionItems, getVolunteerSessionStatus, hourToSlot, toDateKey } from '../../volunteer-utils.ts';
 import type { VolunteerSessionItem, VolunteerStudentSummary } from '../../volunteer-utils.ts';
@@ -111,8 +112,13 @@ function VolunteerSessions() {
   const pendingFeedback = currentItems.filter(item => item.sessStatus === 'Completed'); // 'Rated' ones live in Support History
 
   const [selected, setSelected] = useState<VolunteerSessionItem | null>(null);
+  const [pendingAction, setPendingAction] = useState<{
+    type: 'cancel' | 'confirm' | 'complete';
+    item: VolunteerSessionItem;
+  } | null>(null);
+  const [isActionPending, setIsActionPending] = useState(false);
   const handleViewDetails = (item: VolunteerSessionItem) => setSelected(item);
-  const handleCancelSession = async (item: VolunteerSessionItem) => {
+  const cancelSession = async (item: VolunteerSessionItem) => {
     try {
       await updateSessionStatus(item.sessID, 'Cancelled');
       updateItems(previous => previous.map(session => session.sessID === item.sessID
@@ -126,7 +132,7 @@ function VolunteerSessions() {
     }
   };
   
-  const handleConfirmArrangement = async (item: VolunteerSessionItem) => {
+  const confirmArrangement = async (item: VolunteerSessionItem) => {
     try {
       await updateSupportSession(item.sessID, {
         sessStatus: 'Confirmed',
@@ -141,6 +147,26 @@ function VolunteerSessions() {
     } catch (error) {
       console.error('Error confirming volunteer session arrangement:', error);
       setSessionError('Could not confirm this arrangement. Please try again.');
+    }
+  };
+
+  const handleCancelSession = (item: VolunteerSessionItem) => setPendingAction({ type: 'cancel', item });
+  const handleConfirmArrangement = (item: VolunteerSessionItem) => setPendingAction({ type: 'confirm', item });
+  const handleConfirmPendingAction = async () => {
+    if (!pendingAction) return;
+
+    setIsActionPending(true);
+    try {
+      if (pendingAction.type === 'cancel') {
+        await cancelSession(pendingAction.item);
+      } else if (pendingAction.type === 'confirm') {
+        await confirmArrangement(pendingAction.item);
+      } else {
+        await markSessionComplete(pendingAction.item);
+      }
+    } finally {
+      setIsActionPending(false);
+      setPendingAction(null);
     }
   };
   
@@ -158,7 +184,7 @@ function VolunteerSessions() {
     });
   };
   
-  const handleMarkComplete = async (item: VolunteerSessionItem) => {
+  const markSessionComplete = async (item: VolunteerSessionItem) => {
     try {
       await updateSupportSession(item.sessID, {
         sessStatus: 'Completed'
@@ -173,6 +199,7 @@ function VolunteerSessions() {
       setSessionError('Could not mark this session as complete. Please try again.');
     }
   };
+  const handleMarkComplete = (item: VolunteerSessionItem) => setPendingAction({ type: 'complete', item });
 
   return (
     <div className="ui-page">
@@ -266,6 +293,28 @@ function VolunteerSessions() {
           onMarkComplete={handleMarkComplete}
         />
       )}
+      <ConfirmPopup
+        open={pendingAction !== null}
+        title={pendingAction?.type === 'cancel'
+          ? 'Cancel session?'
+          : pendingAction?.type === 'complete'
+            ? 'Mark session complete?'
+            : 'Confirm arrangement?'}
+        message={pendingAction?.type === 'cancel'
+          ? 'Are you sure you want to cancel this session?'
+          : pendingAction?.type === 'complete'
+            ? 'Are you sure you want to mark this session as complete?'
+            : 'Are you sure you want to confirm this session arrangement?'}
+        confirmLabel={pendingAction?.type === 'cancel'
+          ? 'Cancel Session'
+          : pendingAction?.type === 'complete'
+            ? 'Mark Complete'
+            : 'Confirm Session'}
+        busy={isActionPending}
+        busyLabel="Updating session..."
+        onConfirm={() => void handleConfirmPendingAction()}
+        onCancel={() => setPendingAction(null)}
+      />
     </div>
   );
 }

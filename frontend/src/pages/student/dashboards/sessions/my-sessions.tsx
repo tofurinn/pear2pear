@@ -5,6 +5,7 @@ import SessionDetailsModal from './session-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
+import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
 
 import { buildStudentSessionItems, getStudentSessionStatus, hourToSlot, toDateKey } from '../../student-utils.tsx';
 import type { StudentSessionItem, StudentVolunteerSummary } from '../../student-utils.tsx';
@@ -92,10 +93,15 @@ function StudentSessions() {
   const toRate = currentItems.filter(item => item.sessStatus === 'Completed'); // 'Rated' ones live in Support History
 
   const [selected, setSelected] = useState<StudentSessionItem | null>(null);
+  const [pendingAction, setPendingAction] = useState<{
+    type: 'cancel' | 'confirm';
+    item: StudentSessionItem;
+  } | null>(null);
+  const [isActionPending, setIsActionPending] = useState(false);
   const handleViewDetails = (item: StudentSessionItem) => setSelected(item);
   const handleFeedback = (item: StudentSessionItem) => navigate(`/student/feedback-form/${item.sessID}`);
 
-  const handleCancelSession = async (item: StudentSessionItem) => {
+  const cancelSession = async (item: StudentSessionItem) => {
     try {
       await updateSessionStatus(item.sessID, 'Cancelled');
       setItems(previous => previous.map(session => session.sessID === item.sessID
@@ -110,7 +116,7 @@ function StudentSessions() {
     }
   };
 
-  const handleConfirmArrangement = async (item: StudentSessionItem) => {
+  const confirmArrangement = async (item: StudentSessionItem) => {
     try {
       await updateSupportSession(item.sessID, {
         sessStatus: 'Confirmed',
@@ -126,6 +132,24 @@ function StudentSessions() {
     } catch (error) {
       console.error('Error confirming student session arrangement:', error);
       setLoadError('Could not confirm this arrangement. Please try again.');
+    }
+  };
+
+  const handleCancelSession = (item: StudentSessionItem) => setPendingAction({ type: 'cancel', item });
+  const handleConfirmArrangement = (item: StudentSessionItem) => setPendingAction({ type: 'confirm', item });
+  const handleConfirmPendingAction = async () => {
+    if (!pendingAction) return;
+
+    setIsActionPending(true);
+    try {
+      if (pendingAction.type === 'cancel') {
+        await cancelSession(pendingAction.item);
+      } else {
+        await confirmArrangement(pendingAction.item);
+      }
+    } finally {
+      setIsActionPending(false);
+      setPendingAction(null);
     }
   };
 
@@ -235,6 +259,18 @@ function StudentSessions() {
           onConfirmArrangement={handleConfirmArrangement}
         />
       )}
+      <ConfirmPopup
+        open={pendingAction !== null}
+        title={pendingAction?.type === 'cancel' ? 'Cancel session?' : 'Confirm arrangement?'}
+        message={pendingAction?.type === 'cancel'
+          ? 'Are you sure you want to cancel this session?'
+          : 'Are you sure you want to confirm this session arrangement?'}
+        confirmLabel={pendingAction?.type === 'cancel' ? 'Cancel Session' : 'Confirm Session'}
+        busy={isActionPending}
+        busyLabel="Updating session..."
+        onConfirm={() => void handleConfirmPendingAction()}
+        onCancel={() => setPendingAction(null)}
+      />
     </div>
   );
 }

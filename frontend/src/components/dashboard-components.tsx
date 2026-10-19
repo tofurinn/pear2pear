@@ -18,6 +18,10 @@ export interface ItemCardProps {
   rating?: number;
   pill?: ReactNode;
   onViewDetails: () => void;
+  role?: 'button' | 'radio';
+  ariaChecked?: boolean;
+  ariaLabel?: string;
+  className?: string;
 }
 
 export function ItemCard({
@@ -28,13 +32,18 @@ export function ItemCard({
   rating,
   pill,
   onViewDetails,
+  role = 'button',
+  ariaChecked,
+  ariaLabel = `View details for ${title}`,
+  className = '',
 }: ItemCardProps) {
   return (
     <article
-      className="ui-item-card"
-      role="button"
+      className={`ui-item-card ${className}`.trim()}
+      role={role}
       tabIndex={0}
-      aria-label={`View details for ${title}`}
+      aria-label={ariaLabel}
+      aria-checked={ariaChecked}
       onClick={onViewDetails}
       onKeyDown={event => {
         if (event.key === 'Enter' || event.key === ' ') {

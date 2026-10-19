@@ -2,9 +2,9 @@ import type { Timestamp } from 'firebase/firestore';
 import type { Support_Request } from '../../../../types/Support_Request';
 import type { Student } from '../session-utils.tsx';
 import type { SessionFormData } from '../session-utils.tsx';
-import { CheckIcon } from '../../../../components/icons.tsx';
-import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
+import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import '../../../../global.css';
+import '../../../../components/page-css/subdashboards.css';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -41,24 +41,19 @@ function SelectRequestStep({ formData, updateFormData, requests, students, isLoa
         {requests.map((request) => {
           const isSelected = formData.reqID === request.reqID;
           return (
-            <button
+            <ItemCard
               key={request.reqID}
-              type="button"
+              category={request.category}
+              title={request.title}
+              personName={students[request.studUID]?.name ?? 'Student'}
+              dateLabel={formatDate(request.reqTimestamp)}
+              pill={<StatusPill tone={request.reqStatus.toLowerCase()} label={request.reqStatus} />}
               role="radio"
-              aria-checked={isSelected}
+              ariaChecked={isSelected}
+              ariaLabel={`Select request: ${request.title}`}
               className={`request-card ${isSelected ? 'selected' : ''}`}
-              onClick={() => selectRequest(request.reqID)}
-            >
-              <CategoryTag>{request.category}</CategoryTag>
-              <span className="request-title">{request.title}</span>
-              <span className="volunteer-name">{students[request.studUID]?.name ?? 'Student'}</span>
-              <span className="request-footer">
-                <span className="request-date">{formatDate(request.reqTimestamp)}</span>
-                <span className={`status-pill ${request.reqStatus.toLowerCase()}`}>
-                  <CheckIcon size={14} /> {request.reqStatus}
-                </span>
-              </span>
-            </button>
+              onViewDetails={() => selectRequest(request.reqID)}
+            />
           );
         })}
       </div>
