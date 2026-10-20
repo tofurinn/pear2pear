@@ -44,6 +44,7 @@ export default function Step2({ data, onChange, onBack, onSubmit }: Step2Props) 
             onChange({ availability });
             if (error) setError("");
           }}
+          showSelectAll
         />
 
         {error && (

@@ -280,7 +280,7 @@ function StudentMultiStepSessionForm() {
   return (
     <div className="ui-page">
       <Navbar dashboardPath={"/student/dashboard"} />
-      <main className={"student-dashboard-background"}>
+      <main className={"ui-page-student-background"}>
         <section className={`ui-card ${isConfirmed ? 'ui-card--centered' : ''}`}>
           {isConfirmed ? (
             // Confirmation has its own heading, so no "Support Session" title/divider

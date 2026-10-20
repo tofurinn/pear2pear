@@ -198,7 +198,11 @@ export default function VolunteerSettingsPage() {
       <dialog ref={dialogRef} className="settings-dialog" aria-labelledby="availability-dialog-title">
         <h2 id="availability-dialog-title" className="settings-dialog__title">Edit availability</h2>
 
-        <HourPicker selectedSlots={draftSlots} onSelectionChange={setDraftSlots} />
+        <HourPicker
+          selectedSlots={draftSlots}
+          onSelectionChange={setDraftSlots}
+          showSelectAll
+        />
 
         <div className="settings-dialog__actions">
           <button type="button" className="ui-btn ui-btn-outline" onClick={cancelAvailability}>
