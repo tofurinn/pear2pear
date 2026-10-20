@@ -11,6 +11,7 @@ import Step1 from "./volunteer-steps/step1";
 import Step2 from "./volunteer-steps/step2";
 import "./volunteer-register.css";
 
+// Shape of volunteer data from step 1 and 2
 export interface VolunteerProfileData {
   categories: string[];
   supportMode: "Physical" | "Virtual";
@@ -18,13 +19,16 @@ export interface VolunteerProfileData {
   availability: string[];
 }
 
+// Serves two distinct entry points:
+// Registration and dashboard
 type Flow = "signup" | "upgrade";
 
 interface FlowConfig {
   backTo: string;       // where step 1's "Previous Page" goes
-  successTo: string;
+  successTo: string;    // where submit goes
 }
 
+// Centralised per-flow routing so URL changes only happen here
 const FLOWS: Record<Flow, FlowConfig> = {
   signup: {
     backTo: "/user-registration",
@@ -50,6 +54,8 @@ export default function VolunteerRegisterPage({
 
   const { backTo, successTo } = FLOWS[flow];
 
+  // Volunteer-specific data
+  // Starts empty, step 1 and 2 filles it in
   const [profile, setProfile] = useState<VolunteerProfileData>({
     categories: [],
     supportMode: "Virtual",
@@ -57,12 +63,16 @@ export default function VolunteerRegisterPage({
     availability: [],
   });
 
+  // Move between steps by writing '?step=N' into URL
   const goToStep = (n: number) =>
+    // Carries location.state forward so email survives step transition
     setParams({ step: String(n) }, { state: location.state });
 
   const handleSubmitAll = async () => {
+    // UPGRADE FLOW
+    // Does not redirect to "set-password"
     if (flow === "upgrade") {
-      // User is already signed in — write directly
+      // User is already signed in, write directly to Firestore here
       const uid = auth.currentUser?.uid;
       if (!uid) {
         console.error("No authenticated user for upgrade flow");
@@ -70,10 +80,10 @@ export default function VolunteerRegisterPage({
       }
 
       try {
-        // 1. Mark the user as a volunteer
+        // Flip the isVolunteer flag on the existing user doc
         await updateUser(uid, { isVolunteer: true });
 
-        // 2. Write the volunteer doc
+        // Create the volunteer doc keyed by auth UID
         await createVolunteer(uid, {
           volCategories: profile.categories,
           prefSupportMode: profile.supportMode,
@@ -81,7 +91,7 @@ export default function VolunteerRegisterPage({
           avgRating: 0,
         });
 
-        // 3. Write each availability slot
+        // One availability doc per selected slot
         for (const slot of profile.availability) {
           await createAvailability(slotKeyToAvailability(slot, uid));
         }
@@ -94,6 +104,9 @@ export default function VolunteerRegisterPage({
       return;
     }
 
+    // SIGNUP FLOW
+    // Doesn't write to Firestore yet, instead merges volunteer 
+    // profile into pending signup stash
     mergePendingSignup({ volunteerProfile: profile });
     navigate(successTo, {
       state: { ...(location.state as object | null) },
@@ -107,9 +120,13 @@ export default function VolunteerRegisterPage({
     }
   };
 
+  // Patch-style state updater so step 1/step 2 can send just the fields that
+  // changed without affecting the rest
   const updateProfile = (patch: Partial<VolunteerProfileData>) =>
     setProfile((prev) => ({ ...prev, ...patch }));
 
+  // Guard: step 2 is only reachable if step 1 has the required fields
+  // Also protects from manual URL change to step 2
   const step1Done = profile.categories.length > 0 && profile.skills.length > 0;
   const step = params.get("step") === "2" && step1Done ? 2 : 1;
 
@@ -134,10 +151,11 @@ export default function VolunteerRegisterPage({
             <Step2
               data={profile}
               onChange={updateProfile}
-              onBack={() => goToStep(1)}
+              onBack={() => goToStep(1)}    // "Back" on step 2 returns to step 1
               onSubmit={handleSubmitAll}
             />
           )}
+          {/* Global submit error */}
           {submitError && (
             <p className="register-form__submit-error" role="alert">
               {submitError}

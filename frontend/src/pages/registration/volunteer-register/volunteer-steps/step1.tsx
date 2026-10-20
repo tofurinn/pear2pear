@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import type { VolunteerProfileData } from "../volunteer-register";
 import VolunteerProfileFields from "../../../../components/volunteer-profile-fields";
 
+// Only the fields validated on this step
 type FormErrors = {
   categories?: string;
   skills?: string;
 };
 
+// Inline SVG icons
 const ChevronLeft = () => (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M10 3L5 8l5 5" />
@@ -27,15 +29,19 @@ interface Step1Props {
 }
 
 export default function Step1({ data, onChange, onBack, onNext }: Step1Props) {
+  // Validation errors local to this step, clears on user edits
   const [errors, setErrors] = useState<FormErrors>({});
 
   const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validation for step 1 data
     const nextErrors: FormErrors = {};
     if (data.categories.length === 0) nextErrors.categories = "Choose at least one category.";
     if (data.skills.length === 0) nextErrors.skills = "Choose at least one skill.";
     setErrors(nextErrors);
+    // If anything failed, stay on the page.
+    // Otherwise, let the parent advance
     if (Object.keys(nextErrors).length > 0) return;
 
     onNext();

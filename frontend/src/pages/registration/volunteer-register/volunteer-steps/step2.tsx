@@ -9,6 +9,7 @@ interface Step2Props {
   onSubmit: () => void;
 }
 
+// Inline SVG icons
 const ChevronLeft = () => (
   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M10 3L5 8l5 5" />
@@ -16,11 +17,14 @@ const ChevronLeft = () => (
 );
 
 export default function Step2({ data, onChange, onBack, onSubmit }: Step2Props) {
+  // Single error message for this step. Kept local bc nothing outside
+  // this component needs to know if the user did not pick a slot
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Block submit until at least one slot is chosen
     if (data.availability.length === 0) {
       setError("Select at least one time slot.");
       return;
@@ -33,6 +37,7 @@ export default function Step2({ data, onChange, onBack, onSubmit }: Step2Props) 
     <form className="register-form" onSubmit={handleSubmit} noValidate>
       <fieldset className="volunteer-fieldset">
 
+        {/* Hour Picker Component */}
         <HourPicker
           selectedSlots={data.availability}
           onSelectionChange={(availability) => {
@@ -49,6 +54,7 @@ export default function Step2({ data, onChange, onBack, onSubmit }: Step2Props) 
       </fieldset>
 
       <div className="ui-actions volunteer-actions">
+        {/*Back returns to step 1 without triggering submission */}
         <button
           type="button"
           className="ui-btn ui-btn-outline"
@@ -57,6 +63,7 @@ export default function Step2({ data, onChange, onBack, onSubmit }: Step2Props) 
           <ChevronLeft />
           Previous Page
         </button>
+        {/* Enter key + button click both run handleSubmit */}
         <button type="submit" className="ui-btn ui-btn-primary">
           Submit
         </button>
