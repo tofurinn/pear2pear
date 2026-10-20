@@ -67,6 +67,7 @@ export interface StudentSessionItem extends DashboardSessionItem {
 
 export interface StudentRequestItem extends DashboardRequestItem {
   reqTimestamp: Support_Request['reqTimestamp'];
+  volUID: string;
   volunteer: {
     name: string;
     rating: number;
@@ -94,6 +95,7 @@ export const toStudentRequestItem = (
 ): StudentRequestItem => ({
   reqID: request.reqID,
   reqTimestamp: request.reqTimestamp,
+  volUID: request.volUID,
   reqStatus: request.reqStatus,
   category: request.category,
   title: request.title,

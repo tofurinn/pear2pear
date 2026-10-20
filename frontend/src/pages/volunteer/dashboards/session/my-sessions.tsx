@@ -7,10 +7,11 @@ import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
+import { createNotification } from '../../../../services/NotificationService';
 
 import { buildVolunteerSessionItems, getVolunteerSessionStatus, hourToSlot, toDateKey } from '../../volunteer-utils.ts';
 import type { VolunteerSessionItem, VolunteerStudentSummary } from '../../volunteer-utils.ts';
-import { getRequestsByVolunteer } from '../../../../services/RequestService';
+import { getRequestsByVolunteer, getSupportRequest } from '../../../../services/RequestService';
 import { getSessionsByRequestIDs, updateSessionStatus, updateSupportSession } from '../../../../services/SessionService';
 import { getUser } from '../../../../services/UserService';
 
@@ -121,6 +122,22 @@ function VolunteerSessions() {
   const cancelSession = async (item: VolunteerSessionItem) => {
     try {
       await updateSessionStatus(item.sessID, 'Cancelled');
+      try {
+        const request = await getSupportRequest(item.reqID);
+        if (!request) throw new Error('Could not find the support request for this session.');
+        await createNotification({
+          UID: request.studUID,
+          kind: 'session',
+          actorName: userDoc?.name ?? 'Your volunteer',
+          message: 'cancelled the support session.',
+          category: item.category,
+          title: item.title,
+          redirectionLink: '/student/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session cancelled, but its notification could not be created:', notificationError);
+      }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
         ? { ...session, sessStatus: 'Cancelled' }
         : session
@@ -139,6 +156,22 @@ function VolunteerSessions() {
         studConfirmed: true,
         volConfirmed: true,
       });
+      try {
+        const request = await getSupportRequest(item.reqID);
+        if (!request) throw new Error('Could not find the support request for this session.');
+        await createNotification({
+          UID: request.studUID,
+          kind: 'confirmed',
+          actorName: userDoc?.name ?? 'Your volunteer',
+          message: 'confirmed the session arrangement.',
+          category: item.category,
+          title: item.title,
+          redirectionLink: '/student/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session confirmed, but its notification could not be created:', notificationError);
+      }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
         ? { ...session, sessStatus: 'Confirmed', studConfirmed: true, volConfirmed: true }
         : session
@@ -189,6 +222,22 @@ function VolunteerSessions() {
       await updateSupportSession(item.sessID, {
         sessStatus: 'Completed'
       });
+      try {
+        const request = await getSupportRequest(item.reqID);
+        if (!request) throw new Error('Could not find the support request for this session.');
+        await createNotification({
+          UID: request.studUID,
+          kind: 'session',
+          actorName: userDoc?.name ?? 'Your volunteer',
+          message: 'marked the support session as complete.',
+          category: item.category,
+          title: item.title,
+          redirectionLink: '/student/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session completed, but its notification could not be created:', notificationError);
+      }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
         ? { ...session, sessStatus: 'Completed' }
         : session

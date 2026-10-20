@@ -13,6 +13,7 @@ import { useAuth } from '../../../context/authContext';
 import { getRequestsByStudent } from '../../../services/RequestService';
 import { getRequestsByVolunteer } from '../../../services/RequestService';
 import { getSessionsByRequestIDs, getSupportSession, updateSupportSession } from '../../../services/SessionService';
+import { createNotification } from '../../../services/NotificationService';
 import { getAvailabilityByVolunteer } from '../../../services/AvailabilityService';
 import { getVolunteer } from '../../../services/VolunteerService';
 import { getUser } from '../../../services/UserService';
@@ -166,6 +167,20 @@ function StudentSessionRearrangement() {
         studConfirmed: true,
         volConfirmed: false,
       });
+      try {
+        await createNotification({
+          UID: request.volUID,
+          kind: 'session',
+          actorName: userDoc?.name ?? 'Your student',
+          message: 'proposed a new time for the support session.',
+          category: request.category,
+          title: request.title,
+          redirectionLink: '/volunteer/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session rearranged, but its notification could not be created:', notificationError);
+      }
 
       const rearranged: SessionSummary = {
         category: request.category,

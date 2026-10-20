@@ -11,8 +11,8 @@
   --colour-yellow:#FFF0AC;
   --color-surface: #f5f5f5;
 
-  --color-student: #dbecd0;
-  --color-volunteer: rgb(201, 227, 235);
+  --color-student: #e3f7d2;
+  --color-volunteer: #d6ecf3;
   --color-student-gradient: linear-gradient(160deg, #e0e9c9 0%, #f2f2d5 25%, #c5edb3 65%, #a6cf9c 100%) ;
   --color-volunteer-gradient: linear-gradient(160deg, #85c094bd 0%, #75c9c8e3 25%, #DDECF1 65%, #d0e3e9 100%) ;
 

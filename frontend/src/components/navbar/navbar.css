@@ -2,7 +2,7 @@
 	align-items: center;
 	display: flex;
 	gap: clamp(16px, 2vw, 36px);
-	min-height: 60px;
+	min-height: 40px;
 	justify-content: flex-start;
 	margin: 0;
 	max-width: 1920px;
@@ -19,7 +19,7 @@
 	align-items: center;
 	display: flex;
 	flex: 0 0 160px;
-	height: 56px;
+	height: 40px;
 	text-decoration: none;
 }
 
@@ -102,6 +102,10 @@
 .global-navbar__mode-switch summary:hover,
 .global-navbar__mode-switch[open] summary,
 .global-navbar__mode-switch summary:focus-visible {
+	color: #4f9e59;
+}
+
+.global-navbar__dashboard:has(> a[aria-current="page"]) .global-navbar__mode-switch summary {
 	color: #4f9e59;
 }
 
