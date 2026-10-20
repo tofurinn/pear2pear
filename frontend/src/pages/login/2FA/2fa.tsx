@@ -184,11 +184,7 @@ const EmailVerificationPage: React.FC = () => {
 
       mark2FAVerified();
 
-      const userData = uid ? await getUser(uid) : null;
-      navigate(
-        userData?.isVolunteer ? "/volunteer/dashboard" : "/student/dashboard",
-        { replace: true }
-      );
+      navigate("/student/dashboard", { replace: true });
     } catch (err) {
       console.error("2FA verification failed:", err);
       setError("That code didn't work. Check it and try again.");
