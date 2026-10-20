@@ -70,7 +70,7 @@ const SetPasswordPage: React.FC = () => {
 
     const pending = readPendingSignup();
     if (!pending?.stepOne.email) {
-      // State lost (rare now that sessionStorage is in play, but be safe)
+      // If state lost
       setSubmitError("Your session expired. Please start over.");
       navigate("/user-registration", { replace: true });
       return;
@@ -78,14 +78,14 @@ const SetPasswordPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // 1. Create the Firebase Auth account
+      // Create the Firebase Auth account
       const cred = await createUserWithEmailAndPassword(
         auth,
         pending.stepOne.email,
         formData.password
       );
 
-      // 2. Write the user document
+      // Write the user document into Firestore
       await createUser(cred.user.uid, {
         name: pending.stepOne.name,
         email: pending.stepOne.email,
@@ -93,7 +93,7 @@ const SetPasswordPage: React.FC = () => {
         isVolunteer: Boolean(pending.volunteerProfile),
       });
 
-      // 3. If they came through the volunteer flow, write the volunteer doc too
+      // If they came through the volunteer flow, write the volunteer doc to Firestore too
       if (pending.volunteerProfile) {
         await createVolunteer(cred.user.uid, {
           volCategories: pending.volunteerProfile.categories,
@@ -102,15 +102,16 @@ const SetPasswordPage: React.FC = () => {
           avgRating: 0,
         });
 
+        // + availability doc
         for (const slot of pending.volunteerProfile.availability) {
           await createAvailability(slotKeyToAvailability(slot, cred.user.uid));
         }
       }
 
-      // 4. Clean up
+      // Clean up sessionStorage once registration is complete
       clearPendingSignup();
 
-      // 5. Move on
+      // Navigate to Success Message or display error if any
       navigate("/account-created", { replace: true });
     } catch (err: any) {
       if (err.code === "auth/email-already-in-use") {

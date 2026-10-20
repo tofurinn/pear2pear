@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { mark2FAVerified } from "../../../firebase/verify-session";
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
@@ -7,6 +9,12 @@ import pearHeart from "../../../assets/images/pearheart.png";
 export default function AccountCreatedPage() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // New users already verified their email via OTP during signup,
+  // so mark the session as 2FA-verified before they hit the dashboard.
+  useEffect(() => {
+    mark2FAVerified();
+  }, []);
 
   // Allow upstream pages to say where "Continue" should land.
   // Default = student dashboard.

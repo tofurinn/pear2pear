@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/authContext";
 
 import pearVolunteer from "../../../assets/images/volunteerpfp-cropped.png";
@@ -71,14 +71,12 @@ function GearIcon() {
 
 export default function VolunteerDashboard() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { userDoc, loading: authLoading } = useAuth();
   const userUID = userDoc?.UID ?? null;
-  const showRegistrationPrompt =
-    (location.state as { showVolunteerRegistrationPrompt?: unknown } | null)
-      ?.showVolunteerRegistrationPrompt === true;
+  const isVolunteer = userDoc?.isVolunteer === true;
+  const showRegistrationPrompt = !authLoading && !isVolunteer;
   const [dashboardData, setDashboardData] = useState<VolunteerDashboardData | null>(null);
-  const isLoading = authLoading || (!!userUID && dashboardData?.userUID !== userUID);
+  const isLoading = authLoading || (isVolunteer && userUID && dashboardData?.userUID !== userUID);
   const loadError = !authLoading && !userUID
     ? "Sign in to view your dashboard."
     : dashboardData?.userUID === userUID
@@ -95,6 +93,7 @@ export default function VolunteerDashboard() {
 
     let isCurrent = true;
     const loadDashboard = async () => {
+      if (authLoading || !userUID || !isVolunteer) return;
       try {
         const [requests, volunteer] = await Promise.all([
           getRequestsByVolunteer(userUID),
@@ -159,7 +158,7 @@ export default function VolunteerDashboard() {
     return () => {
       isCurrent = false;
     };
-  }, [authLoading, showRegistrationPrompt, userUID]);
+  }, [authLoading, isVolunteer, userUID]);
 
   return (
     <div className="dash dash--volunteer">
@@ -183,13 +182,15 @@ export default function VolunteerDashboard() {
             </div>
 
             <div className="dash-rating">
-              {rating ? (
+              {!isVolunteer ? (
+                <span className="dash-rating-text">N/A</span>
+              ) : rating ? (
                 <>
                   <StarRating rating={rating.rating} className="dash-rating-stars" />
                   <span className="dash-rating-text">{rating.rating.toFixed(1)} ({rating.count})</span>
                 </>
               ) : (
-                <span className="dash-rating-text">{isLoading ? "Loading rating..." : "—"}</span>
+                <span className="dash-rating-text">Loading rating...</span>
               )}
             </div>
 
@@ -223,135 +224,135 @@ export default function VolunteerDashboard() {
             <button
               type="button"
               className="dash-volunteer-registration__button"
-              onClick={() => navigate("/volunteer-registration")}
+              onClick={() => navigate("/become-volunteer")}
             >
               Join as Volunteer
             </button>
           </section>
         </main>
       ) : (
-      <main className="dash-body">
-        <section className="dash-journey" aria-labelledby="dash-journey-heading">
-          {loadError && <p className="dash-load-error" role="alert">{loadError}</p>}
-          {isLoading && <p className="dash-load-status" role="status">Loading dashboard...</p>}
-          <h2 id="dash-journey-heading" className="dash-journey-heading">
-            My Volunteer Journey
-          </h2>
+        <main className="dash-body">
+          <section className="dash-journey" aria-labelledby="dash-journey-heading">
+            {loadError && <p className="dash-load-error" role="alert">{loadError}</p>}
+            {isLoading && <p className="dash-load-status" role="status">Loading dashboard...</p>}
+            <h2 id="dash-journey-heading" className="dash-journey-heading">
+              My Volunteer Journey
+            </h2>
 
-          <div className="dash-actions">
-            <article
-              className="dash-action dash-action--requests"
-              role="link"
-              tabIndex={0}
-              aria-label="Open incoming requests"
-              onClick={() => navigate('/volunteer/my-requests')}
-              onKeyDown={event => {
-                if (event.target !== event.currentTarget) return;
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  navigate('/volunteer/my-requests');
-                }
-              }}
-            >
-              <div className="dash-action-head">
-                <h3 className="dash-action-title">Incoming Requests</h3>
-                <button
-                  type="button"
-                  className="dash-action-arrow"
-                  aria-label="Open incoming requests"
-                  onClick={event => {
-                    event.stopPropagation();
+            <div className="dash-actions">
+              <article
+                className="dash-action dash-action--requests"
+                role="link"
+                tabIndex={0}
+                aria-label="Open incoming requests"
+                onClick={() => navigate('/volunteer/my-requests')}
+                onKeyDown={event => {
+                  if (event.target !== event.currentTarget) return;
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
                     navigate('/volunteer/my-requests');
-                  }}
-                >
-                  <ChevronRight />
-                </button>
-              </div>
-              <p className="dash-action-sub">Check in to see which pear needs you!</p>
-            </article>
-            <article
-              className="dash-action dash-action--sessions"
-              role="link"
-              tabIndex={0}
-              aria-label="Open my sessions"
-              onClick={() => navigate("/volunteer/my-sessions")}
-              onKeyDown={event => {
-                if (event.target !== event.currentTarget) return;
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  navigate("/volunteer/my-sessions");
-                }
-              }}
-            >
-              <div className="dash-action-head">
-                <h3 className="dash-action-title">My Sessions</h3>
-                <button
-                  type="button"
-                  className="dash-action-arrow"
-                  aria-label="Open my sessions"
-                  onClick={event => {
-                    event.stopPropagation();
-                    navigate("/volunteer/my-sessions");
-                  }}
-                >
-                  <ChevronRight />
-                </button>
-              </div>
-              <p className="dash-action-sub">Make these sessions count</p>
-              <button
-                type="button"
-                className="dash-pill dash-pill--green"
-                onClick={event => {
-                  event.stopPropagation();
-                  navigate("/volunteer/session-form");
+                  }
                 }}
               >
-                Schedule Session
-              </button>
-            </article>
-          </div>
-
-          <ul className="dash-stats">
-            {stats.map((stat, i) => (
-              <li key={stat.label} className={`dash-stat dash-stat--${i + 1}`}>
-                <span className="dash-stat-label">{stat.label}</span>
-                <span className="dash-stat-value">{stat.value}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <aside className="dash-history" aria-labelledby="dash-history-heading">
-          <h2 id="dash-history-heading" className="dash-history-heading">
-            Support History
-          </h2>
-
-          <ul className="dash-history-list">
-            {history.map(item => (
-              <li key={item.id} className="dash-history-item">
-                <CategoryTag>{item.category}</CategoryTag>
-                <h3 className="dash-history-title">{item.title}</h3>
-                <div className="dash-history-meta">
-                  <time className="dash-history-date">{item.date}</time>
-                  {item.rating !== undefined && <StarRating rating={item.rating} className="dash-rating-stars" />}
+                <div className="dash-action-head">
+                  <h3 className="dash-action-title">Incoming Requests</h3>
+                  <button
+                    type="button"
+                    className="dash-action-arrow"
+                    aria-label="Open incoming requests"
+                    onClick={event => {
+                      event.stopPropagation();
+                      navigate('/volunteer/my-requests');
+                    }}
+                  >
+                    <ChevronRight />
+                  </button>
                 </div>
-              </li>
-            ))}
-            {!isLoading && !loadError && history.length === 0 && (
-              <li className="dash-history-empty">No support history yet</li>
-            )}
-          </ul>
+                <p className="dash-action-sub">Check in to see which pear needs you!</p>
+              </article>
+              <article
+                className="dash-action dash-action--sessions"
+                role="link"
+                tabIndex={0}
+                aria-label="Open my sessions"
+                onClick={() => navigate("/volunteer/my-sessions")}
+                onKeyDown={event => {
+                  if (event.target !== event.currentTarget) return;
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    navigate("/volunteer/my-sessions");
+                  }
+                }}
+              >
+                <div className="dash-action-head">
+                  <h3 className="dash-action-title">My Sessions</h3>
+                  <button
+                    type="button"
+                    className="dash-action-arrow"
+                    aria-label="Open my sessions"
+                    onClick={event => {
+                      event.stopPropagation();
+                      navigate("/volunteer/my-sessions");
+                    }}
+                  >
+                    <ChevronRight />
+                  </button>
+                </div>
+                <p className="dash-action-sub">Make these sessions count</p>
+                <button
+                  type="button"
+                  className="dash-pill dash-pill--green"
+                  onClick={event => {
+                    event.stopPropagation();
+                    navigate("/volunteer/session-form");
+                  }}
+                >
+                  Schedule Session
+                </button>
+              </article>
+            </div>
 
-          <button
-            type="button"
-            className="dash-more"
-            onClick={() => navigate("/volunteer/my-support-history")}
-          >
-            View More
-            <ChevronRight />
-          </button>
-        </aside>
-      </main>
+            <ul className="dash-stats">
+              {stats.map((stat, i) => (
+                <li key={stat.label} className={`dash-stat dash-stat--${i + 1}`}>
+                  <span className="dash-stat-label">{stat.label}</span>
+                  <span className="dash-stat-value">{stat.value}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <aside className="dash-history" aria-labelledby="dash-history-heading">
+            <h2 id="dash-history-heading" className="dash-history-heading">
+              Support History
+            </h2>
+
+            <ul className="dash-history-list">
+              {history.map(item => (
+                <li key={item.id} className="dash-history-item">
+                  <CategoryTag>{item.category}</CategoryTag>
+                  <h3 className="dash-history-title">{item.title}</h3>
+                  <div className="dash-history-meta">
+                    <time className="dash-history-date">{item.date}</time>
+                    {item.rating !== undefined && <StarRating rating={item.rating} className="dash-rating-stars" />}
+                  </div>
+                </li>
+              ))}
+              {!isLoading && !loadError && history.length === 0 && (
+                <li className="dash-history-empty">No support history yet</li>
+              )}
+            </ul>
+
+            <button
+              type="button"
+              className="dash-more"
+              onClick={() => navigate("/volunteer/my-support-history")}
+            >
+              View More
+              <ChevronRight />
+            </button>
+          </aside>
+        </main>
       )}
     </div>
   );
