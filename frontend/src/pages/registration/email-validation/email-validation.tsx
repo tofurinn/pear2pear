@@ -11,6 +11,7 @@ import { SKIP_OTP } from "../../../firebase/skip-otp";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
+// Centralised ROUTE paths so URL changes only happen here
 const ROUTES = {
   nextStep: "/set-password",
   previousStep: "/user-registration",
@@ -20,14 +21,20 @@ const CODE_LENGTH = 6;
 const OTP_EXPIRY_MINUTES = 10;
 
 const EmailValidationPage: React.FC = () => {
+  // Guard against React StrictMode's double-invoke on mount
+  // Send effect sends once in dev 
   const sentRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Email comes from the previous step (user registration) via location.state
+  // Email can come from 2 locations
   const emailFromState =
+    // Navigation state if previous step was user-registration
     (location.state as { email?: string } | null)?.email ??
+    // sessionStorage if refreshed or navigation state was lost
     readPendingSignup()?.stepOne.email ??
+    // Falling back to "" means the send effect bails and shows an error instead
+    // of crashing with "undefined email"
     "";
 
   const [email] = useState(emailFromState);
@@ -42,12 +49,16 @@ const EmailValidationPage: React.FC = () => {
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  // Dev-only bypass: When enabled, jump straight past this page
+  // Used while in the development stage to avoid burning EmailJS quota
   useEffect(() => {
     if (SKIP_OTP) {
       navigate("/set-password", { state: location.state, replace: true });
     }
   }, [navigate, location.state]);
 
+  // Send the first OTP on mount (unless skipping)
+  // sentRef guard prevents the double-send
   useEffect(() => {
     if (SKIP_OTP) return;
     if (!email) return;
@@ -56,11 +67,15 @@ const EmailValidationPage: React.FC = () => {
     sendCode();
   }, [email]);
 
+  // Focus an input by index, clamped to the valid range
+  // Used after typing, pasting, or backspacing so the cursor always lands
+  // in a real box (Never at -1 or 7)
   const focusInput = (index: number) => {
     const clamped = Math.max(0, Math.min(index, CODE_LENGTH - 1));
     inputRefs.current[clamped]?.focus();
   };
 
+  // Fill multiple boxes starting from startIndex (used for PASTE)
   const fillFrom = (startIndex: number, chars: string[]) => {
     const next = [...digits];
     chars.slice(0, CODE_LENGTH - startIndex).forEach((char, i) => {
@@ -71,6 +86,7 @@ const EmailValidationPage: React.FC = () => {
   };
 
   // Shared send logic for initial send AND resend
+  // Generates a fresh code, updates state, and emails it
   const sendCode = async (opts: { isResend?: boolean } = {}) => {
     if (SKIP_OTP) return;
     if (!email) {
@@ -94,6 +110,7 @@ const EmailValidationPage: React.FC = () => {
       await sendOtpEmail(email, otp, OTP_EXPIRY_MINUTES);
 
       if (opts.isResend) {
+        // Clears input so the user can type the new code
         setDigits(Array(CODE_LENGTH).fill(""));
         focusInput(0);
         setResendMessage("A new code is on its way.");
@@ -107,6 +124,9 @@ const EmailValidationPage: React.FC = () => {
     }
   };
 
+  // Handle typing in a digit box
+  // Strips non-digits (letters/symbols) then either clears the box (backspace)
+  // or fills the current box position (typing/pasting)
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     const cleaned = e.target.value.replace(/\D/g, "");
@@ -121,7 +141,9 @@ const EmailValidationPage: React.FC = () => {
     fillFrom(index, cleaned.split(""));
   };
 
+  // Handle keyboard navigation between boxes
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Backspace on an empty box moves the cursor back and clears the previous digit
     if (e.key === "Backspace" && digits[index] === "" && index > 0) {
       e.preventDefault();
       const next = [...digits];
@@ -137,6 +159,7 @@ const EmailValidationPage: React.FC = () => {
     }
   };
 
+  // Handle paste: strips non-digits and fills from the current box
   const handlePaste = (index: number, e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     setError("");
@@ -154,7 +177,8 @@ const EmailValidationPage: React.FC = () => {
       return;
     }
 
-    // Expiry check
+    // Rejects expired codes before even comparing them to the generated one
+    // "Expired" has precedence over "Incorrect"
     if (expiresAt && isExpired(expiresAt)) {
       setError("That code has expired. Click \"Send again\" for a new one.");
       return;
@@ -162,8 +186,7 @@ const EmailValidationPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // TODO: replace this with a server-side verification call later.
-      // For now we compare against the code we generated in this browser.
+      // Compares the entered code to the generated one
       if (code !== generatedCode) {
         setError("That code didn't work. Check it and try again.");
         return;
@@ -181,6 +204,7 @@ const EmailValidationPage: React.FC = () => {
     await sendCode({ isResend: true });
   };
 
+  // Submit is disabled while sending, verifying, or before code is entered
   const submitDisabled = isSubmitting || isInitialSending || !generatedCode;
 
   return (
@@ -220,6 +244,7 @@ const EmailValidationPage: React.FC = () => {
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
+                  // Only the first box hints to autofill
                   autoComplete={index === 0 ? "one-time-code" : "off"}
                   value={digit}
                   onChange={(e) => handleChange(index, e)}

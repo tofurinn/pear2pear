@@ -43,60 +43,79 @@ function validate(data: LoginFormData): FormErrors {
 const UserLoginPage: React.FC = () => {
   const navigate = useNavigate();
 
+  // Holds the values the user types into email and password fields
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
   });
+  // Holds validation error messages
   const [errors, setErrors] = useState<FormErrors>({});
+  // Holds the system response when a login request is in flight (blocked, spinning, etc.)
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Holds submit error messages
   const [submitError, setSubmitError] = useState("");
 
+  // Runs on every keystroke in any field input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    // Update only the field that changed, keeping others intact
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear the error for a field as soon as the user edits it
     if (errors[name as keyof LoginFormData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
+    // Also clears any previous submit errors
     if (submitError) setSubmitError("");
   };
 
+  // Runs when the user submits the form
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitError("");
+    e.preventDefault(); // Stop the browser's default full-page reload
+    setSubmitError(""); // Reset any previous submit errors
 
+    // Run client-side validation (invalid email formats, empty fields, etc.)
     const validationErrors = validate(formData);
     setErrors(validationErrors);
+    // If there are any, stop here
     if (Object.keys(validationErrors).length > 0) return;
 
-    setIsSubmitting(true);
+    setIsSubmitting(true); // Show loading state
     try {
+      // Call Firebase Auth to log in with email + password
       const cred = await signInWithEmailAndPassword(
         auth,
-        formData.email.trim(),
+        formData.email.trim(), // Trim any whitespace in the input
         formData.password
       );
 
+      // On success, navigate to OTP Page
       navigate(ROUTES.twoFactor, {
+        // Pass the user's UID + email via state so
+        // the next page knows who's logged in
         state: {
           uid: cred.user.uid,
           email: cred.user.email,
         },
-        replace: true,
+        replace: true, // login is replaced and removed from history
       });
+      // Map firebase error codes to error messages
     } catch (err: any) {
       if (
         err.code === "auth/user-not-found" ||
         err.code === "auth/wrong-password" ||
         err.code === "auth/invalid-credential"
       ) {
+        // Deliberately vague message so attackers can't tell what's incorrect
         setSubmitError("Incorrect email or password.");
+        // Max attempt error message
       } else if (err.code === "auth/too-many-requests") {
         setSubmitError("Too many attempts. Please try again later.");
+        // Any other errors
       } else {
         setSubmitError("Login failed. Please try again.");
       }
     } finally {
+      // Stops loading state, success or failure
       setIsSubmitting(false);
     }
   };

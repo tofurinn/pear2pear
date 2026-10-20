@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// TODO: adjust these paths to your folders
+import { auth } from "../../../firebase/config";
+import { getUser, 
+  getUserByStudentID } from "../../../services/UserService";
 import MainNavbar from "../../../components/navbar/main-navbar";
-import "../../registration/register.css"; // shared field styles (register-field__*)
+import "../../registration/register.css";
 import "../../../components/page-css/settings.css";
 
-// TODO: fill in your route paths
 const ROUTES = {
   dashboard: "/student/dashboard",
 };
