@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { clearPendingSignup } from "../../firebase/pending-signup";
 import { auth } from "../../firebase/config";
 import Navbar from "../../components/navbar/global-navbar";
 import "./login.css";
@@ -84,6 +85,8 @@ const UserLoginPage: React.FC = () => {
         formData.email.trim(), // Trim any whitespace in the input
         formData.password
       );
+
+      clearPendingSignup();
 
       // On success, navigate to OTP Page
       navigate(ROUTES.twoFactor, {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { savePendingSignup } from "../../../firebase/pending-signup";
 import { getUserByEmail, getUserByStudentID } from "../../../services/UserService"
-import { readPendingSignup } from "../../../firebase/pending-signup";
+import { readPendingSignup, clearPendingSignup } from "../../../firebase/pending-signup";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -317,7 +317,9 @@ const UserRegisterPage: React.FC = () => {
                 </button>
                 <p className="register-actions__login">
                   Already registered?{" "}
-                  <Link to={ROUTES.login} className="register-actions__login-link">
+                  <Link to={ROUTES.login} 
+                  onClick={clearPendingSignup}
+                  className="register-actions__login-link">
                     Log in
                   </Link>
                 </p>
