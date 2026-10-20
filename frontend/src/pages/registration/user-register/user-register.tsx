@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { savePendingSignup } from "../../../firebase/pending-signup";
 import { getUserByEmail, getUserByStudentID } from "../../../services/UserService"
+import { readPendingSignup } from "../../../firebase/pending-signup";
 import Navbar from "../../../components/navbar/global-navbar";
 import "../register.css";
 
@@ -60,10 +61,10 @@ const UserRegisterPage: React.FC = () => {
   const location = useLocation();
   // Restore step 1 data if the user navigated back from a later step
   const saved = (location.state as { stepOne?: StudentStepOneData } | null)?.stepOne;
+  const savedFromStorage = readPendingSignup()?.stepOne;
+  const initialData = saved ?? savedFromStorage ?? { name: "", email: "", studentID: "" };
 
-  const [formData, setFormData] = useState<StudentStepOneData>(
-    saved ?? { name: "", email: "", studentID: "" }
-  );
+  const [formData, setFormData] = useState<StudentStepOneData>(initialData);
   // Holds validation error messages
   const [errors, setErrors] = useState<FormErrors>({});
   // Holds the system response when a signup request is in flight (blocked, spinning, etc.)
@@ -241,7 +242,7 @@ const UserRegisterPage: React.FC = () => {
             {/* ---- Email ---- */}
             <div className="register-field">
               <label htmlFor="email" className="register-field__label">
-                Email
+                University Email
               </label>
               <input
                 id="email"

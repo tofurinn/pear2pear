@@ -5,10 +5,6 @@ import { auth } from "../../firebase/config";
 import Navbar from "../../components/navbar/global-navbar";
 import "./login.css";
 
-// TODO: import your Firebase auth helpers and error mapper, e.g.
-// import { login } from "../../../firebase/auth";
-// import { getAuthErrorMessage } from "../../../firebase/errors";
-
 const ROUTES = {
   forgotPassword: "/forgot-password",
   signUp: "/user-registration",
@@ -42,6 +38,7 @@ function validate(data: LoginFormData): FormErrors {
 
 const UserLoginPage: React.FC = () => {
   const navigate = useNavigate();
+  
 
   // Holds the values the user types into email and password fields
   const [formData, setFormData] = useState<LoginFormData>({
@@ -131,7 +128,7 @@ const UserLoginPage: React.FC = () => {
           <form className="auth-form auth-form--tight" onSubmit={handleSubmit} noValidate>
             <div className="auth-field">
               <label htmlFor="email" className="auth-field__label">
-                Email
+                University Email
               </label>
               <input
                 id="email"

@@ -1,21 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// TODO: adjust these paths to your folders
 import MainNavbar from "../../../components/navbar/main-navbar";
 import HourPicker from "../../../components/hour-picker/hour-picker";
 import VolunteerProfileFields from "../../../components/volunteer-profile-fields";
-import type {
-  ProfileFieldsErrors,
-  ProfileFieldsValue,
-} from "../../../components/volunteer-profile-fields";
-// Shared styles for the fields (the register-* and volunteer-* classes)
+import type { ProfileFieldsErrors, ProfileFieldsValue } from "../../../components/volunteer-profile-fields";
+import { useAuth } from "../../../context/authContext";
+import { getVolunteer, updateVolunteer } from "../../../services/VolunteerService";
+import { getAvailabilityByVolunteer, syncAvailabilities } from "../../../services/AvailabilityService";
+import { DAY_NAMES } from "../../student/student-utils";
 import "../../registration/register.css";
 import "../../registration/volunteer-register/volunteer-register.css";
-// Keep this one last so its overrides win
 import "./volunteer-settings.css";
 import "../../../components/page-css/settings.css";
 
-// TODO: fill in your route paths
 const ROUTES = {
   dashboard: "/volunteer/dashboard",
 };
@@ -40,6 +37,7 @@ const ChevronLeft = () => (
 export default function VolunteerSettingsPage() {
   const navigate = useNavigate();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const { userDoc, loading: authLoading } = useAuth();
 
   const [profile, setProfile] = useState<VolunteerSettingsData>(EMPTY_SETTINGS);
   const [saved, setSaved] = useState<VolunteerSettingsData>(EMPTY_SETTINGS); // last loaded / saved version
@@ -55,20 +53,46 @@ export default function VolunteerSettingsPage() {
 
   // Load the signed-in volunteer's current settings
   useEffect(() => {
+    if (authLoading || !userDoc?.UID) return;
     let cancelled = false;
 
     (async () => {
       try {
-        // TODO: load the volunteer's profile and availability from Firestore, e.g.
-        // const loaded = await getVolunteerSettings(uid);
-        // if (!cancelled) {
-        //   setProfile(loaded);
-        //   setSaved(loaded);
-        // }
-        //
-        // Heads-up: if you store skills / categories as ";" strings, split them
-        // into arrays here (and join them again when saving).
-      } catch {
+        // 1. Fetch both volunteer doc and availability docs
+        const [volunteer, availabilityDocs] = await Promise.all([
+          getVolunteer(userDoc.UID),
+          getAvailabilityByVolunteer(userDoc.UID),
+        ]);
+
+        if (cancelled) return;
+
+        if (!volunteer) {
+          setLoadError("Could not find your volunteer profile.");
+          setIsLoading(false);
+          return;
+        }
+
+        // 2. Map availability docs back to the string keys the HourPicker expects
+        // e.g., { dayOfWeek: "Monday", availTimeSlot: 14 } → "1:14:00"
+        const slots = availabilityDocs.map((doc) => {
+          const weekday = DAY_NAMES.indexOf(doc.dayOfWeek);
+          const hourPadded = String(doc.availTimeSlot).padStart(2, '0'); // "8" -> "08"
+          return `${weekday}:${hourPadded}:00`;
+        });
+
+        // 3. Set both form data and the "saved" snapshot
+        const loaded = {
+          categories: volunteer.volCategories,
+          supportMode: volunteer.prefSupportMode,
+          skills: volunteer.skills,
+          availability: slots,
+        };
+        console.log("Raw availability from DB:", availabilityDocs);
+        console.log("Mapped slots for HourPicker:", slots);
+        setProfile(loaded);
+        setSaved(loaded);
+      } catch (err) {
+        console.error(err);
         if (!cancelled) setLoadError("We couldn't load your settings. Please refresh the page.");
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -78,7 +102,7 @@ export default function VolunteerSettingsPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [authLoading, userDoc?.UID]);
 
   const handleFieldsChange = (patch: Partial<ProfileFieldsValue>) => {
     setProfile((prev) => ({ ...prev, ...patch }));
@@ -89,8 +113,14 @@ export default function VolunteerSettingsPage() {
 
   // ----- Availability dialog -----
   const openAvailability = () => {
-    setDraftSlots(profile.availability);
-    dialogRef.current?.showModal();
+    // Pass the slots directly to the state *before* opening the dialog
+    const currentSlots = [...profile.availability]; // Create a copy
+    setDraftSlots(currentSlots);
+
+    // Small delay ensures React processes the state update before the dialog opens
+    setTimeout(() => {
+      dialogRef.current?.showModal();
+    }, 0);
   };
 
   const applyAvailability = () => {
@@ -116,10 +146,21 @@ export default function VolunteerSettingsPage() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
+    if (!userDoc?.UID) return;
+
     setIsSaving(true);
     try {
-      // TODO: save to Firestore, e.g.
-      // await saveVolunteerSettings(uid, profile);
+      await updateVolunteer(userDoc.UID, {
+        volCategories: profile.categories,
+        prefSupportMode: profile.supportMode,
+        skills: profile.skills,
+      });
+
+      // 2. Handle availability (this is the tricky part)
+      // Strategy: delete all old availability docs, then create new ones.
+      // Or: only create/delete the ones that differ. For a student project, 
+      // "delete all and recreate" is easiest.
+      await syncAvailabilities(userDoc.UID, profile.availability);
 
       setSaved(profile);
       setSaveMessage("Changes saved.");
