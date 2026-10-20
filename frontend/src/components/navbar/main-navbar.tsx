@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import './navbar.css'
@@ -7,6 +7,8 @@ import textLogo from '../../assets/images/text-logo.png'
 import ConfirmPopup from '../popup/confirm-popup'
 import { auth } from '../../firebase/config'
 import { clear2FAVerified } from '../../firebase/verify-session'
+import { useAuth } from '../../context/authContext'
+import { subscribeToNotificationsByUser } from '../../services/NotificationService'
 
 type MainNavbarProps = {
 	dashboardPath?: string
@@ -33,11 +35,37 @@ function getModePath(pathname: string, mode: 'student' | 'volunteer') {
 function MainNavbar({ dashboardPath = '/student/dashboard', hasVolunteerAccess }: MainNavbarProps) {
 	const location = useLocation()
 	const navigate = useNavigate()
+	const { userDoc } = useAuth()
+	const UID = userDoc?.UID ?? null
 	const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 	const [isLoggingOut, setIsLoggingOut] = useState(false)
 	const [logoutError, setLogoutError] = useState('')
+	const [unreadNotificationCount, setUnreadNotificationCount] = useState<{
+		UID: string
+		count: number
+	} | null>(null)
 	const isVolunteer = dashboardPath.startsWith('/volunteer/')
 	const canUseVolunteerMode = hasVolunteerAccess ?? isVolunteer
+	const unreadCount = UID && unreadNotificationCount?.UID === UID
+		? unreadNotificationCount.count
+		: 0
+
+	useEffect(() => {
+		if (!UID) return
+
+		return subscribeToNotificationsByUser(
+			UID,
+			notifications => {
+				setUnreadNotificationCount({
+					UID,
+					count: notifications.filter(notification => !notification.isRead).length,
+				})
+			},
+			error => {
+				console.error('Could not load unread notification count:', error)
+			},
+		)
+	}, [UID])
 
 	const switchMode = (mode: 'student' | 'volunteer') => {
 		if (mode === 'volunteer' && !canUseVolunteerMode) {
@@ -97,12 +125,21 @@ function MainNavbar({ dashboardPath = '/student/dashboard', hasVolunteerAccess }
 					<NavLink
 						className="global-navbar__notification"
 						to={isVolunteer ? '/volunteer/notifications' : '/student/notifications'}
-						aria-label="Notifications"
-						title="Notifications"
+						aria-label={unreadCount > 0
+							? `Notifications, ${unreadCount} unread`
+							: 'Notifications'}
+						title={unreadCount > 0
+							? `Notifications (${unreadCount} unread)`
+							: 'Notifications'}
 					>
 						<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 							<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
 						</svg>
+						{unreadCount > 0 && (
+							<span className="global-navbar__notification-count" aria-hidden="true">
+								{unreadCount > 99 ? '99+' : unreadCount}
+							</span>
+						)}
 					</NavLink>
 					<div className="global-navbar__dashboard">
 						<NavLink className="global-navbar__login" to={dashboardPath} end>Dashboard</NavLink>

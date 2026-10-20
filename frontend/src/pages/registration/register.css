@@ -29,18 +29,13 @@
   flex-direction: column;
   font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color: var(--color-text);
-  background: linear-gradient(to bottom,
-      var(--color-gradient-top),
-      var(--color-gradient-bottom));
+  background: var(--color-student-gradient);
   box-sizing: border-box;
 }
 
 /* Register page starts the gradient white so it blends under the navbar */
 .register-page {
-  background: linear-gradient(to bottom,
-      #ffffff 0,
-      var(--color-gradient-top) 8rem,
-      var(--color-gradient-bottom) 100%);
+  background:  var(--color-student-gradient);
 }
 
 /* Shared box-sizing reset */

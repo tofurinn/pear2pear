@@ -250,6 +250,14 @@
   margin-top: 14px;
 }
 
+.vol-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
 .session-modal-footer > .ui-status-pill {
   margin-right: auto;
 }
