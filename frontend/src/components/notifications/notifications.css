@@ -51,7 +51,7 @@
 }
 
 .notif-banner-title {
-  font-size: 1.75rem;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.15;
 }
@@ -128,6 +128,17 @@
 .notif-card:hover {
   border-color: #cfd6d6;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.notif-card--unread {
+  border-left: 4px solid var(--notif-green);
+  background: #f8fff8;
+}
+
+.notif-error {
+  margin-top: 12px !important;
+  color: #b42318;
+  font-size: 0.9375rem;
 }
 
 .notif-card-message {

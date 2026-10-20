@@ -1,26 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useAuth } from '../../context/authContext';
+import { markNotificationAsRead, subscribeToNotificationsByUser } from '../../services/NotificationService';
+import type { Notification as AppNotification, NotificationKind } from '../../types/Notification';
 import Navbar from '../navbar/main-navbar';
 import CategoryTag from '../category-tag/category-tag';
 
 import '../ui.css';
 import './notifications.css';
 
-type NotificationKind = 'request' | 'session' | 'confirmed' | 'rejected';
 type Filter = 'all' | NotificationKind;
 type UserMode = 'student' | 'volunteer';
-
-interface NotificationItem {
-  id: string;
-  kind: NotificationKind;
-  actorName: string;
-  message: string;
-  category: string;
-  title: string;
-  dateLabel: string;
-  path: string;
-}
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: 'all', label: 'All' },
@@ -28,40 +19,6 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: 'session', label: 'Support Sessions' },
   { value: 'confirmed', label: 'Confirmed' },
   { value: 'rejected', label: 'Rejected' },
-];
-
-// TODO: replace with this user's notifications from Firestore
-const MOCK_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: 'n1',
-    kind: 'request',
-    actorName: 'Student Name',
-    message: 'has sent you a Support Request!',
-    category: 'General Student Support',
-    title: 'Help Me do Advanced Maths (fec101)',
-    dateLabel: '11 Aug 2025',
-    path: '/requests/n1',
-  },
-  {
-    id: 'n2',
-    kind: 'session',
-    actorName: 'Volunteer Name',
-    message: 'has accepted your Support Session!',
-    category: 'General Student Support',
-    title: 'Coffee Making Helper',
-    dateLabel: '24 Apr 2026',
-    path: '/sessions/n2',
-  },
-  {
-    id: 'n3',
-    kind: 'session',
-    actorName: 'Student Name',
-    message: 'has sent a feedback!',
-    category: 'General Student Support',
-    title: 'Fix my Laptop plz',
-    dateLabel: '24 Apr 2026',
-    path: '/sessions/n3',
-  },
 ];
 
 const EMPTY_MESSAGES: Record<Filter, string> = {
@@ -72,22 +29,35 @@ const EMPTY_MESSAGES: Record<Filter, string> = {
   rejected: 'No rejected notifications',
 };
 
+const formatDate = (notification: AppNotification) => notification.notifTimestamp
+  ? notification.notifTimestamp.toDate().toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  : '';
+
 interface NotificationCardProps {
-  item: NotificationItem;
+  item: AppNotification;
   onOpen: () => void;
 }
 
 function NotificationCard({ item, onOpen }: NotificationCardProps) {
   return (
     <li>
-      <button type="button" className="notif-card" onClick={onOpen}>
+      <button
+        type="button"
+        className={`notif-card${item.isRead ? '' : ' notif-card--unread'}`}
+        onClick={onOpen}
+      >
         <p className="notif-card-message">
-          <strong>{item.actorName}</strong> {item.message}
+          {item.actorName && <><strong>{item.actorName}</strong> </>}
+          {item.message}
         </p>
-        <CategoryTag>{item.category}</CategoryTag>
+        {item.category && <CategoryTag>{item.category}</CategoryTag>}
         <span className="notif-card-row">
-          <span className="notif-card-title">{item.title}</span>
-          <span className="notif-card-date">{item.dateLabel}</span>
+          <span className="notif-card-title">{item.title ?? item.message}</span>
+          <span className="notif-card-date">{formatDate(item)}</span>
         </span>
       </button>
     </li>
@@ -96,16 +66,64 @@ function NotificationCard({ item, onOpen }: NotificationCardProps) {
 
 export default function NotificationsPage({ mode }: { mode: UserMode }) {
   const navigate = useNavigate();
+  const { userDoc, loading: authLoading } = useAuth();
+  const UID = userDoc?.UID ?? null;
   const dashboardPath = mode === 'volunteer' ? '/volunteer/dashboard' : '/student/dashboard';
   const backgroundClass = mode === 'volunteer'
     ? 'ui-page-volunteer-background'
     : 'ui-page-student-background';
   const [filter, setFilter] = useState<Filter>('all');
+  const [notificationLoad, setNotificationLoad] = useState<{
+    UID: string;
+    notifications: AppNotification[];
+    error?: string;
+  } | null>(null);
+  const [actionError, setActionError] = useState('');
+  const isLoading = authLoading || (!!UID && notificationLoad?.UID !== UID);
+  const loadError = !authLoading && !UID
+    ? 'Sign in to view your notifications.'
+    : notificationLoad?.UID === UID
+      ? notificationLoad.error ?? ''
+      : '';
+  const notifications = UID && notificationLoad?.UID === UID
+    ? notificationLoad.notifications
+    : [];
 
-  const visible = useMemo(
-    () => (filter === 'all' ? MOCK_NOTIFICATIONS : MOCK_NOTIFICATIONS.filter(n => n.kind === filter)),
-    [filter],
-  );
+  useEffect(() => {
+    if (authLoading || !UID) return;
+    return subscribeToNotificationsByUser(
+      UID,
+      loadedNotifications => {
+        setNotificationLoad({ UID, notifications: loadedNotifications });
+      },
+      error => {
+        console.error('Could not load notifications:', error);
+        setNotificationLoad({
+          UID,
+          notifications: [],
+          error: 'Could not load your notifications. Please try again.',
+        });
+      },
+    );
+  }, [UID, authLoading]);
+
+  const visible = filter === 'all'
+    ? notifications
+    : notifications.filter(notification => notification.kind === filter);
+
+  const openNotification = async (notification: AppNotification) => {
+    if (UID && !notification.isRead) {
+      setActionError('');
+      try {
+        await markNotificationAsRead(notification.notifID, UID);
+      } catch (error) {
+        console.error('Could not mark notification as read:', error);
+        setActionError('Could not update this notification. Please try again.');
+        return;
+      }
+    }
+    navigate(notification.redirectionLink || dashboardPath);
+  };
 
   return (
     <div className="ui-page">
@@ -132,11 +150,27 @@ export default function NotificationsPage({ mode }: { mode: UserMode }) {
             ))}
           </div>
 
-          <ul className="notif-list" aria-live="polite">
-            {visible.map(item => (
-              <NotificationCard key={item.id} item={item} onOpen={() => navigate(item.path)} />
-            ))}
-            {visible.length === 0 && <li className="notif-empty">{EMPTY_MESSAGES[filter]}</li>}
+          {loadError && <p className="notif-error" role="alert">{loadError}</p>}
+          {actionError && <p className="notif-error" role="alert">{actionError}</p>}
+          <ul className="notif-list" aria-live="polite" aria-busy={isLoading}>
+            {isLoading ? (
+              <li className="notif-empty" role="status">Loading notifications...</li>
+            ) : (
+              <>
+                {visible.map(item => (
+                  <NotificationCard
+                    key={item.notifID}
+                    item={item}
+                    onOpen={() => void openNotification(item)}
+                  />
+                ))}
+                {visible.length === 0 && (
+                  <li className="notif-empty">
+                    {loadError ? '' : UID ? EMPTY_MESSAGES[filter] : ''}
+                  </li>
+                )}
+              </>
+            )}
           </ul>
         </div>
       </main>
