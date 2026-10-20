@@ -154,7 +154,7 @@
 
 .slot-readout {
   /* centred pill filled like the other inputs; fixed width so it doesn't jump as the text changes */
-  width: min(100%, max(320px, calc(560 * var(--u))));
+  width: min(100%, max(400px, calc(560 * var(--u))));
   margin: calc(20 * var(--u)) auto 0;
   padding: calc(12 * var(--u)) calc(28 * var(--u));
   font-size: var(--fs-body);

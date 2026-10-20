@@ -9,6 +9,7 @@ import { BoardSection, ItemCard, StatusPill } from '../../../../components/dashb
 import { createVolunteerRequestPatch, toVolunteerRequestItem } from '../../volunteer-utils.ts';
 import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
 import { getRequestsByVolunteer, respondToPendingSupportRequest } from '../../../../services/RequestService';
+import { createNotification } from '../../../../services/NotificationService';
 import { getUser } from '../../../../services/UserService';
 
 import '../../../../components/ui.css';
@@ -103,6 +104,23 @@ function VolunteerRequests() {
           }
         : previous
       );
+      try {
+        await createNotification({
+          UID: item.studUID,
+          kind: reqStatus === 'Accepted' ? 'confirmed' : 'rejected',
+          actorName: userDoc?.name ?? 'Your volunteer',
+          message: reqStatus === 'Accepted'
+            ? 'accepted your support request.'
+            : 'declined your support request.',
+          category: item.category,
+          title: item.title,
+          redirectionLink: '/student/my-requests',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Request response saved, but its notification could not be created:', notificationError);
+        setActionError('Your response was saved, but the student could not be notified.');
+      }
       setSelectedID(null);
     } catch (error) {
       console.error(`Error updating volunteer request "${item.reqID}":`, error);

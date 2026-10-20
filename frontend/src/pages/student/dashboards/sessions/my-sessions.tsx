@@ -6,10 +6,11 @@ import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
+import { createNotification } from '../../../../services/NotificationService';
 
 import { buildStudentSessionItems, getStudentSessionStatus, hourToSlot, toDateKey } from '../../student-utils.tsx';
 import type { StudentSessionItem, StudentVolunteerSummary } from '../../student-utils.tsx';
-import { getRequestsByStudent } from '../../../../services/RequestService';
+import { getRequestsByStudent, getSupportRequest } from '../../../../services/RequestService';
 import { getSessionsByRequestIDs, updateSessionStatus, updateSupportSession } from '../../../../services/SessionService';
 import { getVolunteer } from '../../../../services/VolunteerService';
 import { getUser } from '../../../../services/UserService';
@@ -24,9 +25,18 @@ function StudentSessions() {
   const { userDoc, loading: authLoading } = useAuth();
   const studentUID = userDoc?.UID ?? null;
 
-  const [items, setItems] = useState<StudentSessionItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
+  const [sessionLoad, setSessionLoad] = useState<{
+    studentUID: string;
+    items: StudentSessionItem[];
+    error?: string;
+  } | null>(null);
+  const isLoading = authLoading || (!!studentUID && sessionLoad?.studentUID !== studentUID);
+  const loadError = !authLoading && !studentUID
+    ? 'Sign in to view your sessions.'
+    : sessionLoad?.studentUID === studentUID
+      ? sessionLoad.error ?? ''
+      : '';
+  const items = studentUID && sessionLoad?.studentUID === studentUID ? sessionLoad.items : [];
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   useEffect(() => {
@@ -35,18 +45,9 @@ function StudentSessions() {
   }, []);
 
   useEffect(() => {
-    if (authLoading) return;
-
-    if (!studentUID) {
-      setItems([]);
-      setLoadError('Sign in to view your sessions.');
-      setIsLoading(false);
-      return;
-    }
+    if (authLoading || !studentUID) return;
 
     let isCurrent = true;
-    setIsLoading(true);
-    setLoadError('');
 
     const loadSessions = async () => {
       try {
@@ -71,13 +72,20 @@ function StudentSessions() {
         }));
 
         if (isCurrent) {
-          setItems(buildStudentSessionItems(sessions, requests, Object.fromEntries(volunteerEntries)));
+          setSessionLoad({
+            studentUID,
+            items: buildStudentSessionItems(sessions, requests, Object.fromEntries(volunteerEntries)),
+          });
         }
       } catch (error) {
         console.error('Error loading student sessions:', error);
-        if (isCurrent) setLoadError('Could not load your sessions. Please try again.');
-      } finally {
-        if (isCurrent) setIsLoading(false);
+        if (isCurrent) {
+          setSessionLoad({
+            studentUID,
+            items: [],
+            error: 'Could not load your sessions. Please try again.',
+          });
+        }
       }
     };
 
@@ -104,15 +112,40 @@ function StudentSessions() {
   const cancelSession = async (item: StudentSessionItem) => {
     try {
       await updateSessionStatus(item.sessID, 'Cancelled');
-      setItems(previous => previous.map(session => session.sessID === item.sessID
-        ? { ...session, sessStatus: 'Cancelled' }
-        : session
-      ));
+      try {
+        const request = await getSupportRequest(item.reqID);
+        if (!request) throw new Error('Could not find the support request for this session.');
+        await createNotification({
+          UID: request.volUID,
+          kind: 'session',
+          actorName: userDoc?.name ?? 'Your student',
+          message: 'cancelled the support session.',
+          category: item.category,
+          title: item.title,
+          redirectionLink: '/volunteer/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session cancelled, but its notification could not be created:', notificationError);
+      }
+      setSessionLoad(previous => previous?.studentUID === studentUID
+        ? {
+            ...previous,
+            items: previous.items.map(session => session.sessID === item.sessID
+              ? { ...session, sessStatus: 'Cancelled' }
+              : session
+            ),
+            error: undefined,
+          }
+        : previous
+      );
       setSelected(null);
-      setLoadError('');
     } catch (error) {
       console.error('Error cancelling student session:', error);
-      setLoadError('Could not cancel this session. Please try again.');
+      setSessionLoad(previous => previous?.studentUID === studentUID
+        ? { ...previous, error: 'Could not cancel this session. Please try again.' }
+        : previous
+      );
     }
   };
 
@@ -123,15 +156,40 @@ function StudentSessions() {
         studConfirmed: true,
         volConfirmed: true,
       });
-      setItems(previous => previous.map(session => session.sessID === item.sessID
-        ? { ...session, sessStatus: 'Confirmed', studConfirmed: true, volConfirmed: true }
-        : session
-      ));
+      try {
+        const request = await getSupportRequest(item.reqID);
+        if (!request) throw new Error('Could not find the support request for this session.');
+        await createNotification({
+          UID: request.volUID,
+          kind: 'confirmed',
+          actorName: userDoc?.name ?? 'Your student',
+          message: 'confirmed the session arrangement.',
+          category: item.category,
+          title: item.title,
+          redirectionLink: '/volunteer/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session confirmed, but its notification could not be created:', notificationError);
+      }
+      setSessionLoad(previous => previous?.studentUID === studentUID
+        ? {
+            ...previous,
+            items: previous.items.map(session => session.sessID === item.sessID
+              ? { ...session, sessStatus: 'Confirmed', studConfirmed: true, volConfirmed: true }
+              : session
+            ),
+            error: undefined,
+          }
+        : previous
+      );
       setSelected(null);
-      setLoadError('');
     } catch (error) {
       console.error('Error confirming student session arrangement:', error);
-      setLoadError('Could not confirm this arrangement. Please try again.');
+      setSessionLoad(previous => previous?.studentUID === studentUID
+        ? { ...previous, error: 'Could not confirm this arrangement. Please try again.' }
+        : previous
+      );
     }
   };
 

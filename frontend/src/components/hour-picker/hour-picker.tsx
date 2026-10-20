@@ -11,15 +11,37 @@ const HOURS = Array.from({ length: 13 }, (_, index) => index + 8);
 interface HourPickerProps {
   selectedSlots: string[];
   onSelectionChange: (slots: string[]) => void;
+  availableSlots?: ReadonlySet<string>;
+  showSelectAll?: boolean;
 }
 
-function HourPicker({ selectedSlots, onSelectionChange }: HourPickerProps) {
+function HourPicker({
+  selectedSlots,
+  onSelectionChange,
+  availableSlots,
+  showSelectAll = false,
+}: HourPickerProps) {
   const toggleSlot = (key: string) => {
     onSelectionChange(
       selectedSlots.includes(key)
         ? selectedSlots.filter(slot => slot !== key)
         : [...selectedSlots, key],
     );
+  };
+
+  const toggleDay = (weekday: number) => {
+    const daySlots = HOURS
+      .map(hour => weekdaySlotKey(weekday, hour))
+      .filter(key => availableSlots?.has(key) ?? true);
+    if (daySlots.length === 0) return;
+
+    const selected = new Set(selectedSlots);
+    if (daySlots.every(key => selected.has(key))) {
+      daySlots.forEach(key => selected.delete(key));
+    } else {
+      daySlots.forEach(key => selected.add(key));
+    }
+    onSelectionChange([...selected]);
   };
 
   return (
@@ -32,11 +54,29 @@ function HourPicker({ selectedSlots, onSelectionChange }: HourPickerProps) {
           aria-label="Times you are available"
         >
           <span />
-          {WEEKDAYS.map(({ name, weekday }) => (
-            <div className="rf-slot-day" key={weekday}>
-              <span>{name}</span>
-            </div>
-          ))}
+          {WEEKDAYS.map(({ name, weekday }) => {
+            const availableDaySlots = HOURS
+              .map(hour => weekdaySlotKey(weekday, hour))
+              .filter(key => availableSlots?.has(key) ?? true);
+            const allSelected = availableDaySlots.length > 0 &&
+              availableDaySlots.every(key => selectedSlots.includes(key));
+            return (
+              <div className="rf-slot-day" key={weekday}>
+                <span>{name}</span>
+                {showSelectAll && (
+                  <button
+                    type="button"
+                    className="rf-slot-day-select-all"
+                    aria-label={`${allSelected ? 'Deselect' : 'Select'} all available times for ${name}`}
+                    disabled={availableDaySlots.length === 0}
+                    onClick={() => toggleDay(weekday)}
+                  >
+                    {allSelected ? 'Deselect all' : 'Select all'}
+                  </button>
+                )}
+              </div>
+            );
+          })}
 
           {HOURS.map(hour => (
             <React.Fragment key={hour}>
@@ -44,14 +84,17 @@ function HourPicker({ selectedSlots, onSelectionChange }: HourPickerProps) {
               {WEEKDAYS.map(({ name, weekday }) => {
                 const key = weekdaySlotKey(weekday, hour);
                 const isSelected = selectedSlots.includes(key);
+                const isAvailable = availableSlots?.has(key) ?? true;
                 return (
                   <div className="rf-slot-cell" key={weekday}>
                     <button
                       type="button"
                       role="checkbox"
                       aria-checked={isSelected}
-                      aria-label={`${name}, ${formatHour(hour)}`}
-                      className={`rf-slot ${isSelected ? 'selected' : ''}`}
+                      aria-label={`${name}, ${formatHour(hour)}${isAvailable ? '' : ' (unavailable)'}`}
+                      aria-disabled={!isAvailable}
+                      className={`rf-slot ${isAvailable ? (isSelected ? 'selected' : '') : 'unavailable'}`}
+                      disabled={!isAvailable}
                       onClick={() => toggleSlot(key)}
                     >
                       {isSelected && <CheckIcon size={16} />}

@@ -6,6 +6,7 @@ import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
+import { createNotification } from '../../../../services/NotificationService';
 import { buildStudentRequestItems } from '../../student-utils.tsx';
 import type { StudentRequestItem } from '../../student-utils.tsx';
 import type { StudentVolunteerSummary } from '../../student-utils.tsx';
@@ -116,6 +117,20 @@ function StudentRequests() {
     setActionError('');
     try {
       await cancelPendingSupportRequest(cancelTarget.reqID, studentUID);
+      try {
+        await createNotification({
+          UID: cancelTarget.volUID,
+          kind: 'request',
+          actorName: userDoc?.name ?? 'A student',
+          message: 'cancelled their support request.',
+          category: cancelTarget.category,
+          title: cancelTarget.title,
+          redirectionLink: '/volunteer/my-requests',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Request cancelled, but its notification could not be created:', notificationError);
+      }
       setRequestLoad(previous => previous?.studentUID === studentUID
         ? {
             ...previous,

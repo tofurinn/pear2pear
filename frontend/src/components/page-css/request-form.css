@@ -21,6 +21,10 @@
   height: auto;
 }
 
+.rf-tag-field .category-tag {
+  font-size: 14px;
+}
+
 .rf-textarea {
   display: block;
   width: 100%;

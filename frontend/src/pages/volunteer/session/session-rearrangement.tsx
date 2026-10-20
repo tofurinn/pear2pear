@@ -12,6 +12,7 @@ import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 import { useAuth } from '../../../context/authContext';
 import { getRequestsByVolunteer } from '../../../services/RequestService';
 import { getSessionsByRequestIDs, getSupportSession, updateSupportSession } from '../../../services/SessionService';
+import { createNotification } from '../../../services/NotificationService';
 import { getAvailabilityByVolunteer } from '../../../services/AvailabilityService';
 import { getUser } from '../../../services/UserService';
 import { Timestamp } from 'firebase/firestore';
@@ -160,6 +161,20 @@ function VolunteerSessionRearrangement() {
         studConfirmed: false, // the volunteer made the change, so the student has to confirm again
         volConfirmed: true,
       });
+      try {
+        await createNotification({
+          UID: request.studUID,
+          kind: 'session',
+          actorName: userDoc?.name ?? 'Your volunteer',
+          message: 'proposed a new time for the support session.',
+          category: request.category,
+          title: request.title,
+          redirectionLink: '/student/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session rearranged, but its notification could not be created:', notificationError);
+      }
 
       const rearranged: SessionSummary = {
         category: request.category,

@@ -31,6 +31,7 @@ import { getRequestsByVolunteerAndStatus, getRequestsByVolunteer } from '../../.
 import { updateRequestStatus } from '../../../services/RequestService';
 import { getAvailabilityByVolunteer } from '../../../services/AvailabilityService';
 import { createSupportSession, getSessionsByRequestIDs } from '../../../services/SessionService';
+import { createNotification } from '../../../services/NotificationService';
 import { getUser } from '../../../services/UserService';
 import { parseDateKey, slotToHour } from '../volunteer-utils.ts';
 
@@ -190,6 +191,21 @@ function VolunteerMultiStepSessionForm() {
         volConfirmed: true,
       });
       await updateRequestStatus(formData.reqID, 'Scheduled');
+
+      try {
+        await createNotification({
+          UID: selectedRequest.studUID,
+          kind: 'session',
+          actorName: userDoc?.name ?? 'Your volunteer',
+          message: 'has arranged a support session with you.',
+          category: selectedRequest.category,
+          title: selectedRequest.title,
+          redirectionLink: '/student/my-sessions',
+          isRead: false,
+        });
+      } catch (notificationError) {
+        console.error('Session arranged, but its notification could not be created:', notificationError);
+      }
 
       setSummary(buildSessionSummary(formData, selectedRequest, selectedStudent));
       setSubmitMessage('success');

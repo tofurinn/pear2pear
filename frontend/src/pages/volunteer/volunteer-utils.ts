@@ -46,7 +46,9 @@ export const parseDateKey = (key: string) => new Date(`${key}T00:00:00`);
 
 // --- Volunteer dashboard display models ---------------------------------------------------------------------------------------
 
-export type VolunteerRequestItem = DashboardRequestItem;
+export type VolunteerRequestItem = DashboardRequestItem & {
+  studUID: string;
+};
 
 export type VolunteerSessionItem = DashboardSessionItem & {
   reqID: string;
@@ -148,6 +150,7 @@ export const toVolunteerRequestItem = (
   studentName: string,
 ): VolunteerRequestItem => ({
   reqID: request.reqID,
+  studUID: request.studUID,
   reqStatus: request.reqStatus,
   category: request.category,
   title: request.title,

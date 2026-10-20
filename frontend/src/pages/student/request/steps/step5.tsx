@@ -6,6 +6,7 @@ import CategoryTag from "../../../../components/category-tag/category-tag.tsx";
 type StepConfirmationProps = {
   summary: RequestSummary;
   isResubmission?: boolean;
+  notificationWarning?: string;
   onReturnToDashboard: () => void;
   onViewRequests: () => void;
 };
@@ -33,6 +34,7 @@ function Stars({ rating }: { rating: number }) {
 export default function StepConfirmation({
   summary,
   isResubmission = false,
+  notificationWarning = '',
   onReturnToDashboard,
   onViewRequests,
 }: StepConfirmationProps) {
@@ -50,6 +52,7 @@ export default function StepConfirmation({
           ? 'Your request is pending with the new volunteer. You will receive a notification when they respond.'
           : 'Sit tight, you will receive a notification once your matched Volunteer accepts the request'}
       </p>
+      {notificationWarning && <p className="ui-error" role="alert">{notificationWarning}</p>}
 
       <section className="rf-summary" aria-labelledby="rf-summary-heading">
 

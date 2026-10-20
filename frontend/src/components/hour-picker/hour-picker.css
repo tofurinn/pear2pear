@@ -23,6 +23,27 @@
   line-height: 1.2;
 }
 
+.rf-slot-day-select-all {
+  padding: 2px 0;
+  color: var(--color-green1);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--fs-small);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.rf-slot-day-select-all:disabled {
+  color: #aaa;
+  cursor: default;
+}
+
+.rf-slot-day-select-all:focus-visible {
+  outline: 2px solid #d96245;
+  outline-offset: 2px;
+}
+
 .rf-slot-hour {
   display: flex;
   align-items: center;
@@ -57,13 +78,25 @@
   box-shadow: 0 1px 2px rgba(68, 36, 33, 0.25);
 }
 
+.rf-slot.unavailable {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  box-shadow: inset 1px 1px 2px rgba(68, 36, 33, 0.1);
+  cursor: default;
+  opacity: 1;
+}
+
+.rf-slot.unavailable:hover {
+  background: #fff;
+}
+
 .rf-slot svg {
   width: 70%;
   height: 70%;
 }
 
 .rf-slot-readout {
-  width: min(100%, max(320px, calc(560 * var(--u))));
+  width: min(100%, max(400px, calc(560 * var(--u))));
   margin: calc(20 * var(--u)) auto 0;
   padding: calc(12 * var(--u)) calc(28 * var(--u));
   font-size: var(--fs-body);

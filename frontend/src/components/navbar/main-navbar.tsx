@@ -79,7 +79,11 @@ function MainNavbar({ dashboardPath = '/student/dashboard', hasVolunteerAccess }
 	return (
 		<>
 			<header className="global-navbar">
-				<NavLink className="global-navbar__brand" to="/" aria-label="Pear2Pear home">
+				<NavLink 
+					className="global-navbar__brand" 
+					to=	{isVolunteer ? '/volunteer/dashboard' : '/student/dashboard'}
+					aria-label="Pear2Pear home"
+					>
 					<img src={textLogo} alt="Pear2Pear" />
 				</NavLink>
 				<nav className="global-navbar__actions" aria-label="Account navigation">
@@ -87,7 +91,7 @@ function MainNavbar({ dashboardPath = '/student/dashboard', hasVolunteerAccess }
 						className="global-navbar__signup"
 						to={isVolunteer ? '/volunteer/my-requests' : '/student/my-requests'}
 					>
-						{isVolunteer ? 'Support' : 'Request'}
+						{isVolunteer ? 'Requests' : 'Requests'}
 					</NavLink>
 					<NavLink className="global-navbar__login" to={isVolunteer ? '/volunteer/my-sessions' : '/student/my-sessions'}>Sessions</NavLink>
 					<NavLink

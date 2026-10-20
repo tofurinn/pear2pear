@@ -15,10 +15,12 @@ import FilteringStep from './steps/step2.tsx';
 import AvailabilityStep from './steps/step3.tsx';
 import VolunteerMatchStep from './steps/step4.tsx';
 import RequestSubmittedStep from './steps/step5.tsx';
-import { createEmptyForm, buildSummary } from './request-utils.tsx';
+import { createEmptyForm, buildSummary, weekdaySlotKey } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
 import { useAuth } from '../../../context/authContext';
+import { DAY_NAMES } from '../student-utils.tsx';
 import { createSupportRequest, getSupportRequest, resubmitPendingSupportRequest } from '../../../services/RequestService';
+import { createNotification } from '../../../services/NotificationService';
 import { loadRequestFormVolunteers } from '../../../services/StudentRequestService';
 import type { StudentRequestVolunteer } from '../../../types/StudentRequestVolunteer';
 
@@ -32,7 +34,7 @@ const NO_VOLUNTEERS: StudentRequestVolunteer[] = [];
 function StudentMultiStepRequestForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { firebaseUser, loading: authLoading } = useAuth();
+  const { firebaseUser, userDoc, loading: authLoading } = useAuth();
   const routeState = location.state as { resubmitReqID?: unknown } | null;
   const resubmitReqID = typeof routeState?.resubmitReqID === 'string' ? routeState.resubmitReqID : null;
 
@@ -47,6 +49,7 @@ function StudentMultiStepRequestForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [notificationWarning, setNotificationWarning] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [volunteerLoad, setVolunteerLoad] = useState<{
     supportMode: RequestFormData['supportMode'];
@@ -134,6 +137,19 @@ function StudentMultiStepRequestForm() {
     ? volunteerLoad.error
     : '';
 
+  const availableRequestSlots = useMemo(() => {
+    const slots = new Set<string>();
+    volunteers.forEach(volunteer => {
+      volunteer.availability.forEach(slot => {
+        const weekday = DAY_NAMES.indexOf(slot.dayOfWeek);
+        if (weekday >= 0 && Number.isInteger(slot.availTimeSlot)) {
+          slots.add(weekdaySlotKey(weekday, slot.availTimeSlot));
+        }
+      });
+    });
+    return slots;
+  }, [volunteers]);
+
   const availableSkills = useMemo(
     () => [...new Set(volunteers.flatMap(volunteer => volunteer.skills))].sort(),
     [volunteers],
@@ -175,6 +191,25 @@ function StudentMultiStepRequestForm() {
           category: submitted.category,
           reqStatus: 'Pending',
         });
+      }
+
+      try {
+        await createNotification({
+          UID: formData.volUID,
+          kind: 'request',
+          actorName: userDoc?.name ?? 'A student',
+          message: resubmitReqID
+            ? 'has sent you a support request again.'
+            : 'has sent you a support request.',
+          category: submitted.category,
+          title: submitted.title,
+          redirectionLink: '/volunteer/my-requests',
+          isRead: false,
+        });
+        setNotificationWarning('');
+      } catch (notificationError) {
+        console.error('Support request saved, but its notification could not be created:', notificationError);
+        setNotificationWarning('Your request was saved, but the volunteer could not be notified. Please contact them if needed.');
       }
 
       setSummary(submitted);
@@ -229,6 +264,9 @@ function StudentMultiStepRequestForm() {
               availability: formData.availability,
             }}
             updateFormData={updateFormData}
+            availableSlots={availableRequestSlots}
+            volunteersLoading={volunteersLoading}
+            volunteersError={volunteersError}
             onPrevious={handlePrevious}
             onNext={handleNext}
           />
@@ -269,6 +307,7 @@ function StudentMultiStepRequestForm() {
             <RequestSubmittedStep
               summary={summary}
               isResubmission={Boolean(resubmitReqID)}
+              notificationWarning={notificationWarning}
               onReturnToDashboard={() => navigate('/student/dashboard')}
               onViewRequests={() => navigate('/student/my-requests')}
             />
