@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../../firebase/config";
-import { getUser, 
-  getUserByStudentID } from "../../../services/UserService";
 import MainNavbar from "../../../components/navbar/main-navbar";
 import "../../registration/register.css";
 import "../../../components/page-css/settings.css";
