@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/authContext";
+import { updateUser, getUserByStudentID } from "../../../services/UserService";
 import MainNavbar from "../../../components/navbar/main-navbar";
 import "../../registration/register.css";
 import "../../../components/page-css/settings.css";
@@ -45,6 +47,7 @@ const ChevronLeft = () => (
 
 export default function StudentSettingsPage() {
   const navigate = useNavigate();
+  const { userDoc, loading: authLoading, refreshUser } = useAuth();
 
   const [formData, setFormData] = useState<StudentSettingsData>(EMPTY_SETTINGS);
   const [saved, setSaved] = useState<StudentSettingsData>(EMPTY_SETTINGS); // last loaded / saved version
@@ -59,27 +62,24 @@ export default function StudentSettingsPage() {
 
   // Load the signed-in student's current details
   useEffect(() => {
-    let cancelled = false;
+    if (authLoading) return;
 
-    (async () => {
-      try {
-        // TODO: load the student's name and studentID from Firestore, e.g.
-        // const loaded = await getStudentSettings(uid);
-        // if (!cancelled) {
-        //   setFormData(loaded);
-        //   setSaved(loaded);
-        // }
-      } catch {
-        if (!cancelled) setLoadError("We couldn't load your settings. Please refresh the page.");
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    })();
+    if (!userDoc) {
+      setLoadError("Could not find your profile. Please log in again.");
+      setIsLoading(false);
+      return;
+    }
 
-    return () => {
-      cancelled = true;
+    // 3. Populate the form with the context data
+    const loadedData = {
+      name: userDoc.name ?? "",
+      studentID: userDoc.studentID ?? "",
     };
-  }, []);
+    
+    setFormData(loadedData);
+    setSaved(loadedData);
+    setIsLoading(false);
+  }, [userDoc, authLoading]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -92,6 +92,14 @@ export default function StudentSettingsPage() {
     setSaveError("");
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  // Trim leading/trailing whitespace when the user leaves the field
+  if (value !== value.trim()) {
+    setFormData((prev) => ({ ...prev, [name]: value.trim() }));
+  }
+};
+
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaveMessage("");
@@ -101,17 +109,40 @@ export default function StudentSettingsPage() {
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
+    // Guard clause just in case
+    if (!userDoc?.UID) return;
+
     setIsSaving(true);
     try {
-      // TODO: save to Firestore, e.g.
-      // await saveStudentSettings(uid, {
-      //   name: formData.name.trim(),
-      //   studentID: formData.studentID.trim(),
-      // });
+      // 1. Check if the NEW student ID is already taken by someone else
+      const trimmedStudentID = formData.studentID.trim();
+      if (trimmedStudentID !== saved.studentID) {
+        const idInUse = await getUserByStudentID(trimmedStudentID);
+        if (idInUse) {
+          setErrors((prev) => ({ ...prev, studentID: "This Student ID is already registered." }));
+          setIsSaving(false);
+          return; // Stop saving
+        }
+      }
 
-      setSaved(formData);
+      // 2. Update Firestore
+      await updateUser(userDoc.UID, {
+        name: formData.name.trim(),
+        studentID: trimmedStudentID,
+      });
+
+      // 3. Refresh the AuthContext so other pages (like the dashboard) see the new name
+      await refreshUser();
+
+      // 4. Update local "saved" state so the "unsaved changes" warning goes away
+      setSaved({
+        name: formData.name.trim(),
+        studentID: trimmedStudentID,
+      });
+      
       setSaveMessage("Changes saved.");
-    } catch {
+    } catch (err) {
+      console.error("Failed to save settings:", err);
       setSaveError("We couldn't save your changes. Please try again.");
     } finally {
       setIsSaving(false);
@@ -149,6 +180,7 @@ export default function StudentSettingsPage() {
                   className={`register-field__input ${errors.name ? "register-field__input--error" : ""}`}
                   value={formData.name}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   maxLength={MAX_LENGTH.name}
                   autoComplete="name"
                   aria-invalid={!!errors.name}
@@ -172,6 +204,7 @@ export default function StudentSettingsPage() {
                   className={`register-field__input ${errors.studentID ? "register-field__input--error" : ""}`}
                   value={formData.studentID}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   maxLength={MAX_LENGTH.studentID}
                   autoComplete="off"
                   aria-invalid={!!errors.studentID}

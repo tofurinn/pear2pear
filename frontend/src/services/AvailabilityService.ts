@@ -1,5 +1,5 @@
 import { db } from '../firebase/config';
-import { collection, setDoc, getDoc, getDocs, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { collection, setDoc, getDoc, getDocs, updateDoc, deleteDoc, doc, query, where, writeBatch } from 'firebase/firestore';
 import type { Availability } from '../types/Availability';
 import { DAY_NAMES } from "../pages/student/student-utils";
 
@@ -92,4 +92,26 @@ export const deleteAvailability = async (availID: string): Promise<void> => {
     console.error(`Error deleting availability "${availID}":`, error);
     throw error;
   }
+};
+
+// ~~~~~~~~~~ UPDATE & DELETE SON ~~~~~~~~~~
+export const syncAvailabilities = async (volUID: string, slotKeys: string[]) => {
+  const batch = writeBatch(db);
+  const availabilityRef = collection(db, "availability");
+
+  // 1. Find and delete all existing availability for this volunteer
+  const existing = await getDocs(query(availabilityRef, where("volUID", "==", volUID)));
+  existing.forEach((docSnap) => batch.delete(docSnap.ref));
+
+  // 2. Add the new slots
+  slotKeys.forEach((slot) => {
+    const newRef = doc(availabilityRef);
+    batch.set(newRef, {
+      ...slotKeyToAvailability(slot, volUID),
+      availID: newRef.id, // 👈 Add this line!
+    });
+  });
+
+  // 3. Commit everything at once
+  await batch.commit();
 };

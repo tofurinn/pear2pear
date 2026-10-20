@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { auth } from "../../../firebase/config";
+import { useAuth } from "../../../context/authContext";
 import { mergePendingSignup } from "../../../firebase/pending-signup";
 import { createVolunteer } from "../../../services/VolunteerService";
 import { createAvailability, slotKeyToAvailability } from "../../../services/AvailabilityService";
@@ -44,14 +45,13 @@ interface VolunteerRegisterPageProps {
   flow?: Flow;
 }
 
-export default function VolunteerRegisterPage({
-  flow = "signup",
-}: VolunteerRegisterPageProps) {
+export default function VolunteerRegisterPage({flow = "signup",}: VolunteerRegisterPageProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [submitError, setSubmitError] = useState("");
 
+  const { refreshUser } = useAuth();
   const { backTo, successTo } = FLOWS[flow];
 
   // Volunteer-specific data
@@ -95,6 +95,8 @@ export default function VolunteerRegisterPage({
         for (const slot of profile.availability) {
           await createAvailability(slotKeyToAvailability(slot, uid));
         }
+
+        await refreshUser(); 
 
         navigate(successTo, { replace: true });
       } catch (err) {
