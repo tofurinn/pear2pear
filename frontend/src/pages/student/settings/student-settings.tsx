@@ -10,9 +10,9 @@ const ROUTES = {
   dashboard: "/student/dashboard",
 };
 
-// Max lengths mirror the USER table (name 255, studentID 15)
+// Max lengths mirror the USER table
 const MAX_LENGTH = {
-  name: 255,
+  name: 20,
   studentID: 15,
 } as const;
 

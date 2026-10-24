@@ -15,7 +15,7 @@ const ROUTES = {
 
 // Max lengths for each input field
 const MAX_LENGTH = {
-  name: 255,
+  name: 20,
   email: 255,
   studentID: 15,
 } as const;
