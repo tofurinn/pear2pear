@@ -15,9 +15,9 @@ const ROUTES = {
 
 // Max lengths for each input field
 const MAX_LENGTH = {
-  name: 255,
+  name: 20,
   email: 255,
-  studentID: 15,
+  studentID: 8,
 } as const;
 
 // Subset of the USER entity collected in step 1
@@ -32,7 +32,8 @@ export interface StudentStepOneData {
 type FormErrors = Partial<Record<keyof StudentStepOneData, string>>;
 
 // Email shape check
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@]+@helplive\.edu\.my$/;
+const STUDENT_ID_PATTERN = /^B\d{7}$/;
 
 // VALIDATOR : Maps errors to an error message
 // Empty returns means the form is valid
@@ -43,14 +44,18 @@ function validate(data: StudentStepOneData): FormErrors {
     errors.name = "Enter your name.";
   }
 
+  // Email validation
   if (!data.email.trim()) {
     errors.email = "Enter your email address.";
   } else if (!EMAIL_PATTERN.test(data.email.trim())) {
-    errors.email = "Enter a valid email address.";
+    errors.email = "Please use a valid university email address.";
   }
 
+  // Student ID validation
   if (!data.studentID.trim()) {
     errors.studentID = "Enter your student ID.";
+  } else if (!STUDENT_ID_PATTERN.test(data.studentID.trim().toUpperCase())) {
+    errors.studentID = "Please use a valid university student ID.";
   }
 
   return errors;
@@ -76,13 +81,21 @@ const UserRegisterPage: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Destructures the input's name + value (don't need to write once for each field)
     const { name, value } = e.target;
+    // Ensure each student ID entered is immediately converted to upper case
+    let newValue = value;
+    if (name === "studentID") newValue = value.toUpperCase();
+    if (name === "email") newValue = value.toLowerCase();
     // Updates the input for a certain field (only changed fields, keeps the rest)
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
 
     // Clear the error for a field as soon as the user edits it
     if (errors[name as keyof StudentStepOneData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
+  };
+
+  const toTitleCase = (str: string): string => {
+    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
   // STUDENT-ONLY PATH
@@ -100,7 +113,7 @@ const UserRegisterPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       // Check if email is already registered
-      const emailInUse = await getUserByEmail(formData.email.trim());
+      const emailInUse = await getUserByEmail(formData.email.trim().toLowerCase());
       if (emailInUse) {
         setErrors((prev) => ({
           ...prev,
@@ -110,7 +123,7 @@ const UserRegisterPage: React.FC = () => {
       }
 
       // Check if Student ID is already registered
-      const studentIDInUse = await getUserByStudentID(formData.studentID.trim());
+      const studentIDInUse = await getUserByStudentID(formData.studentID.trim().toUpperCase());
       if (studentIDInUse) {
         setErrors((prev) => ({
           ...prev,
@@ -124,9 +137,9 @@ const UserRegisterPage: React.FC = () => {
       // and is saved (readeable in later steps)
       savePendingSignup({
         stepOne: {
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          studentID: formData.studentID.trim(),
+          name: toTitleCase(formData.name.trim()),
+          email: formData.email.trim().toLowerCase(),
+          studentID: formData.studentID.trim().toUpperCase(),
         },
       });
 
@@ -158,7 +171,7 @@ const UserRegisterPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       // Check if email is already registered
-      const emailInUse = await getUserByEmail(formData.email.trim());
+      const emailInUse = await getUserByEmail(formData.email.trim().toLowerCase());
       if (emailInUse) {
         setErrors((prev) => ({
           ...prev,
@@ -168,7 +181,7 @@ const UserRegisterPage: React.FC = () => {
       }
 
       // Check if Student ID is already registered
-      const studentIDInUse = await getUserByStudentID(formData.studentID.trim());
+      const studentIDInUse = await getUserByStudentID(formData.studentID.trim().toUpperCase());
       if (studentIDInUse) {
         setErrors((prev) => ({
           ...prev,
@@ -182,9 +195,9 @@ const UserRegisterPage: React.FC = () => {
       // saved (readable by later steps)
       savePendingSignup({
         stepOne: {
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          studentID: formData.studentID.trim(),
+          name: toTitleCase(formData.name.trim()),
+          email: formData.email.trim().toLowerCase(),
+          studentID: formData.studentID.trim().toUpperCase(),
         },
       });
 
@@ -200,7 +213,7 @@ const UserRegisterPage: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <div className="register-page">
       {/* Navigation bar */}
@@ -222,6 +235,7 @@ const UserRegisterPage: React.FC = () => {
                 id="name"
                 name="name"
                 type="text"
+                placeholder="Bonnie Bun"
                 className={`register-field__input ${errors.name ? "register-field__input--error" : ""}`}
                 value={formData.name}
                 onChange={handleChange}
@@ -248,6 +262,7 @@ const UserRegisterPage: React.FC = () => {
                 id="email"
                 name="email"
                 type="email"
+                placeholder="b2401411@helplive.edu.my"
                 className={`register-field__input ${errors.email ? "register-field__input--error" : ""}`}
                 value={formData.email}
                 onChange={handleChange}
@@ -272,6 +287,7 @@ const UserRegisterPage: React.FC = () => {
                 id="studentID"
                 name="studentID"
                 type="text"
+                placeholder="B2401411"
                 className={`register-field__input ${errors.studentID ? "register-field__input--error" : ""}`}
                 value={formData.studentID}
                 onChange={handleChange}
@@ -317,9 +333,9 @@ const UserRegisterPage: React.FC = () => {
                 </button>
                 <p className="register-actions__login">
                   Already registered?{" "}
-                  <Link to={ROUTES.login} 
-                  onClick={clearPendingSignup}
-                  className="register-actions__login-link">
+                  <Link to={ROUTES.login}
+                    onClick={clearPendingSignup}
+                    className="register-actions__login-link">
                     Log in
                   </Link>
                 </p>

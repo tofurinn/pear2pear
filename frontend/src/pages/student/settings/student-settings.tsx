@@ -10,11 +10,13 @@ const ROUTES = {
   dashboard: "/student/dashboard",
 };
 
-// Max lengths mirror the USER table (name 255, studentID 15)
+// Max lengths mirror the USER table
 const MAX_LENGTH = {
-  name: 255,
-  studentID: 15,
+  name: 20,
+  studentID: 8,
 } as const;
+
+const STUDENT_ID_PATTERN = /^B\d{7}$/;
 
 interface StudentSettingsData {
   name: string;
@@ -34,6 +36,8 @@ function validate(data: StudentSettingsData): FormErrors {
 
   if (!data.studentID.trim()) {
     errors.studentID = "Enter your student ID.";
+  } else if (!STUDENT_ID_PATTERN.test(data.studentID.trim().toUpperCase())) {
+    errors.studentID = "Please use a valid university student ID.";
   }
 
   return errors;
@@ -75,7 +79,7 @@ export default function StudentSettingsPage() {
       name: userDoc.name ?? "",
       studentID: userDoc.studentID ?? "",
     };
-    
+
     setFormData(loadedData);
     setSaved(loadedData);
     setIsLoading(false);
@@ -83,7 +87,9 @@ export default function StudentSettingsPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Force Student ID to uppercase
+    const newValue = name === "studentID" ? value.toUpperCase() : value;
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
     // Clear the error for a field as soon as the user edits it
     if (errors[name as keyof StudentSettingsData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
@@ -93,12 +99,15 @@ export default function StudentSettingsPage() {
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-  // Trim leading/trailing whitespace when the user leaves the field
-  if (value !== value.trim()) {
-    setFormData((prev) => ({ ...prev, [name]: value.trim() }));
-  }
-};
+    const { name, value } = e.target;
+    // Trim whitespace (and uppercase studentID again, just in case)
+    let trimmedValue = value.trim();
+    if (name === "studentID") trimmedValue = trimmedValue.toUpperCase();
+
+    if (value !== trimmedValue) {
+      setFormData((prev) => ({ ...prev, [name]: trimmedValue }));
+    }
+  };
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -115,7 +124,7 @@ export default function StudentSettingsPage() {
     setIsSaving(true);
     try {
       // 1. Check if the NEW student ID is already taken by someone else
-      const trimmedStudentID = formData.studentID.trim();
+      const trimmedStudentID = formData.studentID.trim().toUpperCase();
       if (trimmedStudentID !== saved.studentID) {
         const idInUse = await getUserByStudentID(trimmedStudentID);
         if (idInUse) {
@@ -139,7 +148,7 @@ export default function StudentSettingsPage() {
         name: formData.name.trim(),
         studentID: trimmedStudentID,
       });
-      
+
       setSaveMessage("Changes saved.");
     } catch (err) {
       console.error("Failed to save settings:", err);
