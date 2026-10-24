@@ -40,7 +40,6 @@ function validate(data: LoginFormData): FormErrors {
 const UserLoginPage: React.FC = () => {
   const navigate = useNavigate();
   
-
   // Holds the values the user types into email and password fields
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
