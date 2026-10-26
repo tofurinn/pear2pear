@@ -13,6 +13,23 @@
   margin-top: calc(56 * var(--u));
 }
 
+.feedback-eligibility-error {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  text-align: left;
+}
+
+.feedback-eligibility-error-message {
+  white-space: nowrap;
+}
+
+.ui-actions.feedback-eligibility-actions {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
 .feedback-group {
   display: flex;
   flex-direction: column;
