@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../../../context/authContext";
 import SessionDetailsModal from './session-details.tsx';
@@ -7,6 +7,7 @@ import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
+import ToastMessage from '../../../../components/toast-message/toast-message.tsx';
 import { createNotification } from '../../../../services/NotificationService';
 
 import { buildVolunteerSessionItems, getVolunteerSessionStatus, hourToSlot, toDateKey } from '../../volunteer-utils.ts';
@@ -40,10 +41,25 @@ function VolunteerSessions() {
   const items = volunteerUID && sessionLoad?.volunteerUID === volunteerUID
     ? sessionLoad.items
     : [];
+  const [toastMessage, setToastMessage] = useState('');
+  const toastTimerRef = useRef<number | null>(null);
+
+  const showToast = (message: string) => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastMessage('');
+      toastTimerRef.current = null;
+    }, 3000);
+  };
   
   useEffect(() => {
     const timer = window.setInterval(() => setCurrentTime(new Date()), 30_000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => () => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
   }, []);
 
   useEffect(() => {
@@ -143,6 +159,7 @@ function VolunteerSessions() {
         : session
       ));
       setSelected(null);
+      showToast('Session successfully cancelled');
     } catch (error) {
       console.error('Error cancelling volunteer session:', error);
       setSessionError('Could not cancel this session. Please try again.');
@@ -177,6 +194,7 @@ function VolunteerSessions() {
         : session
       ));
       setSelected(null);
+      showToast('Session successfully confirmed');
     } catch (error) {
       console.error('Error confirming volunteer session arrangement:', error);
       setSessionError('Could not confirm this arrangement. Please try again.');
@@ -243,6 +261,7 @@ function VolunteerSessions() {
         : session
       ));
       setSelected(null);
+      showToast('Session marked as completed');
     } catch (error) {
       console.error('Error marking session as complete:', error);
       setSessionError('Could not mark this session as complete. Please try again.');
@@ -364,6 +383,7 @@ function VolunteerSessions() {
         onConfirm={() => void handleConfirmPendingAction()}
         onCancel={() => setPendingAction(null)}
       />
+      <ToastMessage message={toastMessage} />
     </div>
   );
 }

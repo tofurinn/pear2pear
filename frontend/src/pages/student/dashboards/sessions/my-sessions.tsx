@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../../../context/authContext";
 import SessionDetailsModal from './session-details.tsx';
@@ -6,6 +6,7 @@ import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
 import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
+import ToastMessage from '../../../../components/toast-message/toast-message.tsx';
 import { createNotification } from '../../../../services/NotificationService';
 
 import { buildStudentSessionItems, getStudentSessionStatus, hourToSlot, toDateKey } from '../../student-utils.tsx';
@@ -38,10 +39,25 @@ function StudentSessions() {
       : '';
   const items = studentUID && sessionLoad?.studentUID === studentUID ? sessionLoad.items : [];
   const [currentTime, setCurrentTime] = useState(() => new Date());
+  const [toastMessage, setToastMessage] = useState('');
+  const toastTimerRef = useRef<number | null>(null);
+
+  const showToast = (message: string) => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastMessage('');
+      toastTimerRef.current = null;
+    }, 3000);
+  };
 
   useEffect(() => {
     const timer = window.setInterval(() => setCurrentTime(new Date()), 30_000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => () => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
   }, []);
 
   useEffect(() => {
@@ -140,6 +156,7 @@ function StudentSessions() {
         : previous
       );
       setSelected(null);
+      showToast('Session successfully cancelled');
     } catch (error) {
       console.error('Error cancelling student session:', error);
       setSessionLoad(previous => previous?.studentUID === studentUID
@@ -184,6 +201,7 @@ function StudentSessions() {
         : previous
       );
       setSelected(null);
+      showToast('Session successfully confirmed');
     } catch (error) {
       console.error('Error confirming student session arrangement:', error);
       setSessionLoad(previous => previous?.studentUID === studentUID
@@ -329,6 +347,7 @@ function StudentSessions() {
         onConfirm={() => void handleConfirmPendingAction()}
         onCancel={() => setPendingAction(null)}
       />
+      <ToastMessage message={toastMessage} />
     </div>
   );
 }
