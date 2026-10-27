@@ -88,7 +88,7 @@ function VolunteerHistory() {
                   ? { ...item, volunteerRating: feedback.rating, studentFeedback: { rating: feedback.rating, comments: feedback.comments } }
                   : item;
               })
-              .sort((a, b) => b.sessDate.getTime() - a.sessDate.getTime()), // newest first
+              .sort((a, b) => b.sessTimestamp.toMillis() - a.sessTimestamp.toMillis()),
           });
         }
       } catch (error) {

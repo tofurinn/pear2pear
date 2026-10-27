@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Timestamp } from 'firebase/firestore';
 import { useAuth } from "../../../../context/authContext";
 import SessionDetailsModal from './session-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
@@ -111,7 +112,9 @@ function StudentSessions() {
     };
   }, [authLoading, studentUID]);
 
-  const currentItems = items.map(item => ({ ...item, status: getStudentSessionStatus(item, currentTime) }));
+  const currentItems = items
+    .map(item => ({ ...item, status: getStudentSessionStatus(item, currentTime) }))
+    .sort((a, b) => b.sessTimestamp.toMillis() - a.sessTimestamp.toMillis());
   const planned = currentItems.filter(item => item.sessStatus === 'Planned');
   const confirmed = currentItems.filter(item => item.sessStatus === 'Confirmed');
   const toRate = currentItems.filter(item => item.sessStatus === 'Completed'); // 'Rated' ones live in Support History
@@ -128,6 +131,7 @@ function StudentSessions() {
   const cancelSession = async (item: StudentSessionItem) => {
     try {
       await updateSessionStatus(item.sessID, 'Cancelled');
+      const sessTimestamp = Timestamp.now();
       try {
         const request = await getSupportRequest(item.reqID);
         if (!request) throw new Error('Could not find the support request for this session.');
@@ -148,7 +152,7 @@ function StudentSessions() {
         ? {
             ...previous,
             items: previous.items.map(session => session.sessID === item.sessID
-              ? { ...session, sessStatus: 'Cancelled', createdLabel: formatDate(new Date()) }
+              ? { ...session, sessStatus: 'Cancelled', sessTimestamp, createdLabel: formatDate(sessTimestamp.toDate()) }
               : session
             ),
             error: undefined,
@@ -173,6 +177,7 @@ function StudentSessions() {
         studConfirmed: true,
         volConfirmed: true,
       });
+      const sessTimestamp = Timestamp.now();
       try {
         const request = await getSupportRequest(item.reqID);
         if (!request) throw new Error('Could not find the support request for this session.');
@@ -198,7 +203,8 @@ function StudentSessions() {
                   sessStatus: 'Confirmed',
                   studConfirmed: true,
                   volConfirmed: true,
-                  createdLabel: formatDate(new Date()),
+                  sessTimestamp,
+                  createdLabel: formatDate(sessTimestamp.toDate()),
                 }
               : session
             ),

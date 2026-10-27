@@ -88,7 +88,7 @@ function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
           setHistoryLoad({
             studentUID,
             items: buildStudentSessionItems(finished, requests, Object.fromEntries(volunteerEntries))
-              .sort((a, b) => b.sessDate.getTime() - a.sessDate.getTime()), // newest first
+              .sort((a, b) => b.sessTimestamp.toMillis() - a.sessTimestamp.toMillis()),
             feedback: Object.fromEntries(feedbackEntries),
           });
         }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Timestamp } from 'firebase/firestore';
 import { useAuth } from "../../../../context/authContext";
 import SessionDetailsModal from './session-details.tsx';
 
@@ -123,7 +124,9 @@ function VolunteerSessions() {
     );
   };
 
-  const currentItems = items.map(item => ({ ...item, status: getVolunteerSessionStatus(item, currentTime) }));
+  const currentItems = items
+    .map(item => ({ ...item, status: getVolunteerSessionStatus(item, currentTime) }))
+    .sort((a, b) => b.sessTimestamp.toMillis() - a.sessTimestamp.toMillis());
   const planned = currentItems.filter(item => item.sessStatus === 'Planned');
   const confirmed = currentItems.filter(item => item.sessStatus === 'Confirmed');
   const pendingFeedback = currentItems.filter(item => item.sessStatus === 'Completed'); // 'Rated' ones live in Support History
@@ -138,6 +141,7 @@ function VolunteerSessions() {
   const cancelSession = async (item: VolunteerSessionItem) => {
     try {
       await updateSessionStatus(item.sessID, 'Cancelled');
+      const sessTimestamp = Timestamp.now();
       try {
         const request = await getSupportRequest(item.reqID);
         if (!request) throw new Error('Could not find the support request for this session.');
@@ -155,7 +159,7 @@ function VolunteerSessions() {
         console.error('Session cancelled, but its notification could not be created:', notificationError);
       }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
-        ? { ...session, sessStatus: 'Cancelled', createdLabel: formatDate(new Date()) }
+        ? { ...session, sessStatus: 'Cancelled', sessTimestamp, createdLabel: formatDate(sessTimestamp.toDate()) }
         : session
       ));
       setSelected(null);
@@ -173,6 +177,7 @@ function VolunteerSessions() {
         studConfirmed: true,
         volConfirmed: true,
       });
+      const sessTimestamp = Timestamp.now();
       try {
         const request = await getSupportRequest(item.reqID);
         if (!request) throw new Error('Could not find the support request for this session.');
@@ -195,7 +200,8 @@ function VolunteerSessions() {
             sessStatus: 'Confirmed',
             studConfirmed: true,
             volConfirmed: true,
-            createdLabel: formatDate(new Date()),
+            sessTimestamp,
+            createdLabel: formatDate(sessTimestamp.toDate()),
           }
         : session
       ));
@@ -246,6 +252,7 @@ function VolunteerSessions() {
       await updateSupportSession(item.sessID, {
         sessStatus: 'Completed'
       });
+      const sessTimestamp = Timestamp.now();
       try {
         const request = await getSupportRequest(item.reqID);
         if (!request) throw new Error('Could not find the support request for this session.');
@@ -263,7 +270,7 @@ function VolunteerSessions() {
         console.error('Session completed, but its notification could not be created:', notificationError);
       }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
-        ? { ...session, sessStatus: 'Completed', createdLabel: formatDate(new Date()) }
+        ? { ...session, sessStatus: 'Completed', sessTimestamp, createdLabel: formatDate(sessTimestamp.toDate()) }
         : session
       ));
       setSelected(null);
