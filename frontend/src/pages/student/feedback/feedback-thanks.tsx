@@ -45,6 +45,9 @@ function FeedbackThanks({ feedback, volunteerName, onReturnToDashboard }: Feedba
                                 <StarIcon key={i} filled={i < feedback.rating} outlined={i >= feedback.rating} />
                             ))}
                         </div>
+                        <span className="feedback-date">
+                            <CalendarIcon /> {formatDate(feedback.fbTimestamp)}
+                        </span>
                     </div>
                     {feedback.comments && <p className="feedback-comment">{feedback.comments}</p>}
                 </div>
