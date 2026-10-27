@@ -81,7 +81,7 @@ function SessionConfirmationStep({
           <div className="volunteer-card-header">
             <span className="volunteer-card-name">{volunteer.name}</span>
             <StarRating rating={volunteer.rating} />
-            <span className="rating-text">{volunteer.rating} ({volunteer.ratingCount})</span>
+            <span className="rating-text">{volunteer.rating.toFixed(1)} ({volunteer.ratingCount})</span>
           </div>
           <p className="volunteer-tags">{volunteer.tags.join(' • ')}</p>
         </div>

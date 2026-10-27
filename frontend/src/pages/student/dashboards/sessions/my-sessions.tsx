@@ -81,7 +81,7 @@ function StudentSessions() {
           const summary: StudentVolunteerSummary = {
             name: user?.name ?? 'Volunteer',
             rating: volunteer?.avgRating ?? 0,
-            ratingCount: 0,
+            ratingCount: volunteer?.ratingCount ?? 0,
             skills: volunteer?.skills,
           };
           return [volUID, summary] as const;

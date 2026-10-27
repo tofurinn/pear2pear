@@ -117,7 +117,7 @@ function RequestDetailsModal({
             <span className="session-modal-volunteer-name">{volunteer.name}</span>
             <StarRating rating={volunteer.rating} className="session-modal-stars" />
             <span className="session-modal-volunteer-rating">
-              {volunteer.rating}
+              {volunteer.rating.toFixed(1)} ({volunteer.ratingCount})
             </span>
           </div>
           {volunteer.skills && volunteer.skills.length > 0 && (

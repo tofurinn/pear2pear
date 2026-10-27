@@ -99,7 +99,7 @@ function StudentSessionRearrangement() {
           volUID: ownedRequest.volUID,
           name: volunteerUser?.name ?? 'Volunteer',
           rating: volunteer?.avgRating ?? 0,
-          ratingCount: 0,
+          ratingCount: volunteer?.ratingCount ?? 0,
           tags: volunteer?.skills ?? [],
         };
 

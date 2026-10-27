@@ -4,5 +4,5 @@ export interface Volunteer {
     skills: string[];
     prefSupportMode: "Physical" | "Virtual";
     avgRating: number;
-    reviewCount?: number;
+    ratingCount?: number;
 }

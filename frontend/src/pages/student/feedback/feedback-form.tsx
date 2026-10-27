@@ -140,7 +140,7 @@ function StudentFeedbackForm() {
       const rawAverage = totalStars / totalReviews;
       const avgRating = Math.round(rawAverage * 2) / 2;
 
-      await updateVolunteer(volunteer.UID, { avgRating, reviewCount: totalReviews });
+      await updateVolunteer(volunteer.UID, { avgRating, ratingCount: totalReviews });
 
       try {
         await createNotification({
