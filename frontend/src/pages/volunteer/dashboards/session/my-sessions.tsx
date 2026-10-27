@@ -10,7 +10,7 @@ import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
 import ToastMessage from '../../../../components/toast-message/toast-message.tsx';
 import { createNotification } from '../../../../services/NotificationService';
 
-import { buildVolunteerSessionItems, getVolunteerSessionStatus, hourToSlot, toDateKey } from '../../volunteer-utils.ts';
+import { buildVolunteerSessionItems, formatDate, getVolunteerSessionStatus, hourToSlot, toDateKey } from '../../volunteer-utils.ts';
 import type { VolunteerSessionItem, VolunteerStudentSummary } from '../../volunteer-utils.ts';
 import { getRequestsByVolunteer, getSupportRequest } from '../../../../services/RequestService';
 import { getSessionsByRequestIDs, updateSessionStatus, updateSupportSession } from '../../../../services/SessionService';
@@ -155,7 +155,7 @@ function VolunteerSessions() {
         console.error('Session cancelled, but its notification could not be created:', notificationError);
       }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
-        ? { ...session, sessStatus: 'Cancelled' }
+        ? { ...session, sessStatus: 'Cancelled', createdLabel: formatDate(new Date()) }
         : session
       ));
       setSelected(null);
@@ -190,7 +190,13 @@ function VolunteerSessions() {
         console.error('Session confirmed, but its notification could not be created:', notificationError);
       }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
-        ? { ...session, sessStatus: 'Confirmed', studConfirmed: true, volConfirmed: true }
+        ? {
+            ...session,
+            sessStatus: 'Confirmed',
+            studConfirmed: true,
+            volConfirmed: true,
+            createdLabel: formatDate(new Date()),
+          }
         : session
       ));
       setSelected(null);
@@ -257,7 +263,7 @@ function VolunteerSessions() {
         console.error('Session completed, but its notification could not be created:', notificationError);
       }
       updateItems(previous => previous.map(session => session.sessID === item.sessID
-        ? { ...session, sessStatus: 'Completed' }
+        ? { ...session, sessStatus: 'Completed', createdLabel: formatDate(new Date()) }
         : session
       ));
       setSelected(null);

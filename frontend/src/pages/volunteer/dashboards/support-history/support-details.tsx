@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { CalendarIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon, RatedIcon } from '../../../../components/icons.tsx';
+import { CalendarIcon, ClockIcon, CloseIcon, HistoryUpdateIcon, PinIcon, RatedIcon, StarRating, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import { StatusPill } from '../../../../components/dashboard-components.tsx';
 import type { VolunteerSessionItem } from '../../volunteer-utils.ts';
@@ -14,26 +14,6 @@ interface SupportDetailsProps {
 }
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <span className="session-modal-stars" role="img" aria-label={`${rating} out of 5 stars`}>
-      {[0, 1, 2, 3, 4].map(index => {
-        const fill = Math.max(0, Math.min(1, rating - index)) * 100;
-        return (
-          <span
-            key={index}
-            className="session-modal-star"
-            style={{ ['--fill' as string]: `${fill}%` }}
-            aria-hidden="true"
-          >
-            ★
-          </span>
-        );
-      })}
-    </span>
-  );
-}
 
 function SupportDetailsModal({ item, onClose }: SupportDetailsProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -103,7 +83,7 @@ function SupportDetailsModal({ item, onClose }: SupportDetailsProps) {
 
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
-          <span className="session-modal-topdate"><CalendarIcon /> {dateLabel}</span>
+          <span className="session-modal-topdate"><HistoryUpdateIcon /> {item.createdLabel}</span>
         </div>
 
         <dl className="session-modal-info">
@@ -135,7 +115,7 @@ function SupportDetailsModal({ item, onClose }: SupportDetailsProps) {
             <div className="session-modal-feedback">
               <h3 className="session-modal-feedback-title">Submitted Feedback</h3>
               <div className="session-modal-feedback-content">
-                <Stars rating={item.studentFeedback.rating} />
+                <StarRating rating={item.studentFeedback.rating} className="session-modal-feedback-stars" />
                 {item.studentFeedback.comments && (
                   <p className="session-modal-feedback-comments">{item.studentFeedback.comments}</p>
                 )}

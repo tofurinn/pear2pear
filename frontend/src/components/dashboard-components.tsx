@@ -7,6 +7,7 @@ import {
   CheckIcon,
   ClockIcon,
   CloseIcon,
+  HistoryUpdateIcon,
   StarRating,
 } from './icons.tsx';
 
@@ -63,7 +64,7 @@ export function ItemCard({
       )}
 
       <div className="ui-item-card-footer">
-        <span className="ui-item-card-date">{dateLabel}</span>
+        <span className="ui-item-card-date"><HistoryUpdateIcon /> {dateLabel}</span>
         <div className="dashboard-item-actions">
           {pill}
         </div>

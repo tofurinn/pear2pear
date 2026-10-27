@@ -138,7 +138,7 @@ function StudentFeedbackForm() {
       const totalStars = allFeedback.reduce((total, feedback) => total + feedback.rating, 0);
       const totalReviews = allFeedback.length;
       const rawAverage = totalStars / totalReviews;
-      const avgRating = Math.round(rawAverage * 2) / 2;
+      const avgRating = Math.round(rawAverage * 10) / 10;
 
       await updateVolunteer(volunteer.UID, { avgRating, ratingCount: totalReviews });
 

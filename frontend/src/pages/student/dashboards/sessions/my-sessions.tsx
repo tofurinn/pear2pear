@@ -9,7 +9,7 @@ import ConfirmPopup from '../../../../components/popup/confirm-popup.tsx';
 import ToastMessage from '../../../../components/toast-message/toast-message.tsx';
 import { createNotification } from '../../../../services/NotificationService';
 
-import { buildStudentSessionItems, getStudentSessionStatus, hourToSlot, toDateKey } from '../../student-utils.tsx';
+import { buildStudentSessionItems, formatDate, getStudentSessionStatus, hourToSlot, toDateKey } from '../../student-utils.tsx';
 import type { StudentSessionItem, StudentVolunteerSummary } from '../../student-utils.tsx';
 import { getRequestsByStudent, getSupportRequest } from '../../../../services/RequestService';
 import { getSessionsByRequestIDs, updateSessionStatus, updateSupportSession } from '../../../../services/SessionService';
@@ -148,7 +148,7 @@ function StudentSessions() {
         ? {
             ...previous,
             items: previous.items.map(session => session.sessID === item.sessID
-              ? { ...session, sessStatus: 'Cancelled' }
+              ? { ...session, sessStatus: 'Cancelled', createdLabel: formatDate(new Date()) }
               : session
             ),
             error: undefined,
@@ -193,7 +193,13 @@ function StudentSessions() {
         ? {
             ...previous,
             items: previous.items.map(session => session.sessID === item.sessID
-              ? { ...session, sessStatus: 'Confirmed', studConfirmed: true, volConfirmed: true }
+              ? {
+                  ...session,
+                  sessStatus: 'Confirmed',
+                  studConfirmed: true,
+                  volConfirmed: true,
+                  createdLabel: formatDate(new Date()),
+                }
               : session
             ),
             error: undefined,

@@ -41,13 +41,10 @@ function FeedbackThanks({ feedback, volunteerName, onReturnToDashboard }: Feedba
                 <div className="feedback-review">
                     <div className="feedback-review-top">
                         <div className="feedback-stars" role="img" aria-label={`${feedback.rating} out of 5 stars`}>
-                            {Array.from({ length: feedback.rating }, (_, i) => (
-                                <StarIcon key={i} filled outlined={false} />
+                            {Array.from({ length: 5 }, (_, i) => (
+                                <StarIcon key={i} filled={i < feedback.rating} outlined={i >= feedback.rating} />
                             ))}
                         </div>
-                        <span className="feedback-date">
-                            <CalendarIcon /> {formatDate(feedback.fbTimestamp)}
-                        </span>
                     </div>
                     {feedback.comments && <p className="feedback-comment">{feedback.comments}</p>}
                 </div>

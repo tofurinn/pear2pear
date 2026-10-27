@@ -36,6 +36,12 @@ export const CalendarIcon = (p: IconProps) => (
 export const ClockIcon = (p: IconProps) => (
   <Icon {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></Icon>
 );
+export const HistoryUpdateIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M3 12a9 9 0 109-9 9.2 9.2 0 00-6.4 2.6L3 8" />
+    <path d="M3 3v5h5M12 7v5l3 2" />
+  </Icon>
+);
 export const SwapIcon = (p: IconProps) => <Icon {...p}><path d="M7 7h11l-3-3M17 17H6l3 3" /></Icon>;
 export const PinIcon = (p: IconProps) => (
   <Icon {...p}>

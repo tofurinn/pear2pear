@@ -88,7 +88,10 @@ export const updateSupportSession = async (
   updates: Partial<Omit<Support_Session, 'sessID'>>
 ): Promise<void> => {
   try {
-    await updateDoc(doc(db, COLLECTION, sessID), { ...updates });
+    await updateDoc(doc(db, COLLECTION, sessID), {
+      ...updates,
+      ...(updates.sessStatus !== undefined ? { sessTimestamp: Timestamp.now() } : {}),
+    });
   } catch (error) {
     console.error(`Error updating support session "${sessID}":`, error);
     throw error;
@@ -98,7 +101,7 @@ export const updateSupportSession = async (
 // Shortcut for status changes (Cancelled, Completed, Rated...)
 export const updateSessionStatus = async (sessID: string, sessStatus: Support_Session['sessStatus']): Promise<void> => {
   try {
-    await updateDoc(doc(db, COLLECTION, sessID), { sessStatus });
+    await updateDoc(doc(db, COLLECTION, sessID), { sessStatus, sessTimestamp: Timestamp.now() });
   } catch (error) {
     console.error(`Error setting session "${sessID}" to "${sessStatus}":`, error);
     throw error;
