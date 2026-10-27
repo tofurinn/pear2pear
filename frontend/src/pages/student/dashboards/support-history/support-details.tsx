@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { CalendarIcon, ClockIcon, CloseIcon, HistoryUpdateIcon, PinIcon, RatedIcon, StarRating, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import { StatusPill } from '../../../../components/dashboard-components.tsx';
+import { formatDate } from '../../student-utils.tsx';
 import type { StudentSessionItem } from '../../student-utils.tsx';
 
 import '../../../../components/page-css/details.css';
@@ -92,7 +93,7 @@ function SupportDetailsModal({ item, feedback, onClose }: SupportDetailsModalPro
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
           <span className="session-modal-topdate">
-            <HistoryUpdateIcon /> {item.createdLabel}
+            Request accepted on: {formatDate(item.reqTimestamp.toDate())}
           </span>
         </div>
 
@@ -133,7 +134,13 @@ function SupportDetailsModal({ item, feedback, onClose }: SupportDetailsModalPro
               <div className="session-modal-feedback">
                 <h3 className="session-modal-feedback-title">Submitted Feedback</h3>
                 <div className="session-modal-feedback-content">
-                  <StarRating rating={feedback.rating} className="session-modal-feedback-stars" />
+                  <div className="session-modal-feedback-rating">
+                    <StarRating
+                      rating={feedback.rating}
+                      className="session-modal-stars session-modal-feedback-stars"
+                    />
+                    <span className="session-modal-feedback-score">{feedback.rating}/5</span>
+                  </div>
                   {feedback.comments && <p className="session-modal-feedback-comments">{feedback.comments}</p>}
                 </div>
               </div>
@@ -141,12 +148,15 @@ function SupportDetailsModal({ item, feedback, onClose }: SupportDetailsModalPro
           </section>
         )}
 
-        <footer className="session-modal-footer">
+        <footer className="session-modal-footer session-modal-footer--history">
           <StatusPill
             tone={item.status.tone}
             label={item.status.label}
             icon={item.sessStatus === 'Cancelled' ? <CloseIcon /> : <RatedIcon />}
           />
+          <span className="session-modal-last-updated">
+            <HistoryUpdateIcon /> Last updated: {item.createdLabel}
+          </span>
         </footer>
       </div>
     </div>,
