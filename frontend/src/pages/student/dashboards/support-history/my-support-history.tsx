@@ -71,7 +71,7 @@ function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
             volUID,
             name: user?.name ?? 'Volunteer',
             rating: volunteer?.avgRating ?? 0,
-            ratingCount: 0,
+            ratingCount: volunteer?.ratingCount ?? 0,
             tags: volunteer?.skills ?? [],
           };
           return [volUID, summary] as const;
@@ -88,7 +88,7 @@ function StudentHistory({ dashboardPath = '/student/dashboard' }: { dashboardPat
           setHistoryLoad({
             studentUID,
             items: buildStudentSessionItems(finished, requests, Object.fromEntries(volunteerEntries))
-              .sort((a, b) => b.sessDate.getTime() - a.sessDate.getTime()), // newest first
+              .sort((a, b) => b.sessTimestamp.toMillis() - a.sessTimestamp.toMillis()),
             feedback: Object.fromEntries(feedbackEntries),
           });
         }

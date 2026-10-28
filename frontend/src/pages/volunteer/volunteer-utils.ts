@@ -52,6 +52,8 @@ export type VolunteerRequestItem = DashboardRequestItem & {
 
 export type VolunteerSessionItem = DashboardSessionItem & {
   reqID: string;
+  reqTimestamp: Support_Request['reqTimestamp'];
+  sessTimestamp: Support_Session['sessTimestamp'];
   sessTimeSlot: Support_Session['sessTimeSlot'];
   createdLabel: string;
   volunteerRating?: number;
@@ -106,6 +108,8 @@ export const toVolunteerSessionItem = (
 ): VolunteerSessionItem => ({
   sessID: session.sessID,
   reqID: session.reqID,
+  reqTimestamp: request.reqTimestamp,
+  sessTimestamp: session.sessTimestamp,
   sessStatus: session.sessStatus,
   studConfirmed: session.studConfirmed,
   volConfirmed: session.volConfirmed,

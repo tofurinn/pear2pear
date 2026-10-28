@@ -64,7 +64,7 @@ function StudentRequests() {
           const summary: StudentVolunteerSummary = {
             name: user?.name ?? 'Volunteer',
             rating: volunteer?.avgRating ?? 0,
-            ratingCount: 0,
+            ratingCount: volunteer?.ratingCount ?? 0,
             skills: volunteer?.skills,
           };
           return [volunteerID, summary] as const;

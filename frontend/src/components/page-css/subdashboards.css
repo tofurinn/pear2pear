@@ -251,10 +251,19 @@
 }
 
 .ui-item-card-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   margin-right: auto;
   font-size: var(--fs-small);
   color: #cfcfcf;
   white-space: nowrap;
+}
+
+.ui-item-card-date svg {
+  flex: none;
+  width: 1em;
+  height: 1em;
 }
 
 /* ---------- Status pill and chip buttons ---------- */

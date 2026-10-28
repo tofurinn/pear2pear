@@ -87,7 +87,7 @@ function StudentMultiStepSessionForm() {
             volUID,
             name: user?.name ?? 'Volunteer',
             rating: volunteer?.avgRating ?? 0,
-            ratingCount: 0,
+            ratingCount: volunteer?.ratingCount ?? 0,
             tags: volunteer?.skills ?? [],
           };
           return [volUID, summary] as const;

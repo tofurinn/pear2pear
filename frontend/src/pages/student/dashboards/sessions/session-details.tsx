@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, HistoryUpdateIcon, PinIcon, StarRating, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import { getStudentSessionStatus } from '../../student-utils.tsx';
 import type { StudentSessionItem } from '../../student-utils.tsx';
@@ -26,34 +26,13 @@ export interface SessionDetailsExtras {
   volunteer?: {
     name: string;
     rating: number;
+    ratingCount: number;
     skills?: string[];
     requestStatusLabel?: string; // e.g. "Accepted"
   };
 }
 
 export type SessionDetailsItem = StudentSessionItem & SessionDetailsExtras;
-
-// ─── Small icons (swap for ones in icons.tsx if you already have them) ─────────
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <span className="session-modal-stars" role="img" aria-label={`${rating} out of 5 stars`}>
-      {[0, 1, 2, 3, 4].map(i => {
-        const fill = Math.max(0, Math.min(1, rating - i)) * 100;
-        return (
-          <span
-            key={i}
-            className="session-modal-star"
-            style={{ ['--fill' as string]: `${fill}%` }}
-            aria-hidden="true"
-          >
-            ★
-          </span>
-        );
-      })}
-    </span>
-  );
-}
 
 // ─── Modal ─────────────────────────────────────────────────────────────────────
 
@@ -161,7 +140,7 @@ function SessionDetailsModal({
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
           <span className="session-modal-topdate">
-            <CalendarIcon /> {item.createdLabel}
+            <HistoryUpdateIcon /> {item.createdLabel}
           </span>
         </div>
 
@@ -195,10 +174,7 @@ function SessionDetailsModal({
               <div className="session-modal-feedback">
                 <h3 className="session-modal-feedback-title">Submitted Feedback</h3>
                 <div className="session-modal-feedback-content">
-                  <div className="session-modal-feedback-stars" aria-label={`${student.feedback.rating} out of 5 stars`}>
-                    {'★'.repeat(Math.floor(student.feedback.rating))}
-                    {student.feedback.rating % 1 >= 0.5 ? '½' : ''}
-                  </div>
+                  <StarRating rating={student.feedback.rating} className="session-modal-feedback-stars" />
                   <p className="session-modal-feedback-comments">{student.feedback.comments}</p>
                 </div>
               </div>
@@ -210,9 +186,9 @@ function SessionDetailsModal({
           <section className="session-modal-volunteer" aria-label="Matched volunteer">
             <div className="session-modal-volunteer-head">
               <span className="session-modal-volunteer-name">{volunteer.name}</span>
-              <Stars rating={volunteer.rating} />
-              <span className="session-modal-volunteer-rating">
-                {volunteer.rating}
+              <StarRating rating={volunteer.rating} className="session-modal-stars" />
+              <span className="session-modal-volunteer-rating rating-text">
+                {volunteer.rating.toFixed(1)} ({volunteer.ratingCount})
               </span>
             </div>
             {volunteer.skills && volunteer.skills.length > 0 && (

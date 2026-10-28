@@ -142,7 +142,7 @@ export default function StudentDashboard({
             title: request.title,
             date: session.sessDate.toLocaleDateString("en-GB", {
               day: "numeric",
-              month: "long",
+              month: "short",
               year: "numeric",
             }),
             ...(feedback ? { rating: feedback.rating } : {}),

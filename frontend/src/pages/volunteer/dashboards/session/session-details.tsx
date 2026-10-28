@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, HistoryUpdateIcon, PinIcon, SwapIcon } from '../../../../components/icons.tsx';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import { getVolunteerSessionStatus } from '../../volunteer-utils.ts';
 import type { VolunteerSessionItem } from '../../volunteer-utils.ts';
@@ -104,7 +104,7 @@ function SessionDetailsModal({
 
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
-          <span className="session-modal-topdate"><CalendarIcon /> {item.createdLabel}</span>
+          <span className="session-modal-topdate"><HistoryUpdateIcon /> {item.createdLabel}</span>
         </div>
 
         <dl className="session-modal-info">

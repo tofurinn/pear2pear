@@ -55,11 +55,14 @@ export interface StudentVolunteerSummary {
 
 export interface StudentSessionItem extends DashboardSessionItem {
   reqID: string;
+  reqTimestamp: Support_Request['reqTimestamp'];
+  sessTimestamp: Support_Session['sessTimestamp'];
   sessTimeSlot: Support_Session['sessTimeSlot'];
   createdLabel: string;   // (sessTimestamp)
   volunteer?: {
     name: string;
     rating: number;
+    ratingCount: number;
     skills?: string[];
     requestStatusLabel?: string;
   };
@@ -71,6 +74,7 @@ export interface StudentRequestItem extends DashboardRequestItem {
   volunteer: {
     name: string;
     rating: number;
+    ratingCount: number;
     skills?: string[];
     requestStatusLabel: string;
   };
@@ -106,6 +110,7 @@ export const toStudentRequestItem = (
   volunteer: {
     name: volunteer.name,
     rating: volunteer.rating,
+    ratingCount: volunteer.ratingCount,
     skills: volunteer.skills,
     requestStatusLabel: request.reqStatus,
   },
@@ -119,6 +124,7 @@ export const buildStudentRequestItems = (
     toStudentRequestItem(request, volunteers[request.volUID] ?? {
       name: 'Volunteer',
       rating: 0,
+      ratingCount: 0,
     })
   );
 
@@ -166,6 +172,8 @@ export const toStudentSessionItem = (
 ): StudentSessionItem => ({
   sessID: session.sessID,
   reqID: session.reqID,
+  reqTimestamp: request.reqTimestamp,
+  sessTimestamp: session.sessTimestamp,
   sessStatus: session.sessStatus,
   studConfirmed: session.studConfirmed,
   volConfirmed: session.volConfirmed,
@@ -185,6 +193,7 @@ export const toStudentSessionItem = (
   volunteer: {
     name: volunteer.name,
     rating: volunteer.rating,
+    ratingCount: volunteer.ratingCount,
     skills: volunteer.skills,
     requestStatusLabel: request.reqStatus,
   },
