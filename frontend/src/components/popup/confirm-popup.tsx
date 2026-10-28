@@ -11,6 +11,8 @@ interface ConfirmPopupProps {
   message: ReactNode;
   confirmLabel?: string;
   cancelLabel?: string;
+  hideCancel?: boolean;
+  confirmStyle?: 'solid' | 'outline';
   busy?: boolean;          // true while the confirmed action is running: disables everything
   busyLabel?: string;
   onConfirm: () => void;
@@ -23,6 +25,8 @@ function ConfirmPopup({
   message,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
+  hideCancel = false,
+  confirmStyle = 'solid',
   busy = false,
   busyLabel = 'Please wait…',
   onConfirm,
@@ -54,10 +58,12 @@ function ConfirmPopup({
         <p className="popup-message" id="popup-message">{message}</p>
 
         <div className="popup-actions">
-          <button type="button" className="ui-btn ui-btn-outline" onClick={onCancel} disabled={busy}>
-            {cancelLabel}
-          </button>
-          <button type="button" className="ui-btn ui-btn-solid" onClick={onConfirm} disabled={busy} autoFocus>
+          {!hideCancel && (
+            <button type="button" className="ui-btn ui-btn-outline" onClick={onCancel} disabled={busy}>
+              {cancelLabel}
+            </button>
+          )}
+          <button type="button" className={`ui-btn ui-btn-${confirmStyle}`} onClick={onConfirm} disabled={busy} autoFocus>
             {busy ? busyLabel : confirmLabel}
           </button>
         </div>

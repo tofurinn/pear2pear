@@ -57,6 +57,7 @@ function VolunteerMultiStepSessionForm() {
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showSlotUnavailablePopup, setShowSlotUnavailablePopup] = useState(false);
   const [requests, setRequests] = useState<Support_Request[]>([]);
   const [students, setStudents] = useState<Record<string, Student>>({});
   const [loadedRequestsVolunteerUID, setLoadedRequestsVolunteerUID] = useState<string | null>(null);
@@ -166,19 +167,31 @@ function VolunteerMultiStepSessionForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setSubmitMessage('');
+    setShowSlotUnavailablePopup(false);
 
     try {
       if (!selectedRequest || !selectedStudent) throw new Error('REQUEST_NOT_FOUND');
+      if (!volunteerUID) throw new Error('REQUEST_NOT_FOUND');
 
-      if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, availability, bookedSessions)) {
-        throw new Error('SLOT_UNAVAILABLE');
-      }
+      if (!formData.sessDate || !formData.sessTimeSlot) throw new Error('SLOT_UNAVAILABLE');
       const baseDate = parseDateKey(formData.sessDate);
       const hour = slotToHour(formData.sessTimeSlot);
       const slotDate = new Date(baseDate);
       slotDate.setHours(hour, 0, 0, 0);
       const sessTimeSlot = Timestamp.fromDate(slotDate);
       if (sessTimeSlot.toMillis() <= Date.now()) throw new Error('SLOT_PASSED');
+
+      const [availabilityRecords, volunteerRequests] = await Promise.all([
+        getAvailabilityByVolunteer(volunteerUID, 'server'),
+        getRequestsByVolunteer(volunteerUID, 'server'),
+      ]);
+      const latestSessions = await getSessionsByRequestIDs(volunteerRequests.map(request => request.reqID), 'server');
+      const latestAvailability = toWeeklyAvailability(availabilityRecords);
+      setAvailability(latestAvailability);
+      setBookedSessions(latestSessions);
+      if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, latestAvailability, latestSessions)) {
+        throw new Error('SLOT_UNAVAILABLE');
+      }
 
       await createSupportSession({
         reqID: formData.reqID,
@@ -215,14 +228,16 @@ function VolunteerMultiStepSessionForm() {
       setCurrentStep(1);
     } catch (error) {
       console.error('Session submission error:', error);
+      const slotUnavailable = error instanceof Error && error.message === 'SLOT_UNAVAILABLE';
       setErrorMessage(
         error instanceof Error && error.message === 'SLOT_PASSED'
           ? 'That time slot has already passed. Please go back and choose another one.'
-          : error instanceof Error && error.message === 'SLOT_UNAVAILABLE'
+          : slotUnavailable
             ? 'That time slot is no longer available. Please choose another one.'
             : 'Error arranging session. Please try again.'
       );
-      setSubmitMessage('error');
+      setSubmitMessage(slotUnavailable ? '' : 'error');
+      setShowSlotUnavailablePopup(slotUnavailable);
     } finally {
       setIsSubmitting(false);
       setShowConfirm(false); // close the popup whether it worked or not, so it never covers the next screen
@@ -355,6 +370,19 @@ function VolunteerMultiStepSessionForm() {
         busyLabel="Arranging…"
         onConfirm={handleSubmit}
         onCancel={() => setShowConfirm(false)}
+      />
+      <ConfirmPopup
+        open={showSlotUnavailablePopup}
+        title="Time slot unavailable"
+        message={errorMessage}
+        confirmLabel="Choose Another Time"
+        hideCancel
+        confirmStyle="outline"
+        onConfirm={() => {
+          setShowSlotUnavailablePopup(false);
+          setCurrentStep(2);
+        }}
+        onCancel={() => setShowSlotUnavailablePopup(false)}
       />
     </div>
   );
