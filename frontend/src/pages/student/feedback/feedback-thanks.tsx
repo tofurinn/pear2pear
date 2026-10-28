@@ -1,7 +1,6 @@
 import React from 'react';
-import type { Timestamp } from 'firebase/firestore';
 import type { Feedback } from '../../../types/Feedback';
-import { CalendarIcon, StarIcon } from '../../../components/icons.tsx';
+import { StarIcon } from '../../../components/icons.tsx';
 import volunteerPfp from '../../../assets/images/volunteerpfp-cropped.png';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -13,8 +12,6 @@ interface FeedbackThanksProps {
     onReturnToDashboard: () => void;
 }
 
-const formatDate = (ts: Timestamp) =>
-    ts.toDate().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 import pearHeartIcon from '../../../assets/images/pearheart.png';
 
 const HeartPearIcon: React.FC<{ className?: string }> = ({ className }) => (
@@ -45,9 +42,6 @@ function FeedbackThanks({ feedback, volunteerName, onReturnToDashboard }: Feedba
                                 <StarIcon key={i} filled={i < feedback.rating} outlined={i >= feedback.rating} />
                             ))}
                         </div>
-                        <span className="feedback-date">
-                            <CalendarIcon /> {formatDate(feedback.fbTimestamp)}
-                        </span>
                     </div>
                     {feedback.comments && <p className="feedback-comment">{feedback.comments}</p>}
                 </div>
