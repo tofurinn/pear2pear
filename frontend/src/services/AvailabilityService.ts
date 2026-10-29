@@ -1,5 +1,5 @@
 import { db } from '../firebase/config';
-import { collection, setDoc, getDoc, getDocs, updateDoc, deleteDoc, doc, query, where, writeBatch } from 'firebase/firestore';
+import { collection, setDoc, getDoc, getDocs, getDocsFromServer, updateDoc, deleteDoc, doc, query, where, writeBatch } from 'firebase/firestore';
 import type { Availability } from '../types/Availability';
 import { DAY_NAMES } from "../pages/student/student-utils";
 
@@ -49,9 +49,13 @@ export const getAvailability = async (availID: string): Promise<Availability | n
 };
 
 // Get all of a volunteer's slots (the time-slot grid in the session form)
-export const getAvailabilityByVolunteer = async (volUID: string): Promise<Availability[]> => {
+export const getAvailabilityByVolunteer = async (
+  volUID: string,
+  source: 'default' | 'server' = 'default',
+): Promise<Availability[]> => {
   try {
-    const snap = await getDocs(query(collection(db, COLLECTION), where('volUID', '==', volUID)));
+    const availabilityQuery = query(collection(db, COLLECTION), where('volUID', '==', volUID));
+    const snap = source === 'server' ? await getDocsFromServer(availabilityQuery) : await getDocs(availabilityQuery);
     return snap.docs.map(d => d.data() as Availability);
   } catch (error) {
     console.error(`Error getting availability for volunteer "${volUID}":`, error);

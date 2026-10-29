@@ -60,6 +60,7 @@ function StudentSessionRearrangement() {
   const [availability, setAvailability] = useState<Record<number, number[]>>({});
   const [bookedSessions, setBookedSessions] = useState<Support_Session[]>([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showSlotUnavailablePopup, setShowSlotUnavailablePopup] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [summary, setSummary] = useState<SessionSummary | null>(null);
@@ -148,19 +149,30 @@ function StudentSessionRearrangement() {
 
     try {
       if (!session || !request || !sessionVolunteer) throw new Error('Could not load the session details');
-      if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, availability, bookedSessions, session.sessID)) {
-        throw new Error('Choose an available future time slot.');
-      }
+      if (!formData.sessDate || !formData.sessTimeSlot) throw new Error('SLOT_UNAVAILABLE');
 
       const sessDate = parseDateKey(formData.sessDate);
       const hour = slotToHour(formData.sessTimeSlot);
       const sessTimeSlot = new Date(sessDate);
       sessTimeSlot.setHours(hour, 0, 0, 0);
-      if (sessTimeSlot <= new Date()) throw new Error('Choose a future time slot.');
+      const sessionTimestamp = Timestamp.fromDate(sessTimeSlot);
+      if (sessionTimestamp.toMillis() <= Date.now()) throw new Error('SLOT_PASSED');
+
+      const [availabilityRecords, volunteerRequests] = await Promise.all([
+        getAvailabilityByVolunteer(request.volUID, 'server'),
+        getRequestsByVolunteer(request.volUID, 'server'),
+      ]);
+      const latestSessions = await getSessionsByRequestIDs(volunteerRequests.map(candidate => candidate.reqID), 'server');
+      const latestAvailability = toWeeklyAvailability(availabilityRecords);
+      setAvailability(latestAvailability);
+      setBookedSessions(latestSessions);
+      if (!isSessionSlotBookable(formData.sessDate, formData.sessTimeSlot, latestAvailability, latestSessions, session.sessID)) {
+        throw new Error('SLOT_UNAVAILABLE');
+      }
 
       await updateSupportSession(sessID, {
         sessDate,
-        sessTimeSlot: Timestamp.fromDate(sessTimeSlot),
+        sessTimeSlot: sessionTimestamp,
         supportMode: formData.supportMode,
         meetingLocation: formData.meetingLocation.trim(),
         sessStatus: 'Planned',
@@ -195,7 +207,16 @@ function StudentSessionRearrangement() {
       setSummary(rearranged); // switches the page to the confirmation screen
     } catch (error) {
       console.error('Session update error:', error);
-      setErrorMessage('Could not save your changes. Please try again.');
+      const slotUnavailable = error instanceof Error && error.message === 'SLOT_UNAVAILABLE';
+      setErrorMessage(
+        error instanceof Error && error.message === 'SLOT_PASSED'
+          ? 'That time slot has already passed. Please go back and choose another one.'
+          : slotUnavailable
+            ? 'That time slot is no longer available. Please choose another one.'
+            : 'Could not save your changes. Please try again.'
+      );
+      setShowSlotUnavailablePopup(slotUnavailable);
+      if (slotUnavailable) setErrorMessage('');
       setShowConfirm(false);
     } finally {
       setIsSaving(false);
@@ -331,6 +352,19 @@ function StudentSessionRearrangement() {
         busyLabel="Saving…"
         onConfirm={handleSave}
         onCancel={() => setShowConfirm(false)}
+      />
+      <ConfirmPopup
+        open={showSlotUnavailablePopup}
+        title="Time slot unavailable"
+        message="That time slot is no longer available. Please choose another one."
+        confirmLabel="Choose Another Time"
+        hideCancel
+        confirmStyle="outline"
+        onConfirm={() => {
+          setShowSlotUnavailablePopup(false);
+          setCurrentStep(FIRST_STEP);
+        }}
+        onCancel={() => setShowSlotUnavailablePopup(false)}
       />
     </div>
   );

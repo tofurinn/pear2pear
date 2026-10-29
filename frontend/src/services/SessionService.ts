@@ -1,5 +1,5 @@
 import { db } from '../firebase/config';
-import { collection, setDoc, getDoc, getDocs, updateDoc, deleteDoc, doc, query, where, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { collection, setDoc, getDoc, getDocs, getDocsFromServer, updateDoc, deleteDoc, doc, query, where, serverTimestamp, Timestamp } from 'firebase/firestore';
 import type { DocumentData } from 'firebase/firestore';
 import type { Support_Session } from '../types/Support_Session';
 
@@ -55,13 +55,19 @@ export const getSessionByRequest = async (reqID: string): Promise<Support_Sessio
 // Get the sessions for a list of requests.
 // A session has no student or volunteer ID of its own, so "my sessions" means: fetch my requests, then
 // fetch the sessions for those requests. Firestore's "in" filter allows 30 values at most, hence the chunks.
-export const getSessionsByRequestIDs = async (reqIDs: string[]): Promise<Support_Session[]> => {
+export const getSessionsByRequestIDs = async (
+  reqIDs: string[],
+  source: 'default' | 'server' = 'default',
+): Promise<Support_Session[]> => {
   try {
     const chunks: string[][] = [];
     for (let i = 0; i < reqIDs.length; i += 30) chunks.push(reqIDs.slice(i, i + 30));
 
     const snaps = await Promise.all(
-      chunks.map(chunk => getDocs(query(collection(db, COLLECTION), where('reqID', 'in', chunk))))
+      chunks.map(chunk => {
+        const sessionsQuery = query(collection(db, COLLECTION), where('reqID', 'in', chunk));
+        return source === 'server' ? getDocsFromServer(sessionsQuery) : getDocs(sessionsQuery);
+      })
     );
     return snaps.flatMap(snap => snap.docs.map(d => toSession(d.data())));
   } catch (error) {
