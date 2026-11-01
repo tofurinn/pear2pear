@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../context/authContext';
 
@@ -6,6 +6,7 @@ import RequestDetailsModal from './request-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
 import { ChevronLeft } from '../../../../components/icons.tsx';
 import { BoardSection, ItemCard, StatusPill } from '../../../../components/dashboard-components.tsx';
+import ToastMessage from '../../../../components/toast-message/toast-message.tsx';
 import { createVolunteerRequestPatch, toVolunteerRequestItem } from '../../volunteer-utils.ts';
 import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
 import { getRequestsByVolunteer, respondToPendingSupportRequest } from '../../../../services/RequestService';
@@ -77,6 +78,21 @@ function VolunteerRequests() {
   const selected = items.find(item => item.reqID === selectedID) ?? null;
   const [actionError, setActionError] = useState('');
   const [updatingRequestID, setUpdatingRequestID] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const toastTimerRef = useRef<number | null>(null);
+
+  const showToast = (message: string) => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastMessage('');
+      toastTimerRef.current = null;
+    }, 3000);
+  };
+
+  useEffect(() => () => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+  }, []);
 
   const pending = items.filter(item => item.reqStatus === 'Pending');
   const accepted = items.filter(item => item.reqStatus === 'Accepted');
@@ -122,6 +138,9 @@ function VolunteerRequests() {
         setActionError('Your response was saved, but the student could not be notified.');
       }
       setSelectedID(null);
+      showToast(reqStatus === 'Accepted'
+        ? 'Request successfully accepted'
+        : 'Request successfully rejected');
     } catch (error) {
       console.error(`Error updating volunteer request "${item.reqID}":`, error);
       setActionError('Could not update this request. Please try again.');
@@ -198,6 +217,7 @@ function VolunteerRequests() {
           isUpdating={updatingRequestID === selected.reqID}
         />
       )}
+      <ToastMessage message={toastMessage} />
     </div>
   );
 }
