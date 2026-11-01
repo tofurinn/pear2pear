@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, StarRating } from '../../../../components/icons.tsx';
+import { AlertIcon, CalendarIcon, CheckIcon, ClockIcon, CloseIcon, HistoryUpdateIcon, StarRating } from '../../../../components/icons.tsx';
 import { isPendingRequestActionAvailable, PENDING_REQUEST_ACTION_DELAY_MS } from '../../../../services/RequestService';
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
 import type { StudentRequestItem } from '../../student-utils.tsx';
@@ -106,7 +106,7 @@ function RequestDetailsModal({
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
           <span className="session-modal-topdate">
-            <CalendarIcon /> {item.dateLabel}
+            <HistoryUpdateIcon /> {item.dateLabel}
           </span>
         </div>
 

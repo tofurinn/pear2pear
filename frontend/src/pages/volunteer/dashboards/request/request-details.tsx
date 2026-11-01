@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
-import { CalendarIcon, CloseIcon } from '../../../../components/icons.tsx';
+import { CloseIcon, HistoryUpdateIcon } from '../../../../components/icons.tsx';
 import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
 
 import '../../../../components/page-css/details.css';
@@ -92,7 +92,7 @@ function RequestDetailsModal({
         <h2 id="volunteer-request-modal-title" className="session-modal-title">{item.title}</h2>
         <div className="session-modal-tagrow">
           <CategoryTag className="session-modal-tag">{item.category}</CategoryTag>
-          <span className="session-modal-topdate"><CalendarIcon /> {item.dateLabel}</span>
+          <span className="session-modal-topdate"><HistoryUpdateIcon /> {item.dateLabel}</span>
         </div>
         <p className="session-modal-description">{item.description}</p>
         <section className="session-modal-volunteer session-modal-requester" aria-label="Requesting student">
