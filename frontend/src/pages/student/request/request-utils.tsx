@@ -33,9 +33,9 @@ export interface RequestFormData {
   // Step 2: Filtering
   supportMode: SupportMode;
   requiredSkills: string[];
-  // Step 3: Availability Filtering
+  // Step 2: Availability Filtering
   availability: string[];     // recurring weekday slot keys: 'weekday:HH:00'
-  // Step 4: Volunteer Match-making
+  // Step 3: Volunteer Match-making
   volUID: string;
 }
 

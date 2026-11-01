@@ -12,8 +12,7 @@ import StepProgress from '../../../components/step-progress.tsx';
 import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 import SupportTypeStep from './steps/step1.tsx';
 import FilteringStep from './steps/step2.tsx';
-import AvailabilityStep from './steps/step3.tsx';
-import VolunteerMatchStep from './steps/step4.tsx';
+import VolunteerMatchStep from './steps/step3.tsx';
 import RequestSubmittedStep from './steps/step5.tsx';
 import { createEmptyForm, buildSummary, weekdaySlotKey } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
@@ -23,6 +22,7 @@ import { createSupportRequest, getSupportRequest, resubmitPendingSupportRequest 
 import { createNotification } from '../../../services/NotificationService';
 import { loadRequestFormVolunteers } from '../../../services/StudentRequestService';
 import type { StudentRequestVolunteer } from '../../../types/StudentRequestVolunteer';
+import { CATEGORY_SKILLS } from '../../../components/volunteer-profile-options';
 
 import '../../../components/ui.css';
 import '../../../components/page-css/request-form.css';
@@ -63,7 +63,7 @@ function StudentMultiStepRequestForm() {
     error: '',
   });
 
-  const totalSteps = 4; // the confirmation page is not a numbered step
+  const totalSteps = 3; // the confirmation page is not a numbered step
 
   useEffect(() => {
     if (!resubmitReqID || authLoading) return;
@@ -137,9 +137,15 @@ function StudentMultiStepRequestForm() {
     ? volunteerLoad.error
     : '';
 
+  const matchingFilterVolunteers = useMemo(
+    () => volunteers
+      .filter(volunteer => volunteer.categories.includes(formData.category))
+      .filter(volunteer => formData.requiredSkills.every(skill => volunteer.skills.includes(skill))),
+    [volunteers, formData.category, formData.requiredSkills],
+  );
   const availableRequestSlots = useMemo(() => {
     const slots = new Set<string>();
-    volunteers.forEach(volunteer => {
+    matchingFilterVolunteers.forEach(volunteer => {
       volunteer.availability.forEach(slot => {
         const weekday = DAY_NAMES.indexOf(slot.dayOfWeek);
         if (weekday >= 0 && Number.isInteger(slot.availTimeSlot)) {
@@ -148,11 +154,18 @@ function StudentMultiStepRequestForm() {
       });
     });
     return slots;
-  }, [volunteers]);
+  }, [matchingFilterVolunteers]);
 
-  const availableSkills = useMemo(
-    () => [...new Set(volunteers.flatMap(volunteer => volunteer.skills))].sort(),
-    [volunteers],
+  const availableSkills = formData.category ? CATEGORY_SKILLS[formData.category] : [];
+  const skillsWithVolunteers = useMemo(
+    () => new Set(
+      formData.category
+        ? volunteers
+            .filter(volunteer => volunteer.categories.includes(formData.category))
+            .flatMap(volunteer => volunteer.skills)
+        : [],
+    ),
+    [formData.category, volunteers],
   );
 
   const updateFormData = (data: Partial<RequestFormData>) => {
@@ -250,6 +263,9 @@ function StudentMultiStepRequestForm() {
               requiredSkills: formData.requiredSkills,
             }}
             availableSkills={availableSkills}
+            skillsWithVolunteers={skillsWithVolunteers}
+            availableSlots={availableRequestSlots}
+            availability={formData.availability}
             volunteersLoading={volunteersLoading}
             volunteersError={volunteersError}
             updateFormData={updateFormData}
@@ -258,20 +274,6 @@ function StudentMultiStepRequestForm() {
           />
         );
       case 3:
-        return (
-          <AvailabilityStep
-            formData={{
-              availability: formData.availability,
-            }}
-            updateFormData={updateFormData}
-            availableSlots={availableRequestSlots}
-            volunteersLoading={volunteersLoading}
-            volunteersError={volunteersError}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-          />
-        );
-      case 4:
         return (
           <VolunteerMatchStep
             formData={{
