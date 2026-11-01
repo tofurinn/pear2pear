@@ -104,7 +104,7 @@ function FilteringStep({
         </div>
       </div>
 
-      <div className="ui-field">
+      <div className="ui-field rf-availability-field">
         <span className="ui-field-label" id="availability-label">Availability</span>
         <div aria-busy={volunteersLoading}>
           {volunteersLoading && (
