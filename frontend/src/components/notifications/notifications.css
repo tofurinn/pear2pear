@@ -2,6 +2,7 @@
 
 .notif-background {
   padding-block: 0;
+  background-attachment: fixed;
 }
 
 .notif-main {
@@ -131,8 +132,15 @@
 }
 
 .notif-card--unread {
-  border-left: 4px solid var(--notif-green);
-  background: #f8fff8;
+  border: 2px solid var(--notif-green);
+  padding: 8px 7px 11px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(114, 200, 118, 0.4);
+}
+
+.notif-main--volunteer .notif-card--unread {
+  border-color: var(--color-blue2);
+  box-shadow: 0 2px 6px rgba(117, 201, 200, 0.45);
 }
 
 .notif-error {

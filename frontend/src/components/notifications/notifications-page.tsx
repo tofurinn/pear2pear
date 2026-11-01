@@ -146,7 +146,7 @@ export default function NotificationsPage({ mode }: { mode: UserMode }) {
       <Navbar dashboardPath={dashboardPath} />
 
       <main className={`${backgroundClass} notif-background`}>
-        <div className="notif-main">
+        <div className={`notif-main notif-main--${mode}`}>
           <header className="notif-banner">
             <h1 className="notif-banner-title">Notifications</h1>
             <p className="notif-banner-subtitle">Always stay updated !</p>
