@@ -43,7 +43,10 @@ function SupportTypeStep({ formData, updateFormData, onNext }: Step1Props) {
               <CategoryTagButton
                 key={category}
                 selected={formData.category === category}
-                onClick={() => updateFormData({ category })}
+                onClick={() => updateFormData({
+                  category,
+                  ...(formData.category !== category ? { requiredSkills: [] } : {}),
+                })}
               >
                 {category}
               </CategoryTagButton>

@@ -1,61 +1,90 @@
-import { useEffect } from 'react';
+import { matchVolunteers } from '../request-utils.tsx';
 import type { RequestFormData } from '../request-utils.tsx';
-import { StepNav } from '../request-ui.tsx';
-import HourPicker from '../../../../components/hour-picker/hour-picker.tsx';
+import type { RequestFormVolunteer } from '../request-utils.tsx';
+import { StarRating, StepNav } from '../request-ui.tsx';
+import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
+
+// ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface Step3Props {
-  formData: Pick<RequestFormData, 'availability'>;
-  updateFormData: (data: Partial<RequestFormData>) => void;
-  availableSlots: ReadonlySet<string>;
+  formData: Pick<RequestFormData, 'category' | 'requiredSkills' | 'availability' | 'volUID'>;
+  supportMode: RequestFormData['supportMode'];
+  volunteers: RequestFormVolunteer[];
   volunteersLoading: boolean;
   volunteersError: string;
+  updateFormData: (data: Partial<RequestFormData>) => void;
   onPrevious: () => void;
-  onNext: () => void;
+  onSubmit: () => void;
+  isSubmitting: boolean;
 }
 
-function AvailabilityStep({
+// ─── Component ─────────────────────────────────────────────────────────────────
+
+function VolunteerMatchStep({
   formData,
-  updateFormData,
-  availableSlots,
+  supportMode,
+  volunteers,
   volunteersLoading,
   volunteersError,
+  updateFormData,
   onPrevious,
-  onNext,
+  onSubmit,
+  isSubmitting,
 }: Step3Props) {
-  const count = formData.availability.length;
+  // Volunteers who fit the category, skills and availability chosen in the earlier steps
+  const matches = matchVolunteers({ ...formData, supportMode }, volunteers);
 
-  useEffect(() => {
-    if (volunteersLoading || volunteersError) return;
-    const availableSelection = formData.availability.filter(slot => availableSlots.has(slot));
-    if (availableSelection.length !== count) {
-      updateFormData({ availability: availableSelection });
-    }
-  }, [availableSlots, count, formData.availability, updateFormData, volunteersError, volunteersLoading]);
+  // A volunteer picked earlier may no longer match after the filters changed
+  const hasValidChoice = matches.some(v => v.volUID === formData.volUID);
 
   return (
     <>
-      <h2 className="ui-card-heading">Step 3: Availability Filtering</h2>
+      <h2 className="ui-card-heading">Step 3: Volunteer Match-making</h2>
 
       {volunteersLoading ? (
-        <div className="ui-card-body rf-empty" role="status"><p>Loading volunteer availability...</p></div>
+        <div className="ui-card-body rf-empty"><p>Loading volunteers...</p></div>
       ) : volunteersError ? (
         <div className="ui-card-body rf-empty" role="alert"><p>{volunteersError}</p></div>
+      ) : matches.length === 0 ? (
+        <div className="ui-card-body rf-empty">
+          <p>No volunteers match your filters yet.</p>
+          <p>Go back and try fewer required skills or more time slots.</p>
+        </div>
       ) : (
-        <HourPicker
-          selectedSlots={formData.availability}
-          onSelectionChange={availability => updateFormData({ availability })}
-          availableSlots={availableSlots}
-          showSelectAll
-        />
+        <div className="ui-card-body rf-volunteer-grid" role="radiogroup" aria-label="Select a volunteer">
+          {matches.map(volunteer => {
+            const isSelected = formData.volUID === volunteer.volUID;
+            return (
+              <button
+                key={volunteer.volUID}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                className={`rf-volunteer-card ${isSelected ? 'selected' : ''}`}
+                onClick={() => updateFormData({ volUID: volunteer.volUID })}
+              >
+                <CategoryTag>{formData.category}</CategoryTag>
+                <span className="rf-volunteer-name">{volunteer.name}</span>
+                <span className="rf-volunteer-tags">{volunteer.skills.join(' • ')}</span>
+                <span className="rf-volunteer-rating">
+                  <StarRating rating={volunteer.rating} />
+                  <span className="rf-rating-text">{volunteer.rating}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       )}
 
       <StepNav
         onPrevious={onPrevious}
-        onNext={onNext}
-        nextDisabled={count === 0 || volunteersLoading || Boolean(volunteersError)}
+        onNext={onSubmit}
+        nextLabel={isSubmitting ? 'Submitting…' : 'Submit Request'}
+        nextVariant="solid"
+        nextDisabled={!hasValidChoice || isSubmitting || volunteersLoading || Boolean(volunteersError)}
       />
     </>
   );
 }
 
-export default AvailabilityStep;
+export default VolunteerMatchStep;

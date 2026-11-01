@@ -23,6 +23,8 @@ export interface ItemCardProps {
   ariaChecked?: boolean;
   ariaLabel?: string;
   className?: string;
+  highlighted?: boolean;
+  highlightTone?: 'student' | 'volunteer';
 }
 
 export function ItemCard({
@@ -37,10 +39,16 @@ export function ItemCard({
   ariaChecked,
   ariaLabel = `View details for ${title}`,
   className = '',
+  highlighted = false,
+  highlightTone,
 }: ItemCardProps) {
+  const highlightClass = highlighted && highlightTone
+    ? `ui-item-card--updated-${highlightTone}`
+    : '';
+
   return (
     <article
-      className={`ui-item-card ${className}`.trim()}
+      className={`ui-item-card ${className} ${highlightClass}`.trim()}
       role={role}
       tabIndex={0}
       aria-label={ariaLabel}

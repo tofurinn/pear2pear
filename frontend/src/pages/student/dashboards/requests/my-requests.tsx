@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import RequestDetailsModal from './request-details.tsx';
 import Navbar from '../../../../components/navbar/main-navbar.tsx';
@@ -15,6 +15,7 @@ import { useAuth } from '../../../../context/authContext';
 import { cancelPendingSupportRequest, getRequestsByStudent } from '../../../../services/RequestService';
 import { getUser } from '../../../../services/UserService';
 import { getVolunteer } from '../../../../services/VolunteerService';
+import { useTransientHighlight } from '../../../../hooks/useTransientHighlight';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
@@ -26,6 +27,7 @@ const EMPTY_VOLUNTEERS: Record<string, StudentVolunteerSummary> = {};
 
 function StudentRequests() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { userDoc, loading: authLoading } = useAuth();
   const studentUID = userDoc?.UID ?? null;
 
@@ -98,6 +100,10 @@ function StudentRequests() {
     () => buildStudentRequestItems(requests, volunteers),
     [requests, volunteers]
   );
+  const routeState = location.state as { highlightRequestID?: unknown } | null;
+  const routeHighlightID = typeof routeState?.highlightRequestID === 'string'
+    ? routeState.highlightRequestID
+    : null;
 
   const pending = items.filter(item => item.reqStatus === 'Pending');
   const accepted = items.filter(item => item.reqStatus === 'Accepted');
@@ -108,7 +114,14 @@ function StudentRequests() {
   const [cancelTarget, setCancelTarget] = useState<StudentRequestItem | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [actionError, setActionError] = useState('');
+  const { highlightedID, highlightItem } = useTransientHighlight();
   const handleViewDetails = (item: StudentRequestItem) => setSelected(item);
+
+  useEffect(() => {
+    if (loading || !routeHighlightID || !items.some(item => item.reqID === routeHighlightID)) return;
+    highlightItem(routeHighlightID);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [highlightItem, items, loading, location.pathname, navigate, routeHighlightID]);
 
   const handleCancelRequest = async () => {
     if (!cancelTarget || !studentUID) return;
@@ -143,6 +156,7 @@ function StudentRequests() {
       );
       setSelected(null);
       setCancelTarget(null);
+      highlightItem(cancelTarget.reqID);
     } catch (error) {
       console.error('Error cancelling student support request:', error);
       setActionError(error instanceof Error ? error.message : 'Could not cancel this request. Please try again.');
@@ -192,6 +206,8 @@ function StudentRequests() {
                         personName={item.personName}
                         dateLabel={item.dateLabel}
                         pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                        highlighted={highlightedID === item.reqID}
+                        highlightTone="student"
                         onViewDetails={() => handleViewDetails(item)}
                       />
                     ))}
@@ -210,6 +226,8 @@ function StudentRequests() {
                         personName={item.personName}
                         dateLabel={item.dateLabel}
                         pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                        highlighted={highlightedID === item.reqID}
+                        highlightTone="student"
                         onViewDetails={() => handleViewDetails(item)}
                       />
                     ))}
@@ -228,6 +246,8 @@ function StudentRequests() {
                         personName={item.personName}
                         dateLabel={item.dateLabel}
                         pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                        highlighted={highlightedID === item.reqID}
+                        highlightTone="student"
                         onViewDetails={() => handleViewDetails(item)}
                       />
                     ))}

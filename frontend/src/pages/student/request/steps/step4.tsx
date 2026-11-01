@@ -1,90 +1,89 @@
-import { matchVolunteers } from '../request-utils.tsx';
-import type { RequestFormData } from '../request-utils.tsx';
-import type { RequestFormVolunteer } from '../request-utils.tsx';
-import { StarRating, StepNav } from '../request-ui.tsx';
-import CategoryTag from '../../../../components/category-tag/category-tag.tsx';
+import heartFinger from "../../../../assets/images/heart-finger.png";
+import "./request-confirmation.css";
+import type { RequestSummary } from "../request-utils.tsx";
+import CategoryTag from "../../../../components/category-tag/category-tag.tsx";
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
+type RequestConfirmationProps = {
+  summary: RequestSummary;
+  isResubmission?: boolean;
+  notificationWarning?: string;
+  onReturnToDashboard: () => void;
+  onViewRequests: () => void;
+};
 
-interface Step4Props {
-  formData: Pick<RequestFormData, 'category' | 'requiredSkills' | 'availability' | 'volUID'>;
-  supportMode: RequestFormData['supportMode'];
-  volunteers: RequestFormVolunteer[];
-  volunteersLoading: boolean;
-  volunteersError: string;
-  updateFormData: (data: Partial<RequestFormData>) => void;
-  onPrevious: () => void;
-  onSubmit: () => void;
-  isSubmitting: boolean;
-}
-
-// ─── Component ─────────────────────────────────────────────────────────────────
-
-function VolunteerMatchStep({
-  formData,
-  supportMode,
-  volunteers,
-  volunteersLoading,
-  volunteersError,
-  updateFormData,
-  onPrevious,
-  onSubmit,
-  isSubmitting,
-}: Step4Props) {
-  // Volunteers who fit the category, skills and availability chosen in the earlier steps
-  const matches = matchVolunteers({ ...formData, supportMode }, volunteers);
-
-  // A volunteer picked earlier may no longer match after the filters changed
-  const hasValidChoice = matches.some(v => v.volUID === formData.volUID);
-
+function Stars({ rating }: { rating: number }) {
   return (
-    <>
-      <h2 className="ui-card-heading">Step 4: Volunteer Match-making</h2>
-
-      {volunteersLoading ? (
-        <div className="ui-card-body rf-empty"><p>Loading volunteers...</p></div>
-      ) : volunteersError ? (
-        <div className="ui-card-body rf-empty" role="alert"><p>{volunteersError}</p></div>
-      ) : matches.length === 0 ? (
-        <div className="ui-card-body rf-empty">
-          <p>No volunteers match your filters yet.</p>
-          <p>Go back and try fewer required skills or more time slots.</p>
-        </div>
-      ) : (
-        <div className="ui-card-body rf-volunteer-grid" role="radiogroup" aria-label="Select a volunteer">
-          {matches.map(volunteer => {
-            const isSelected = formData.volUID === volunteer.volUID;
-            return (
-              <button
-                key={volunteer.volUID}
-                type="button"
-                role="radio"
-                aria-checked={isSelected}
-                className={`rf-volunteer-card ${isSelected ? 'selected' : ''}`}
-                onClick={() => updateFormData({ volUID: volunteer.volUID })}
-              >
-                <CategoryTag>{formData.category}</CategoryTag>
-                <span className="rf-volunteer-name">{volunteer.name}</span>
-                <span className="rf-volunteer-tags">{volunteer.skills.join(' • ')}</span>
-                <span className="rf-volunteer-rating">
-                  <StarRating rating={volunteer.rating} />
-                  <span className="rf-rating-text">{volunteer.rating}</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      <StepNav
-        onPrevious={onPrevious}
-        onNext={onSubmit}
-        nextLabel={isSubmitting ? 'Submitting…' : 'Submit Request'}
-        nextVariant="solid"
-        nextDisabled={!hasValidChoice || isSubmitting || volunteersLoading || Boolean(volunteersError)}
-      />
-    </>
+    <span className="rf-stars" role="img" aria-label={`${rating} out of 5 stars`}>
+      {[0, 1, 2, 3, 4].map(i => {
+        const fill = Math.max(0, Math.min(1, rating - i)) * 100;
+        return (
+          <span
+            key={i}
+            className="rf-star"
+            style={{ ["--fill" as string]: `${fill}%` }}
+            aria-hidden="true"
+          >
+            ★
+          </span>
+        );
+      })}
+    </span>
   );
 }
 
-export default VolunteerMatchStep;
+export default function RequestConfirmation({
+  summary,
+  isResubmission = false,
+  notificationWarning = '',
+  onReturnToDashboard,
+  onViewRequests,
+}: RequestConfirmationProps) {
+  const { volunteer } = summary;
+
+  return (
+    <div className="ui-confirmation">
+      <img className="ui-confirmation-icon" src={heartFinger} alt="" />
+
+      <h1 className="ui-confirmation-title">
+        {isResubmission ? 'Your Volunteer Request Is Updated!' : 'Your Support Request Is Submitted!'}
+      </h1>
+      <p className="ui-confirmation-message">
+        {isResubmission
+          ? 'Your request is pending with the new volunteer. You will receive a notification when they respond.'
+          : 'Sit tight, you will receive a notification once your matched Volunteer accepts the request'}
+      </p>
+      {notificationWarning && <p className="ui-error" role="alert">{notificationWarning}</p>}
+
+      <section className="rf-summary" aria-labelledby="rf-summary-heading">
+
+        <div className="rf-confirm-summary-panel">
+          <CategoryTag className="rf-confirm-summary-tag">{summary.category}</CategoryTag>
+          <h3 className="rf-confirm-summary-title">{summary.title}</h3>
+          <p className="rf-confirm-summary-description">{summary.description}</p>
+
+          <div className="rf-confirm-volunteer">
+            <div className="rf-confirm-volunteer-header">
+              <span className="rf-confirm-volunteer-name">{volunteer.name}</span>
+              <Stars rating={volunteer.rating} />
+              <span className="rf-confirm-volunteer-rating">
+                {volunteer.rating}
+              </span>
+            </div>
+            <div className="rf-confirm-volunteer-traits">
+              {volunteer.skills.join(" • ")}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="ui-confirmation-actions">
+        <button type="button" className="ui-btn ui-btn-solid" onClick={onReturnToDashboard}>
+          Return to Dashboard
+        </button>
+        <button type="button" className="ui-btn ui-btn-outline" onClick={onViewRequests}>
+          View Requests
+        </button>
+      </div>
+    </div>
+  );
+}

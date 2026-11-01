@@ -210,6 +210,52 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.ui-item-card--updated-student {
+  animation: student-card-updated 2.5s ease-out forwards;
+}
+
+.ui-item-card--updated-volunteer {
+  animation: volunteer-card-updated 2.5s ease-out forwards;
+}
+
+@keyframes student-card-updated {
+  0%, 30% {
+    outline: 3px solid var(--color-green1);
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(117, 201, 200, 0.18);
+  }
+  100% {
+    outline-color: transparent;
+    outline-offset: 4px;
+    box-shadow: 0 1px 4px rgba(68, 36, 33, 0.1);
+  }
+}
+
+@keyframes volunteer-card-updated {
+  0%, 30% {
+    outline: 3px solid var(--color-blue2);
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px rgba(117, 201, 200, 0.18);
+  }
+  100% {
+    outline-color: transparent;
+    outline-offset: 4px;
+    box-shadow: 0 1px 4px rgba(68, 36, 33, 0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-item-card--updated-student {
+    outline: 3px solid var(--color-green1);
+    animation: none;
+  }
+
+  .ui-item-card--updated-volunteer {
+    outline: 3px solid var(--color-blue2);
+    animation: none;
+  }
+}
+
 .ui-item-card:focus-visible {
   outline: 3px solid #3d1f1f;
   outline-offset: 2px;

@@ -77,6 +77,20 @@
   background: var(--color-green1);
 }
 
+.rf-skill.unavailable {
+  color: var(--color-text-muted, #888);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.rf-skill.unavailable .rf-skill-dot {
+  box-shadow: none;
+}
+
+.rf-availability-field {
+  margin-top: calc(24 * var(--u));
+}
+
 /* ---------- Step 4: volunteer match-making ---------- */
 .rf-volunteer-grid {
   display: grid;
