@@ -137,12 +137,12 @@ function StudentSessions() {
         if (!request) throw new Error('Could not find the support request for this session.');
         await createNotification({
           UID: request.volUID,
-          kind: 'session',
+          type: 'session',
+          recipientRole: 'volunteer',
           actorName: userDoc?.name ?? 'Your student',
           message: 'cancelled the support session.',
           category: item.category,
           title: item.title,
-          redirectionLink: '/volunteer/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {
@@ -183,12 +183,12 @@ function StudentSessions() {
         if (!request) throw new Error('Could not find the support request for this session.');
         await createNotification({
           UID: request.volUID,
-          kind: 'confirmed',
+          type: 'session',
+          recipientRole: 'volunteer',
           actorName: userDoc?.name ?? 'Your student',
           message: 'confirmed the session arrangement.',
           category: item.category,
           title: item.title,
-          redirectionLink: '/volunteer/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../../context/authContext';
 //state objects: rating / hoverRating - chosen stars and the star under the cursor
 //state object: comments - optional written feedback
 //state object: isSubmitting / errorMessage - submission state
@@ -32,6 +33,7 @@ export const MAX_FEEDBACK_COMMENT_LENGTH = 255;
 function StudentFeedbackForm() {
   const { sessID = '' } = useParams<{ sessID: string }>(); // route e.g. /feedback/:sessID
   const navigate = useNavigate();
+  const { userDoc } = useAuth();
 
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -140,17 +142,17 @@ function StudentFeedbackForm() {
       const rawAverage = totalStars / totalReviews;
       const avgRating = Math.round(rawAverage * 10) / 10;
 
-      await updateVolunteer(volunteer.UID, { avgRating, ratingCount: totalReviews });
+      await updateVolunteer(volunteer.UID, { avgRating });
 
       try {
         await createNotification({
           UID: volunteer.UID,
-          kind: 'session',
-          actorName: 'A student',
+          type: 'session',
+          recipientRole: 'volunteer',
+          actorName: userDoc?.name ?? 'A student',
           message: 'left feedback for your support session.',
           category: volunteer.category,
           title: volunteer.title,
-          redirectionLink: '/volunteer/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {

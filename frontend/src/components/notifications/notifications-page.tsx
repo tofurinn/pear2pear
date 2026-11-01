@@ -3,30 +3,30 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/authContext';
 import { markNotificationAsRead, subscribeToNotificationsByUser } from '../../services/NotificationService';
-import type { Notification as AppNotification, NotificationKind } from '../../types/Notification';
+import type { Notification as AppNotification } from '../../types/Notification';
 import Navbar from '../navbar/main-navbar';
 import CategoryTag from '../category-tag/category-tag';
 
 import '../ui.css';
 import './notifications.css';
 
-type Filter = 'all' | NotificationKind;
+type Filter = 'all' | 'request' | 'session';
 type UserMode = 'student' | 'volunteer';
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'request', label: 'Support Requests' },
   { value: 'session', label: 'Support Sessions' },
-  { value: 'confirmed', label: 'Confirmed' },
-  { value: 'rejected', label: 'Rejected' },
 ];
 
 const EMPTY_MESSAGES: Record<Filter, string> = {
   all: 'No notifications yet',
   request: 'No support request notifications',
   session: 'No support session notifications',
-  confirmed: 'No confirmed notifications',
-  rejected: 'No rejected notifications',
+};
+
+const getNotificationType = (notification: AppNotification) => {
+  return notification.type ?? null;
 };
 
 const formatDate = (notification: AppNotification) => notification.notifTimestamp
@@ -54,7 +54,16 @@ function NotificationCard({ item, onOpen }: NotificationCardProps) {
           {item.actorName && <><strong>{item.actorName}</strong> </>}
           {item.message}
         </p>
-        {item.category && <CategoryTag>{item.category}</CategoryTag>}
+        {(getNotificationType(item) || item.category) && (
+          <span className="notif-card-tags">
+            {getNotificationType(item) && (
+              <span className={`notif-type-pill notif-type-pill--${getNotificationType(item)}`}>
+                {getNotificationType(item) === 'request' ? 'Support Request' : 'Support Session'}
+              </span>
+            )}
+            {item.category && <CategoryTag>{item.category}</CategoryTag>}
+          </span>
+        )}
         <span className="notif-card-row">
           <span className="notif-card-title">{item.title ?? item.message}</span>
           <span className="notif-card-date">{formatDate(item)}</span>
@@ -88,6 +97,9 @@ export default function NotificationsPage({ mode }: { mode: UserMode }) {
   const notifications = UID && notificationLoad?.UID === UID
     ? notificationLoad.notifications
     : [];
+  const roleNotifications = notifications.filter(notification =>
+    !notification.recipientRole || notification.recipientRole === mode
+  );
 
   useEffect(() => {
     if (authLoading || !UID) return;
@@ -108,8 +120,8 @@ export default function NotificationsPage({ mode }: { mode: UserMode }) {
   }, [UID, authLoading]);
 
   const visible = filter === 'all'
-    ? notifications
-    : notifications.filter(notification => notification.kind === filter);
+    ? roleNotifications
+    : roleNotifications.filter(notification => getNotificationType(notification) === filter);
 
   const openNotification = async (notification: AppNotification) => {
     if (UID && !notification.isRead) {
@@ -118,11 +130,15 @@ export default function NotificationsPage({ mode }: { mode: UserMode }) {
         await markNotificationAsRead(notification.notifID, UID);
       } catch (error) {
         console.error('Could not mark notification as read:', error);
-        setActionError('Could not update this notification. Please try again.');
-        return;
+        setActionError('Could not mark this notification as read.');
       }
     }
-    navigate(notification.redirectionLink || dashboardPath);
+    const type = getNotificationType(notification);
+    if (!type) {
+      setActionError('This notification is missing its request or session type.');
+      return;
+    }
+    navigate(type === 'request' ? `/${mode}/my-requests` : `/${mode}/my-sessions`);
   };
 
   return (
@@ -130,7 +146,7 @@ export default function NotificationsPage({ mode }: { mode: UserMode }) {
       <Navbar dashboardPath={dashboardPath} />
 
       <main className={`${backgroundClass} notif-background`}>
-        <div className="notif-main">
+        <div className={`notif-main notif-main--${mode}`}>
           <header className="notif-banner">
             <h1 className="notif-banner-title">Notifications</h1>
             <p className="notif-banner-subtitle">Always stay updated !</p>

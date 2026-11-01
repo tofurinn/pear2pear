@@ -176,12 +176,12 @@ function VolunteerSessionRearrangement() {
       try {
         await createNotification({
           UID: request.studUID,
-          kind: 'session',
+          type: 'session',
+          recipientRole: 'student',
           actorName: userDoc?.name ?? 'Your volunteer',
           message: 'proposed a new time for the support session.',
           category: request.category,
           title: request.title,
-          redirectionLink: '/student/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {

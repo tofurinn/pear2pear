@@ -196,14 +196,14 @@ function StudentMultiStepRequestForm() {
       try {
         await createNotification({
           UID: formData.volUID,
-          kind: 'request',
+          type: 'request',
+          recipientRole: 'volunteer',
           actorName: userDoc?.name ?? 'A student',
           message: resubmitReqID
             ? 'has sent you a support request again.'
             : 'has sent you a support request.',
           category: submitted.category,
           title: submitted.title,
-          redirectionLink: '/volunteer/my-requests',
           isRead: false,
         });
         setNotificationWarning('');
