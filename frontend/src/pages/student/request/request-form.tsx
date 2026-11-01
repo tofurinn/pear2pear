@@ -13,7 +13,7 @@ import ConfirmPopup from '../../../components/popup/confirm-popup.tsx';
 import SupportTypeStep from './steps/step1.tsx';
 import FilteringStep from './steps/step2.tsx';
 import VolunteerMatchStep from './steps/step3.tsx';
-import RequestSubmittedStep from './steps/step5.tsx';
+import RequestSubmittedStep from './steps/step4.tsx';
 import { createEmptyForm, buildSummary, weekdaySlotKey } from './request-utils.tsx';
 import type { RequestFormData, RequestSummary } from './request-utils.tsx';
 import { useAuth } from '../../../context/authContext';

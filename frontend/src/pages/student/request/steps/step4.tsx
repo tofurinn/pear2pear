@@ -3,7 +3,7 @@ import "./request-confirmation.css";
 import type { RequestSummary } from "../request-utils.tsx";
 import CategoryTag from "../../../../components/category-tag/category-tag.tsx";
 
-type StepConfirmationProps = {
+type RequestConfirmationProps = {
   summary: RequestSummary;
   isResubmission?: boolean;
   notificationWarning?: string;
@@ -31,13 +31,13 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export default function StepConfirmation({
+export default function RequestConfirmation({
   summary,
   isResubmission = false,
   notificationWarning = '',
   onReturnToDashboard,
   onViewRequests,
-}: StepConfirmationProps) {
+}: RequestConfirmationProps) {
   const { volunteer } = summary;
 
   return (
