@@ -1,15 +1,16 @@
 import type { Timestamp } from "firebase/firestore";
 
-export type NotificationKind = "request" | "session" | "confirmed" | "rejected";
+export type NotificationType = "request" | "session";
+export type NotificationRecipientRole = "student" | "volunteer";
 
 export interface Notification {
     notifID: string;
     UID: string;
     message: string;
-    redirectionLink: string;
     notifTimestamp: Timestamp;
     isRead: boolean;
-    kind?: NotificationKind;
+    type: NotificationType;
+    recipientRole?: NotificationRecipientRole;
     actorName?: string;
     category?: string;
     title?: string;

@@ -120,12 +120,12 @@ function StudentRequests() {
       try {
         await createNotification({
           UID: cancelTarget.volUID,
-          kind: 'request',
+          type: 'request',
+          recipientRole: 'volunteer',
           actorName: userDoc?.name ?? 'A student',
           message: 'cancelled their support request.',
           category: cancelTarget.category,
           title: cancelTarget.title,
-          redirectionLink: '/volunteer/my-requests',
           isRead: false,
         });
       } catch (notificationError) {

@@ -147,12 +147,12 @@ function VolunteerSessions() {
         if (!request) throw new Error('Could not find the support request for this session.');
         await createNotification({
           UID: request.studUID,
-          kind: 'session',
+          type: 'session',
+          recipientRole: 'student',
           actorName: userDoc?.name ?? 'Your volunteer',
           message: 'cancelled the support session.',
           category: item.category,
           title: item.title,
-          redirectionLink: '/student/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {
@@ -183,12 +183,12 @@ function VolunteerSessions() {
         if (!request) throw new Error('Could not find the support request for this session.');
         await createNotification({
           UID: request.studUID,
-          kind: 'confirmed',
+          type: 'session',
+          recipientRole: 'student',
           actorName: userDoc?.name ?? 'Your volunteer',
           message: 'confirmed the session arrangement.',
           category: item.category,
           title: item.title,
-          redirectionLink: '/student/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {
@@ -258,12 +258,12 @@ function VolunteerSessions() {
         if (!request) throw new Error('Could not find the support request for this session.');
         await createNotification({
           UID: request.studUID,
-          kind: 'session',
+          type: 'session',
+          recipientRole: 'student',
           actorName: userDoc?.name ?? 'Your volunteer',
           message: 'marked the support session as complete.',
           category: item.category,
           title: item.title,
-          redirectionLink: '/student/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {

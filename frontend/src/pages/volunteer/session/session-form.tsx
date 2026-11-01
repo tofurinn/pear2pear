@@ -208,12 +208,12 @@ function VolunteerMultiStepSessionForm() {
       try {
         await createNotification({
           UID: selectedRequest.studUID,
-          kind: 'session',
+          type: 'session',
+          recipientRole: 'student',
           actorName: userDoc?.name ?? 'Your volunteer',
           message: 'has arranged a support session with you.',
           category: selectedRequest.category,
           title: selectedRequest.title,
-          redirectionLink: '/student/my-sessions',
           isRead: false,
         });
       } catch (notificationError) {

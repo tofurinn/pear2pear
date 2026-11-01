@@ -20,11 +20,14 @@ const COLLECTION = 'notifications';
 
 // ~~~~~~~~~~ CREATE ~~~~~~~~~~
 
+type NewNotificationData = Omit<AppNotification, 'notifID' | 'notifTimestamp'>
+  & Required<Pick<AppNotification, 'type' | 'recipientRole'>>;
+
 // Returns the new notifID.
 // Notifications about someone else's actions should be created by a Cloud Function, not the browser:
 // once you write security rules, only the server should be allowed to create these.
 export const createNotification = async (
-  data: Omit<AppNotification, 'notifID' | 'notifTimestamp'>
+  data: NewNotificationData
 ): Promise<string> => {
   try {
     const ref = doc(collection(db, COLLECTION));

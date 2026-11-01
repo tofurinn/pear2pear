@@ -107,14 +107,14 @@ function VolunteerRequests() {
       try {
         await createNotification({
           UID: item.studUID,
-          kind: reqStatus === 'Accepted' ? 'confirmed' : 'rejected',
+          type: 'request',
+          recipientRole: 'student',
           actorName: userDoc?.name ?? 'Your volunteer',
           message: reqStatus === 'Accepted'
             ? 'accepted your support request.'
             : 'declined your support request.',
           category: item.category,
           title: item.title,
-          redirectionLink: '/student/my-requests',
           isRead: false,
         });
       } catch (notificationError) {

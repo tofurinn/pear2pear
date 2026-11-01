@@ -146,6 +146,32 @@
   line-height: 1.3;
 }
 
+.notif-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.notif-type-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 9px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
+}
+
+.notif-type-pill--request {
+  background: color-mix(in srgb, var(--color-green2) 50%, transparent);
+}
+
+.notif-type-pill--session {
+  background: color-mix(in srgb, var(--color-blue2) 50%, transparent);
+}
+
 .notif-card-row {
   display: flex;
   align-items: flex-end;
