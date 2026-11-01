@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Timestamp } from 'firebase/firestore';
 import { useAuth } from "../../../../context/authContext";
 import SessionDetailsModal from './session-details.tsx';
@@ -16,6 +16,7 @@ import type { VolunteerSessionItem, VolunteerStudentSummary } from '../../volunt
 import { getRequestsByVolunteer, getSupportRequest } from '../../../../services/RequestService';
 import { getSessionsByRequestIDs, updateSessionStatus, updateSupportSession } from '../../../../services/SessionService';
 import { getUser } from '../../../../services/UserService';
+import { useTransientHighlight } from '../../../../hooks/useTransientHighlight';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
@@ -24,6 +25,7 @@ import '../../../../components/page-css/subdashboards.css';
 
 function VolunteerSessions() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { userDoc, loading: authLoading } = useAuth();
   const volunteerUID = userDoc?.UID ?? null;
 
@@ -39,11 +41,25 @@ function VolunteerSessions() {
     : sessionLoad?.volunteerUID === volunteerUID
       ? sessionLoad.error ?? ''
       : '';
-  const items = volunteerUID && sessionLoad?.volunteerUID === volunteerUID
-    ? sessionLoad.items
-    : [];
+  const items = useMemo(
+    () => volunteerUID && sessionLoad?.volunteerUID === volunteerUID
+      ? sessionLoad.items
+      : [],
+    [volunteerUID, sessionLoad],
+  );
+  const routeState = location.state as { highlightSessionID?: unknown } | null;
+  const routeHighlightID = typeof routeState?.highlightSessionID === 'string'
+    ? routeState.highlightSessionID
+    : null;
   const [toastMessage, setToastMessage] = useState('');
   const toastTimerRef = useRef<number | null>(null);
+  const { highlightedID, highlightItem } = useTransientHighlight();
+
+  useEffect(() => {
+    if (isLoading || !routeHighlightID || !items.some(item => item.sessID === routeHighlightID)) return;
+    highlightItem(routeHighlightID);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [highlightItem, isLoading, items, location.pathname, navigate, routeHighlightID]);
 
   const showToast = (message: string) => {
     if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
@@ -163,6 +179,7 @@ function VolunteerSessions() {
         : session
       ));
       setSelected(null);
+      highlightItem(item.sessID);
       showToast('Session successfully cancelled');
     } catch (error) {
       console.error('Error cancelling volunteer session:', error);
@@ -206,6 +223,7 @@ function VolunteerSessions() {
         : session
       ));
       setSelected(null);
+      highlightItem(item.sessID);
       showToast('Session successfully confirmed');
     } catch (error) {
       console.error('Error confirming volunteer session arrangement:', error);
@@ -274,6 +292,7 @@ function VolunteerSessions() {
         : session
       ));
       setSelected(null);
+      highlightItem(item.sessID);
       showToast('Session marked as completed');
     } catch (error) {
       console.error('Error marking session as complete:', error);
@@ -317,6 +336,8 @@ function VolunteerSessions() {
                       personName={item.personName}
                       dateLabel={item.createdLabel}
                       pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                      highlighted={highlightedID === item.sessID}
+                      highlightTone="volunteer"
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}
@@ -335,6 +356,8 @@ function VolunteerSessions() {
                       personName={item.personName}
                       dateLabel={item.createdLabel}
                       pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                      highlighted={highlightedID === item.sessID}
+                      highlightTone="volunteer"
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}
@@ -353,6 +376,8 @@ function VolunteerSessions() {
                       personName={item.personName}
                       dateLabel={item.createdLabel}
                       pill={<StatusPill tone={item.status.tone} label={item.status.label} />}
+                      highlighted={highlightedID === item.sessID}
+                      highlightTone="volunteer"
                       onViewDetails={() => handleViewDetails(item)}
                     />
                   ))}

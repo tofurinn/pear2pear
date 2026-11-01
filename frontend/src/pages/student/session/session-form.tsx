@@ -54,6 +54,7 @@ function StudentMultiStepSessionForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<SessionFormData>(EMPTY_FORM);
   const [summary, setSummary] = useState<SessionSummary | null>(null);
+  const [createdSessionID, setCreatedSessionID] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -195,7 +196,7 @@ function StudentMultiStepSessionForm() {
         throw new Error('SLOT_UNAVAILABLE');
       }
 
-      await createSupportSession({
+      const sessID = await createSupportSession({
         reqID: formData.reqID,
         sessDate: baseDate,
         sessTimeSlot,
@@ -205,6 +206,7 @@ function StudentMultiStepSessionForm() {
         studConfirmed: true,
         volConfirmed: false,
       });
+      setCreatedSessionID(sessID);
       await updateRequestStatus(formData.reqID, 'Scheduled');
 
       try {
@@ -301,7 +303,9 @@ function StudentMultiStepSessionForm() {
             <SessionConfirmationStep
               summary={summary}
               onReturnToDashboard={() => navigate("/student/dashboard")}
-              onViewSession={() => navigate("/student/my-sessions")}
+              onViewSession={() => navigate("/student/my-sessions", {
+                state: { highlightSessionID: createdSessionID },
+              })}
             />
           ) : (
             <>

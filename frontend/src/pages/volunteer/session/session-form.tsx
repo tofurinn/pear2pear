@@ -53,6 +53,7 @@ function VolunteerMultiStepSessionForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<SessionFormData>(EMPTY_FORM);
   const [summary, setSummary] = useState<SessionSummary | null>(null);
+  const [createdSessionID, setCreatedSessionID] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -193,7 +194,7 @@ function VolunteerMultiStepSessionForm() {
         throw new Error('SLOT_UNAVAILABLE');
       }
 
-      await createSupportSession({
+      const sessID = await createSupportSession({
         reqID: formData.reqID,
         sessDate: baseDate,
         sessTimeSlot,
@@ -203,6 +204,7 @@ function VolunteerMultiStepSessionForm() {
         studConfirmed: false, // the volunteer is arranging it, so the student is the one who still has to confirm
         volConfirmed: true,
       });
+      setCreatedSessionID(sessID);
       await updateRequestStatus(formData.reqID, 'Scheduled');
 
       try {
@@ -298,7 +300,9 @@ function VolunteerMultiStepSessionForm() {
             <SessionConfirmationStep
               summary={summary}
               onReturnToDashboard={() => navigate("/volunteer/dashboard")}
-              onViewSession={() => navigate("/volunteer/my-sessions")}
+              onViewSession={() => navigate("/volunteer/my-sessions", {
+                state: { highlightSessionID: createdSessionID },
+              })}
             />
           ) : (
             <>

@@ -12,6 +12,7 @@ import type { VolunteerRequestItem } from '../../volunteer-utils.ts';
 import { getRequestsByVolunteer, respondToPendingSupportRequest } from '../../../../services/RequestService';
 import { createNotification } from '../../../../services/NotificationService';
 import { getUser } from '../../../../services/UserService';
+import { useTransientHighlight } from '../../../../hooks/useTransientHighlight';
 
 import '../../../../components/ui.css';
 import '../../../../components/page-css/subdashboards.css';
@@ -79,6 +80,7 @@ function VolunteerRequests() {
   const [actionError, setActionError] = useState('');
   const [updatingRequestID, setUpdatingRequestID] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState('');
+  const { highlightedID, highlightItem } = useTransientHighlight();
   const toastTimerRef = useRef<number | null>(null);
 
   const showToast = (message: string) => {
@@ -138,6 +140,7 @@ function VolunteerRequests() {
         setActionError('Your response was saved, but the student could not be notified.');
       }
       setSelectedID(null);
+      highlightItem(item.reqID);
       showToast(reqStatus === 'Accepted'
         ? 'Request successfully accepted'
         : 'Request successfully rejected');
@@ -163,6 +166,8 @@ function VolunteerRequests() {
         personName={item.personName}
         dateLabel={item.dateLabel}
         pill={<StatusPill tone={tone} label={label} />}
+        highlighted={highlightedID === item.reqID}
+        highlightTone="volunteer"
         onViewDetails={() => setSelectedID(item.reqID)}
       />
     );

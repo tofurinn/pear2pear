@@ -46,6 +46,7 @@ function StudentMultiStepRequestForm() {
     error?: string;
   } | null>(null);
   const [summary, setSummary] = useState<RequestSummary | null>(null);
+  const [submittedRequestID, setSubmittedRequestID] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -193,10 +194,11 @@ function StudentMultiStepRequestForm() {
       const submitted = buildSummary(formData, volunteers);
       if (!submitted) throw new Error('Could not find the selected volunteer');
 
+      let updatedRequestID = resubmitReqID;
       if (resubmitReqID) {
         await resubmitPendingSupportRequest(resubmitReqID, firebaseUser.uid, formData.volUID);
       } else {
-        await createSupportRequest({
+        updatedRequestID = await createSupportRequest({
           studUID: firebaseUser.uid,
           volUID: formData.volUID,
           title: formData.title,
@@ -226,6 +228,7 @@ function StudentMultiStepRequestForm() {
       }
 
       setSummary(submitted);
+      setSubmittedRequestID(updatedRequestID);
       setSubmitMessage('success');
 
       // Reset form (the summary above keeps what the confirmation page needs)
@@ -311,7 +314,9 @@ function StudentMultiStepRequestForm() {
               isResubmission={Boolean(resubmitReqID)}
               notificationWarning={notificationWarning}
               onReturnToDashboard={() => navigate('/student/dashboard')}
-              onViewRequests={() => navigate('/student/my-requests')}
+              onViewRequests={() => navigate('/student/my-requests', {
+                state: { highlightRequestID: submittedRequestID },
+              })}
             />
           ) : resubmitReqID && resubmitLoad?.reqID !== resubmitReqID ? (
             <p className="dashboard-empty" role="status">Loading request details...</p>

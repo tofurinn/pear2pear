@@ -236,7 +236,9 @@ function StudentSessionRearrangement() {
               title="Your Support Session Has Been Rearranged!"
               message="Sit tight, you will receive a notification once your matched Volunteer confirms the new arrangement"
               onReturnToDashboard={() => navigate("/student/dashboard")}
-              onViewSession={() => navigate("/student/my-sessions")}
+              onViewSession={() => navigate("/student/my-sessions", {
+                state: { highlightSessionID: sessID },
+              })}
             />
           </section>
         </main>
