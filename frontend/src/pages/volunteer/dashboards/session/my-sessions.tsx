@@ -279,7 +279,7 @@ function VolunteerSessions() {
           type: 'session',
           recipientRole: 'student',
           actorName: userDoc?.name ?? 'Your volunteer',
-          message: 'marked the support session as complete.',
+          message: 'marked session as complete, please provide feedback.',
           category: item.category,
           title: item.title,
           isRead: false,
