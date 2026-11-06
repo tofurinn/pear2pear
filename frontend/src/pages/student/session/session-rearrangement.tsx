@@ -185,7 +185,7 @@ function StudentSessionRearrangement() {
           type: 'session',
           recipientRole: 'volunteer',
           actorName: userDoc?.name ?? 'Your student',
-          message: 'proposed a new time for the support session.',
+          message: 'proposed a new arrangement for the support session.',
           category: request.category,
           title: request.title,
           isRead: false,
