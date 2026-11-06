@@ -21,6 +21,7 @@ export async function loadRequestFormVolunteers(
       volUID: volunteer.UID,
       name: user.name,
       rating: volunteer.avgRating,
+      ratingCount: volunteer.ratingCount ?? 0,
       skills: volunteer.skills,
       categories: volunteer.volCategories,
       supportMode: volunteer.prefSupportMode,

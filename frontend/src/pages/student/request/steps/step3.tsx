@@ -68,7 +68,9 @@ function VolunteerMatchStep({
                 <span className="rf-volunteer-tags">{volunteer.skills.join(' • ')}</span>
                 <span className="rf-volunteer-rating">
                   <StarRating rating={volunteer.rating} />
-                  <span className="rf-rating-text">{volunteer.rating}</span>
+                  <span className="rf-rating-text">
+                    {volunteer.rating} ({volunteer.ratingCount})
+                  </span>
                 </span>
               </button>
             );

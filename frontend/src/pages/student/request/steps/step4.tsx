@@ -66,7 +66,7 @@ export default function RequestConfirmation({
               <span className="rf-confirm-volunteer-name">{volunteer.name}</span>
               <Stars rating={volunteer.rating} />
               <span className="rf-confirm-volunteer-rating">
-                {volunteer.rating}
+                {volunteer.rating} ({volunteer.ratingCount})
               </span>
             </div>
             <div className="rf-confirm-volunteer-traits">
