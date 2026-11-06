@@ -4,6 +4,7 @@ export interface StudentRequestVolunteer {
   volUID: string;
   name: string;
   rating: number;
+  ratingCount: number;
   skills: string[];
   categories: string[];
   supportMode: 'Physical' | 'Virtual';
