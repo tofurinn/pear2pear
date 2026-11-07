@@ -129,7 +129,7 @@ function VolunteerHistory() {
             <header className="dashboard-banner dashboard-banner--yellow">
               <div>
                 <h1 className="dashboard-banner-title">Support History</h1>
-                <p className="dashboard-banner-subtitle">Completed and cancelled sessions</p>
+                <p className="dashboard-banner-subtitle">Inactive Session History</p>
               </div>
             </header>
 
