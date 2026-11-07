@@ -209,6 +209,10 @@
   align-items: center;
 }
 
+.detail--wide-label {
+  grid-template-columns: max(160px, calc(260 * var(--u))) 1fr;
+}
+
 .detail dt {
   display: flex;
   align-items: center;

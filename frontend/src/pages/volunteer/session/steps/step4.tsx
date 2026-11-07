@@ -62,7 +62,7 @@ function SessionConfirmationStep({
             <dt><CalendarIcon size={26} /> Session Date</dt>
             <dd>{summary.dateLabel}</dd>
           </div>
-          <div className="detail">
+          <div className="detail detail--wide-label">
             <dt><SwapIcon size={26} /> Support Mode</dt>
             <dd>{summary.supportMode}</dd>
           </div>
@@ -70,7 +70,7 @@ function SessionConfirmationStep({
             <dt><ClockIcon size={26} /> Timeslot</dt>
             <dd>{summary.timeslotLabel}</dd>
           </div>
-          <div className="detail">
+          <div className="detail detail--wide-label">
             <dt><PinIcon size={26} /> Meeting Location</dt>
             <dd>{summary.meetingLocation}</dd>
           </div>
