@@ -1,4 +1,4 @@
-# 🍐 pear2pear 🍐
+# 🍐 𝕡𝕖𝕒𝕣𝟚𝕡𝕖𝕒𝕣 🍐
 
 ## 📑 Table of Contents
 
@@ -11,7 +11,7 @@
 
 ## 📝 Description
 
-A peer-to-peer help-seeking platform for students who need assistance with various challenges—ranging from new student onboarding to technical issues—connecting them with student volunteers ready to help out their troubled pears (peers).
+**pear2pear** is a free, web-based peer-to-peer support platform designed for HELP University students. It enables students seeking assistance—whether with academic subjects, new student onboarding, or everyday campus challenges—to easily connect with student volunteers eager to share their expertise and interests. 
 
 ## 🛠️ Tech Stack
 
@@ -38,9 +38,9 @@ npm install
 npm run dev
 ```
 
-*(Optional) To run database seeding scripts in `database/`, navigate to `/database` and run `npm install` to install `firebase-admin`.*
+> To run database seeding scripts in `database/`, navigate to `/database` and run `npm install` to install `firebase-admin`.
 
-## 🚢 Deployment
+## 🔥 Deployment
 
 ### Firebase Hosting
 
