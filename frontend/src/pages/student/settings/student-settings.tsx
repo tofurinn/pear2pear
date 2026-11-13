@@ -39,9 +39,9 @@ function validate(data: StudentSettingsData): FormErrors {
   if (!data.studentID.trim()) {
     errors.studentID = "Enter your student ID.";
   }
-  //else if (!STUDENT_ID_PATTERN.test(data.studentID.trim().toUpperCase())) {
-  //  errors.studentID = "Please use a valid university student ID.";
-  //}
+  else if (!STUDENT_ID_PATTERN.test(data.studentID.trim().toUpperCase())) {
+    errors.studentID = "Please use a valid university student ID.";
+  }
 
   return errors;
 }
@@ -58,9 +58,7 @@ export default function StudentSettingsPage() {
 
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [securityMessage, setSecurityMessage] = useState("");
-  const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
-  const [emailSuccessMessage, setEmailSuccessMessage] = useState("");
   const [formData, setFormData] = useState<StudentSettingsData>(EMPTY_SETTINGS);
   const [saved, setSaved] = useState<StudentSettingsData>(EMPTY_SETTINGS); // last loaded / saved version
   const [errors, setErrors] = useState<FormErrors>({});
