@@ -42,6 +42,10 @@
   margin-top: 1.2rem;
 }
 
+.settings-dialog .register-field__error {
+  text-align: center;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {

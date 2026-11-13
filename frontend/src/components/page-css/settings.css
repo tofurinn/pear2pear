@@ -66,6 +66,28 @@
   padding-top: 0;
 }
 
+/* ---------- Dialogs ---------- */
+
+.settings-security-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.settings-dialog-btn {
+  justify-content: center;
+}
+
+.settings-page .settings-dialog {
+  width: 70%
+}
+
+.settings-dialog .register-field__input {
+  background: #f0f6ea !important;
+  color: var(--color-text);
+  border: 2px solid transparent;
+}
+
 /* ---------- Responsive ----------
    Every value is smaller than its desktop value: tablet (<= 900px), phone (<= 600px). */
 

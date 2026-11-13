@@ -74,7 +74,7 @@ export default function VolunteerDashboard() {
   const { userDoc, loading: authLoading } = useAuth();
   const userUID = userDoc?.UID ?? null;
   const isVolunteer = userDoc?.isVolunteer === true;
-  const showRegistrationPrompt = !authLoading && !isVolunteer;
+  const showRegistrationPrompt = !authLoading && !!userUID && !isVolunteer;
   const [dashboardData, setDashboardData] = useState<VolunteerDashboardData | null>(null);
   const isLoading = authLoading || (isVolunteer && userUID && dashboardData?.userUID !== userUID);
   const loadError = !authLoading && !userUID

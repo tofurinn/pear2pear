@@ -65,29 +65,29 @@ export const routes: RouteDefinition[] = [
 
   // - - - STUDENT ROUTES - - -
   // Dashboard pages
-  { path: "/student/dashboard", title: "Student Dashboard", element: <Require2FA><StudentDashboard /></Require2FA> },
+  { path: "/student/dashboard", title: "Student Dashboard", element: <StudentDashboard /> },
   { path: "/student/my-requests", title: "My Requests", element: <Require2FA><StudentRequests /></Require2FA> },
   { path: "/student/my-sessions", title: "My Sessions", element: <Require2FA><StudentSessions /></Require2FA> },
   { path: "/student/my-support-history", title: "Support History", element: <Require2FA><StudentHistory /></Require2FA> },
   { path: "/student/notifications", title: "Notifications", element: <Require2FA><StudentNotifications /></Require2FA> },
 
   // Student forms
-  { path: "/student/request-form", title: "Request Support", element: <StudentMultiStepRequestForm /> },
-  { path: "/student/session-form", title: "Schedule a Session", element: <StudentMultiStepSessionForm /> },
-  { path: "/student/feedback-form/:sessID", title: "Feedback", element: <StudentFeedbackForm /> },
-  { path: "/student/session-edit/:sessID", title: "Edit Session", element: <StudentSessionRearrangement /> },
-  { path: "/student/settings", title: "Settings", element: <StudentSettings /> },
+  { path: "/student/request-form", title: "Request Support", element: <Require2FA><StudentMultiStepRequestForm /></Require2FA> },
+  { path: "/student/session-form", title: "Schedule a Session", element: <Require2FA><StudentMultiStepSessionForm /></Require2FA> },
+  { path: "/student/feedback-form/:sessID", title: "Feedback", element: <Require2FA><StudentFeedbackForm /></Require2FA> },
+  { path: "/student/session-edit/:sessID", title: "Edit Session", element: <Require2FA><StudentSessionRearrangement /></Require2FA> },
+  { path: "/student/settings", title: "Settings", element: <Require2FA><StudentSettings /></Require2FA> },
 
   // - - - VOLUNTEER ROUTES - - -
   { path: "/volunteer/dashboard", title: "Volunteer Dashboard", element: <VolunteerDashboard /> },
-  { path: "/volunteer/my-requests", title: "My Requests", element: <VolunteerRequests /> },
-  { path: "/volunteer/my-sessions", title: "My Sessions", element: <VolunteerSessions /> },
-  { path: "/volunteer/my-support-history", title: "Support History", element: <VolunteerHistory /> },
-  { path: "/volunteer/notifications", title: "Notifications", element: <VolunteerNotifications /> },
-  { path: "/become-volunteer", title: "Become a Volunteer", element: <VolunteerRegisterPage flow="upgrade" /> },
+  { path: "/volunteer/my-requests", title: "My Requests", element: <Require2FA><VolunteerRequests /></Require2FA> },
+  { path: "/volunteer/my-sessions", title: "My Sessions", element: <Require2FA><VolunteerSessions /></Require2FA> },
+  { path: "/volunteer/my-support-history", title: "Support History", element: <Require2FA><VolunteerHistory /></Require2FA> },
+  { path: "/volunteer/notifications", title: "Notifications", element: <Require2FA><VolunteerNotifications /></Require2FA> },
+  { path: "/become-volunteer", title: "Become a Volunteer", element: <Require2FA><VolunteerRegisterPage flow="upgrade" /></Require2FA> },
 
   // Volunteer forms
-  { path: "/volunteer/session-form", title: "Schedule a Session", element: <VolunteerMultiStepSessionForm /> },
-  { path: "/volunteer/session-edit/:sessID", title: "Edit Session", element: <VolunteerSessionRearrangement /> },
-  { path: "/volunteer/settings", title: "Settings", element: <VolunteerSettings /> },
+  { path: "/volunteer/session-form", title: "Schedule a Session", element: <Require2FA><VolunteerMultiStepSessionForm /></Require2FA> },
+  { path: "/volunteer/session-edit/:sessID", title: "Edit Session", element: <Require2FA><VolunteerSessionRearrangement /></Require2FA> },
+  { path: "/volunteer/settings", title: "Settings", element: <Require2FA><VolunteerSettings /></Require2FA> },
 ];

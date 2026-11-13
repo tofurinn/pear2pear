@@ -7,7 +7,10 @@ import type { ProfileFieldsErrors, ProfileFieldsValue } from "../../../component
 import { useAuth } from "../../../context/authContext";
 import { getVolunteer, updateVolunteer } from "../../../services/VolunteerService";
 import { getAvailabilityByVolunteer, syncAvailabilities } from "../../../services/AvailabilityService";
-import { DAY_NAMES } from "../../student/student-utils";
+import { getRequestsByVolunteer } from "../../../services/RequestService";
+import { getSessionsByRequestIDs } from "../../../services/SessionService";
+import { DAY_NAMES, formatHour } from "../../student/student-utils";
+import type { Support_Session } from "../../../types/Support_Session";
 import "../../registration/register.css";
 import "../../registration/volunteer-register/volunteer-register.css";
 import "./volunteer-settings.css";
@@ -45,6 +48,7 @@ export default function VolunteerSettingsPage() {
   const [errors, setErrors] = useState<ProfileFieldsErrors>({});
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [availabilityError, setAvailabilityError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [saveError, setSaveError] = useState("");
@@ -53,7 +57,14 @@ export default function VolunteerSettingsPage() {
 
   // Load the signed-in volunteer's current settings
   useEffect(() => {
-    if (authLoading || !userDoc?.UID) return;
+    if (authLoading) return;                                    // wait for auth to finish
+
+    if (!userDoc?.UID) {                                        // auth done, no user
+      setLoadError("Could not find your profile. Please log in again.");
+      setIsLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     (async () => {
@@ -87,8 +98,6 @@ export default function VolunteerSettingsPage() {
           skills: volunteer.skills,
           availability: slots,
         };
-        console.log("Raw availability from DB:", availabilityDocs);
-        console.log("Mapped slots for HourPicker:", slots);
         setProfile(loaded);
         setSaved(loaded);
       } catch (err) {
@@ -113,6 +122,7 @@ export default function VolunteerSettingsPage() {
 
   // ----- Availability dialog -----
   const openAvailability = () => {
+    setAvailabilityError("");
     // Pass the slots directly to the state *before* opening the dialog
     const currentSlots = [...profile.availability]; // Create a copy
     setDraftSlots(currentSlots);
@@ -123,11 +133,62 @@ export default function VolunteerSettingsPage() {
     }, 0);
   };
 
-  const applyAvailability = () => {
-    setProfile((prev) => ({ ...prev, availability: draftSlots }));
-    setSaveMessage("");
-    setSaveError("");
-    dialogRef.current?.close();
+  const applyAvailability = async () => {
+    setAvailabilityError("");
+
+    const toDate = (value: Date | { toDate: () => Date }): Date =>
+      value instanceof Date ? value : value.toDate();
+
+    // Day from sessDate, hour from sessTimeSlot (works whichever one holds the full date-time)
+    const getSessionStart = (session: Support_Session): Date => {
+      const start = new Date(toDate(session.sessDate));
+      const time = toDate(session.sessTimeSlot);
+      start.setHours(time.getHours(), time.getMinutes(), 0, 0);
+      return start;
+    };
+
+    try {
+      const requests = await getRequestsByVolunteer(userDoc!.UID);
+      const sessions = await getSessionsByRequestIDs(requests.map((r) => r.reqID));
+
+      const upcomingStarts = sessions
+        .filter((s) => s.sessStatus === "Planned" || s.sessStatus === "Confirmed")
+        .map(getSessionStart)
+        .filter((start) => start.getTime() > Date.now());
+
+      // Slots being removed = currently saved but not in the new draft
+      const removedSlots = saved.availability.filter(
+        (slot) => !draftSlots.includes(slot)
+      );
+
+      for (const slot of removedSlots) {
+        const [weekdayStr, hourStr] = slot.split(":");
+        const dayName = DAY_NAMES[Number(weekdayStr)];
+        const hour = Number(hourStr);
+
+        const hasSession = upcomingStarts.some(
+          (start) =>
+            start.toLocaleDateString("en-US", { weekday: "long" }) === dayName &&
+            start.getHours() === hour
+        );
+
+        if (hasSession) {
+          setAvailabilityError(
+            `${dayName} ${formatHour(hour)} can't be removed because you have an upcoming session then.`
+          );
+          return; // Don't close the dialog — let them fix it
+        }
+      }
+
+      // 2. No conflicts — apply the changes
+      setProfile((prev) => ({ ...prev, availability: draftSlots }));
+      setSaveMessage("");
+      setSaveError("");
+      dialogRef.current?.close();
+    } catch (err) {
+      console.error(err);
+      setAvailabilityError("Couldn't verify your schedule. Please try again.");
+    }
   };
 
   const cancelAvailability = () => {
@@ -149,17 +210,17 @@ export default function VolunteerSettingsPage() {
     if (!userDoc?.UID) return;
 
     setIsSaving(true);
+
     try {
+
       await updateVolunteer(userDoc.UID, {
         volCategories: profile.categories,
         prefSupportMode: profile.supportMode,
         skills: profile.skills,
       });
 
-      // 2. Handle availability (this is the tricky part)
-      // Strategy: delete all old availability docs, then create new ones.
-      // Or: only create/delete the ones that differ. For a student project, 
-      // "delete all and recreate" is easiest.
+      // Handle availability
+      // Delete all old availability docs, then create new ones
       await syncAvailabilities(userDoc.UID, profile.availability);
 
       setSaved(profile);
@@ -245,11 +306,27 @@ export default function VolunteerSettingsPage() {
           showSelectAll
         />
 
+        {availabilityError && (
+          <p className="register-field__error" role="alert">
+            {availabilityError}
+          </p>
+        )}
+
         <div className="settings-dialog__actions">
-          <button type="button" className="ui-btn ui-btn-outline" onClick={cancelAvailability}>
+          <button
+            type="button"
+            className="ui-btn ui-btn-outline"
+            onClick={cancelAvailability}
+            style={{ justifyContent: "center" }}
+          >
             Cancel
           </button>
-          <button type="button" className="ui-btn ui-btn-solid" onClick={applyAvailability}>
+          <button
+            type="button"
+            className="ui-btn ui-btn-solid"
+            onClick={applyAvailability}
+            disabled={isSaving}
+          >
             Done
           </button>
         </div>
