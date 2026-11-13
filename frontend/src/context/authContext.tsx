@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/config";
-import { getUser } from "../services/UserService";
+import { getUser, updateUser } from "../services/UserService";
 import type { User } from "../types/User";
-import type { User as FirebaseUser } from "firebase/auth"
- 
+import type { User as FirebaseUser } from "firebase/auth";
+
 interface AuthContextValue {
   firebaseUser: FirebaseUser | null;
   userDoc: User | null;
@@ -31,8 +31,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  
-
   useEffect(() => {
     let cancelled = false;
 
@@ -49,7 +47,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       try {
         const doc = await getUser(user.uid);
-        if (!cancelled) setUserDoc(doc);
+        if (cancelled) return;
+
+        if (doc && user.email && doc.email !== user.email) {
+          await updateUser(doc.UID, { email: user.email });
+          setUserDoc({ ...doc, email: user.email });
+        } else {
+          setUserDoc(doc);
+        }
       } catch (err) {
         console.error("Failed to load user doc:", err);
       } finally {

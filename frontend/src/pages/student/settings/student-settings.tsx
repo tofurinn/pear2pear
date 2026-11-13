@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/authContext";
+import ChangeEmailDialog from "../../../components/settings-dialogs/change-email-dialog";
+import ChangePasswordDialog from "../../../components/settings-dialogs/change-password-dialog";
 import { updateUser, getUserByStudentID } from "../../../services/UserService";
 import MainNavbar from "../../../components/navbar/main-navbar";
 import "../../registration/register.css";
@@ -36,9 +38,10 @@ function validate(data: StudentSettingsData): FormErrors {
 
   if (!data.studentID.trim()) {
     errors.studentID = "Enter your student ID.";
-  } else if (!STUDENT_ID_PATTERN.test(data.studentID.trim().toUpperCase())) {
-    errors.studentID = "Please use a valid university student ID.";
   }
+  //else if (!STUDENT_ID_PATTERN.test(data.studentID.trim().toUpperCase())) {
+  //  errors.studentID = "Please use a valid university student ID.";
+  //}
 
   return errors;
 }
@@ -53,6 +56,11 @@ export default function StudentSettingsPage() {
   const navigate = useNavigate();
   const { userDoc, loading: authLoading, refreshUser } = useAuth();
 
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [securityMessage, setSecurityMessage] = useState("");
+  const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
+  const [emailSuccessMessage, setEmailSuccessMessage] = useState("");
   const [formData, setFormData] = useState<StudentSettingsData>(EMPTY_SETTINGS);
   const [saved, setSaved] = useState<StudentSettingsData>(EMPTY_SETTINGS); // last loaded / saved version
   const [errors, setErrors] = useState<FormErrors>({});
@@ -87,7 +95,7 @@ export default function StudentSettingsPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // Force Student ID to uppercase
+    // Plug any new values into newValue + force Student ID to uppercase
     const newValue = name === "studentID" ? value.toUpperCase() : value;
     setFormData((prev) => ({ ...prev, [name]: newValue }));
     // Clear the error for a field as soon as the user edits it
@@ -177,77 +185,123 @@ export default function StudentSettingsPage() {
           ) : loadError ? (
             <p className="settings-message settings-message--error" role="alert">{loadError}</p>
           ) : (
-            <form className="register-form" onSubmit={handleSave} noValidate>
-              <div className="register-field">
-                <label htmlFor="name" className="register-field__label">
-                  Name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  className={`register-field__input ${errors.name ? "register-field__input--error" : ""}`}
-                  value={formData.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  maxLength={MAX_LENGTH.name}
-                  autoComplete="name"
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
-                />
-                {errors.name && (
-                  <p id="name-error" className="register-field__error" role="alert">
-                    {errors.name}
-                  </p>
-                )}
-              </div>
+            <>
+              <form className="register-form" onSubmit={handleSave} noValidate>
+                <div className="register-field">
+                  <label htmlFor="name" className="register-field__label">
+                    Name
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    className={`register-field__input ${errors.name ? "register-field__input--error" : ""}`}
+                    value={formData.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    maxLength={MAX_LENGTH.name}
+                    autoComplete="name"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "name-error" : undefined}
+                  />
+                  {errors.name && (
+                    <p id="name-error" className="register-field__error" role="alert">
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
 
-              <div className="register-field">
-                <label htmlFor="studentID" className="register-field__label">
-                  Student ID
-                </label>
-                <input
-                  id="studentID"
-                  name="studentID"
-                  type="text"
-                  className={`register-field__input ${errors.studentID ? "register-field__input--error" : ""}`}
-                  value={formData.studentID}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  maxLength={MAX_LENGTH.studentID}
-                  autoComplete="off"
-                  aria-invalid={!!errors.studentID}
-                  aria-describedby={errors.studentID ? "studentID-error" : undefined}
-                />
-                {errors.studentID && (
-                  <p id="studentID-error" className="register-field__error" role="alert">
-                    {errors.studentID}
-                  </p>
-                )}
-              </div>
+                <div className="register-field">
+                  <label htmlFor="studentID" className="register-field__label">
+                    Student ID
+                  </label>
+                  <input
+                    id="studentID"
+                    name="studentID"
+                    type="text"
+                    className={`register-field__input ${errors.studentID ? "register-field__input--error" : ""}`}
+                    value={formData.studentID}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    maxLength={MAX_LENGTH.studentID}
+                    autoComplete="off"
+                    aria-invalid={!!errors.studentID}
+                    aria-describedby={errors.studentID ? "studentID-error" : undefined}
+                  />
+                  {errors.studentID && (
+                    <p id="studentID-error" className="register-field__error" role="alert">
+                      {errors.studentID}
+                    </p>
+                  )}
+                </div>
 
-              {/* Reserved line so the layout doesn't jump when a message appears */}
-              <p
-                className={`settings-message ${saveError ? "settings-message--error" : ""}`}
-                role={saveError ? "alert" : "status"}
-              >
-                {saveError || saveMessage}
-              </p>
+                <fieldset className="volunteer-fieldset">
+                  <legend className="register-field__label volunteer-legend">Security</legend>
 
-              <div className="ui-actions settings-actions">
-                <button type="button" className="ui-btn ui-btn-outline" onClick={handleBack}>
-                  <ChevronLeft />
-                  Dashboard
-                </button>
-                <button
-                  type="submit"
-                  className="ui-btn ui-btn-solid"
-                  disabled={isSaving || !isDirty}
+                  <div className="settings-security-buttons">
+                    <button
+                      type="button"
+                      className="ui-btn ui-btn-outline settings-availability-btn"
+                      onClick={() => {
+                        setIsEmailDialogOpen(true);
+                        setSecurityMessage("");
+                      }}
+                    >
+                      Change Email
+                    </button>
+                    <button
+                      type="button"
+                      className="ui-btn ui-btn-outline settings-availability-btn"
+                      onClick={() => {
+                        setIsPasswordDialogOpen(true);
+                        setSecurityMessage("");
+                      }}
+                    >
+                      Change Password
+                    </button>
+                  </div>
+
+                  {securityMessage && (
+                    <p className="settings-message" role="status">
+                      {securityMessage}
+                    </p>
+                  )}
+                </fieldset>
+
+                {/* Reserved line so the layout doesn't jump when a message appears */}
+                <p
+                  className={`settings-message ${saveError ? "settings-message--error" : ""}`}
+                  role={saveError ? "alert" : "status"}
                 >
-                  {isSaving ? "Saving..." : "Save changes"}
-                </button>
-              </div>
-            </form>
+                  {saveError || saveMessage}
+                </p>
+
+                <div className="ui-actions settings-actions">
+                  <button type="button" className="ui-btn ui-btn-outline" onClick={handleBack}>
+                    <ChevronLeft />
+                    Dashboard
+                  </button>
+                  <button
+                    type="submit"
+                    className="ui-btn ui-btn-solid"
+                    disabled={isSaving || !isDirty}
+                  >
+                    {isSaving ? "Saving..." : "Save changes"}
+                  </button>
+                </div>
+              </form>
+
+              <ChangeEmailDialog
+                open={isEmailDialogOpen}
+                onClose={() => setIsEmailDialogOpen(false)}
+                onSuccess={() => setSecurityMessage("Verification link sent. Check your inbox, then log in with your new email.")}
+              />
+              <ChangePasswordDialog
+                open={isPasswordDialogOpen}
+                onClose={() => setIsPasswordDialogOpen(false)}
+                onSuccess={() => setSecurityMessage("Password updated successfully.")}
+              />
+            </>
           )}
         </section>
       </main>
