@@ -71,10 +71,10 @@ export default function ChangeEmailDialog({
       setError("Enter your new email address.");
       return;
     }
-    //if (!EMAIL_PATTERN.test(trimmedNewEmail)) {
-    //  setError("Please use a valid @helplive.edu.my email address.");
-    //  return;
-    //}
+    if (!EMAIL_PATTERN.test(trimmedNewEmail)) {
+      setError("Please use a valid @helplive.edu.my email address.");
+      return;
+    }
     if (userDoc?.email && trimmedNewEmail === userDoc.email.toLowerCase()) {
       setError("New email must be different from your current one.");
       return;
