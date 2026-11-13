@@ -65,7 +65,7 @@ export const routes: RouteDefinition[] = [
 
   // - - - STUDENT ROUTES - - -
   // Dashboard pages
-  { path: "/student/dashboard", title: "Student Dashboard", element: <StudentDashboard /> },
+  { path: "/student/dashboard", title: "Student Dashboard", element: <Require2FA><StudentDashboard /></Require2FA> },
   { path: "/student/my-requests", title: "My Requests", element: <Require2FA><StudentRequests /></Require2FA> },
   { path: "/student/my-sessions", title: "My Sessions", element: <Require2FA><StudentSessions /></Require2FA> },
   { path: "/student/my-support-history", title: "Support History", element: <Require2FA><StudentHistory /></Require2FA> },
