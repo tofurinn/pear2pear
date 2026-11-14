@@ -55,8 +55,11 @@ const UserLoginPage: React.FC = () => {
   // Runs on every keystroke in any field input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    // Ensure each student ID entered is immediately converted to upper case
+    let newValue = value;
+    if (name === "email") newValue = value.toLowerCase();
     // Update only the field that changed, keeping others intact
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
     // Clear the error for a field as soon as the user edits it
     if (errors[name as keyof LoginFormData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
