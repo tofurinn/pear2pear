@@ -59,11 +59,15 @@ pear2pear/
 │       ├── firebase-hosting-merge.yml          # Automated deployment on merge to main
 │       └── firebase-hosting-pull-request.yml   # Preview channel deployment for PRs
 │
+├── backend/                                    # Empty (backend logic is handled via Firebase BaaS & frontend/src/services/)
+│
 ├── database/
 │   ├── firestore.indexes.json                  # Database composite indexes
 │   ├── firestore.rules                         # Firestore security & access rules
 │   ├── package.json                            # Database script dependencies (firebase-admin)
 │   └── seed.js                                 # Database seeding script for mock data
+│
+├── documentation/                              # Final project report (PDF), testing spreadsheets, and Gantt project files
 │
 ├── frontend/
 │   ├── public/                                 # Static assets served directly (favicons, SVGs)
