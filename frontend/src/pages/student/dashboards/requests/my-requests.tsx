@@ -266,6 +266,7 @@ function StudentRequests() {
           item={selected}
           onClose={() => setSelected(null)}
           onSchedule={() => navigate('/student/session-form', { state: { reqID: selected.reqID } })}
+          onViewSession={() => navigate('/student/my-sessions')}
           onCancelRequest={() => setCancelTarget(selected)}
           onResubmitRequest={() => navigate('/student/request-form', { state: { resubmitReqID: selected.reqID } })}
         />
