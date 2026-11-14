@@ -12,6 +12,7 @@ interface RequestDetailsModalProps {
   item: StudentRequestItem;
   onClose: () => void;
   onSchedule: () => void;
+  onViewSession: () => void;
   onCancelRequest: () => void;
   onResubmitRequest: () => void;
 }
@@ -22,6 +23,7 @@ function RequestDetailsModal({
   item,
   onClose,
   onSchedule,
+  onViewSession,
   onCancelRequest,
   onResubmitRequest,
 }: RequestDetailsModalProps) {
@@ -132,6 +134,11 @@ function RequestDetailsModal({
           {item.reqStatus === 'Accepted' && (
             <button type="button" className="ui-chip-btn ui-chip-btn--info session-modal-action" onClick={onSchedule}>
               Schedule Session
+            </button>
+          )}
+          {item.reqStatus === 'Scheduled' && (
+            <button type="button" className="ui-chip-btn ui-chip-btn--info session-modal-action" onClick={onViewSession}>
+              View Session
             </button>
           )}
           {item.reqStatus === 'Pending' && canChangePendingRequest && (
