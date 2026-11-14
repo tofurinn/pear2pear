@@ -125,6 +125,7 @@ const EmailVerificationPage: React.FC = () => {
 
   const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
+    setResendMessage("");
     const cleaned = e.target.value.replace(/\D/g, "");
 
     if (cleaned.length === 0) {
