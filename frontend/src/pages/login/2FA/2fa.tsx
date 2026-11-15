@@ -244,7 +244,10 @@ const EmailVerificationPage: React.FC = () => {
                   onChange={(e) => handleChange(index, e)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onPaste={(e) => handlePaste(index, e)}
-                  onFocus={(e) => e.target.select()}
+                  onFocus={(e) => {
+                    setResendMessage("");
+                    e.target.select();
+                  }}
                   aria-label={`Digit ${index + 1} of ${CODE_LENGTH}`}
                   aria-invalid={!!error}
                   disabled={isInitialSending}
