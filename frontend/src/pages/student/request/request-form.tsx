@@ -215,7 +215,7 @@ function StudentMultiStepRequestForm() {
           recipientRole: 'volunteer',
           actorName: userDoc?.name ?? 'A student',
           message: resubmitReqID
-            ? 'has sent you a support request again.'
+            ? 'has sent you a support request.'
             : 'has sent you a support request.',
           category: submitted.category,
           title: submitted.title,
