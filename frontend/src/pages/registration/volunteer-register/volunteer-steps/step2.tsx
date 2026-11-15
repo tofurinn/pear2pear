@@ -48,7 +48,7 @@ export default function Step2({ data, onChange, onBack, onSubmit }: Step2Props) 
         />
 
         {error && (
-          <p className="register-field__error" role="alert">
+          <p className="register-field__error register-field__error--centered" role="alert">
             {error}
           </p>
         )}
