@@ -139,6 +139,7 @@ const EmailVerificationPage: React.FC = () => {
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    setResendMessage("");
     if (e.key === "Backspace" && digits[index] === "" && index > 0) {
       e.preventDefault();
       const next = [...digits];
@@ -157,6 +158,7 @@ const EmailVerificationPage: React.FC = () => {
   const handlePaste = (index: number, e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     setError("");
+    setResendMessage("");
     const pasted = e.clipboardData.getData("text").replace(/\D/g, "");
     if (pasted) fillFrom(index, pasted.split(""));
   };

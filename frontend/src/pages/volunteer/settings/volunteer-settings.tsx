@@ -176,7 +176,7 @@ export default function VolunteerSettingsPage() {
           setAvailabilityError(
             `${dayName} ${formatHour(hour)} can't be removed because you have an upcoming session then.`
           );
-          return; // Don't close the dialog — let them fix it
+          return;
         }
       }
 
