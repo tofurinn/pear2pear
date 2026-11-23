@@ -1,0 +1,602 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2026-11-06" view-index="0" gantt-divider-location="519" resource-divider-location="300" version="3.3.3322" locale="en_US">
+    <description/>
+    <view zooming-state="default:1" id="gantt-chart">
+        <field id="tpd11" name="Outline number" width="48" order="0"/>
+        <field id="tpd15" name="Notes" width="20" order="1"/>
+        <field id="tpd3" name="Name" width="265" order="1"/>
+        <field id="tpd4" name="Begin date" width="43" order="2"/>
+        <field id="tpd14" name="Task color" width="20" order="3"/>
+        <field id="tpd5" name="End date" width="58" order="3"/>
+        <field id="tpd7" name="Completion" width="43" order="4"/>
+        <field id="tpd0" name="Type" width="46" order="5"/>
+        <option id="taskLabelUp" value="name"/>
+        <option id="taskLabelDown" value="resources"/>
+        <option id="taskLabelLeft" value=""/>
+        <option id="filter.completedTasks" value="false"/>
+        <option id="filter.dueTodayTasks" value="false"/>
+        <option id="filter.overdueTasks" value="false"/>
+        <option id="filter.inProgressTodayTasks" value="false"/>
+        <timeline><![CDATA[41]]></timeline>
+        <option id="color.recent"><![CDATA[#ff99cc #ff33cc #33cc00 #a6ea79 #d6d9df #009966 #009933 #c5f5e0 #ffff99 #ffffcc]]></option>
+    </view>
+    <view id="resource-table">
+        <field id="0" name="Name" width="200" order="0"/>
+        <field id="1" name="Default role" width="93" order="1"/>
+    </view>
+    <!-- -->
+    <calendars>
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <default-week id="1" name="default" sun="0" mon="0" tue="0" wed="0" thu="0" fri="0" sat="0"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
+        </day-types>
+    </calendars>
+    <tasks empty-milestones="true">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="0" uid="34aa5ace43b34a46b8c760a1b262c514" name="Writing Project Plan" color="#009966" meeting="false" project="true" start="2026-08-24" duration="18" complete="100" expand="true">
+            <depend id="13" type="2" difference="0" hardness="Strong"/>
+            <task id="1" uid="56271b0a9240435ab1754339368aeca6" name="Derive Project Title &amp; Overview" color="#ffff99" meeting="false" start="2026-08-24" duration="1" complete="100" expand="true"/>
+            <task id="2" uid="d52cbc6e954145e79df691dd2b865425" name="Project Aims" color="#ffff99" meeting="false" start="2026-08-24" duration="10" complete="100" expand="true"/>
+            <task id="3" uid="dc234b9911cb4c75a30f9c3e8cb4171f" name="Project Objectives" color="#ffff99" meeting="false" start="2026-08-24" duration="18" complete="100" expand="true"/>
+            <task id="4" uid="9580b9747bbb47e0a6f253274959e0cc" name="Project Scope" color="#ffff99" meeting="false" start="2026-08-24" duration="10" complete="100" expand="true"/>
+            <task id="6" uid="66decbe92f6d4022ae94fc9f411010b6" name="Project Schedule" color="#33cc00" meeting="false" start="2026-08-26" duration="16" complete="100" expand="true">
+                <task id="5" uid="36981ae4d756468ea5527f66689a0975" name="Work Breakdown Structure" color="#ffff99" meeting="false" start="2026-08-26" duration="14" complete="100" expand="true">
+                    <depend id="8" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="8" uid="44a2c79521e14bf389067bddbfd692ec" name="GanttProject Creation" color="#ffff99" meeting="false" start="2026-09-09" duration="2" complete="100" expand="true">
+                    <depend id="7" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="7" uid="367bb1ec94c042d0aa8dd124f60959d9" name="GanttProject File" color="#66ffcc" meeting="true" start="2026-09-11" duration="0" complete="0" expand="true"/>
+            </task>
+            <task id="9" uid="11422cc94b77463080e6b0466c48fcf9" name="Technical Description of the System" color="#33cc00" meeting="false" start="2026-08-24" duration="3" complete="100" expand="true">
+                <task id="10" uid="fb21d03e4acd4b60bdee508793d11371" name="Development Platform" color="#ffff99" meeting="false" start="2026-08-24" duration="3" complete="100" expand="true"/>
+                <task id="11" uid="fe2db7fbdd174ce3bf2753ad170ea005" name="Demonstration Platform" color="#ffff99" meeting="false" start="2026-08-24" duration="3" complete="100" expand="true"/>
+            </task>
+            <task id="12" uid="66105eff5e7c4f6891cd36c2497977fe" name="Risk Management" color="#ffff99" meeting="false" start="2026-08-24" duration="7" complete="100" expand="true"/>
+        </task>
+        <task id="13" uid="40c4d3b70ee744c5b325d8b49494b0ec" name="Project Proposal (Task 1 Assignment 1)" color="#00ffcc" meeting="true" start="2026-09-11" duration="0" complete="100" expand="true"/>
+        <task id="14" uid="e91ad79419414aefbaf440a86ba399a7" name="Derive Requirements" color="#009966" meeting="false" start="2026-08-31" duration="24" complete="100" expand="true">
+            <depend id="26" type="2" difference="0" hardness="Strong"/>
+            <task id="15" uid="fc5462928e304182a8b855677d8ef1d3" name="Modeling Requirements - Derive Epic, User Stories, Acceptance Criteria &amp; Tasks" color="#33cc00" meeting="false" start="2026-08-31" duration="22" complete="100" expand="true">
+                <depend id="21" type="2" difference="0" hardness="Strong"/>
+                <task id="16" uid="6e1381ac5a0a48eb83753390b735325c" name="Use Case 1: Manage Student and Volunteer Profiles" color="#ffff99" meeting="false" start="2026-08-31" duration="22" complete="100" expand="true"/>
+                <task id="20" uid="5fbb9bf4da394e6b8476c28ed921b253" name="Use Case 2: Support Request &amp; Volunteer Matching" color="#ffff99" meeting="false" start="2026-08-31" duration="22" complete="100" expand="true"/>
+                <task id="19" uid="567e71c6780449aaa5604728536fe1fd" name="Use Case 3: Manage Support Sessions &amp; Feedback" color="#ffff99" meeting="false" start="2026-08-31" duration="22" complete="100" expand="true"/>
+            </task>
+            <task id="21" uid="ff0abc58e630419a979b3c082cbe3d22" name="Write Functional and Non-Functional Requirements" color="#ffff99" meeting="false" start="2026-09-22" duration="2" complete="100" expand="true"/>
+        </task>
+        <task id="26" uid="2377cbddc71d40c6bd72004e7ac0d22b" name="Requirement Specifications Document (Task 2 (1/2) Assignment 1)" color="#00ffcc" meeting="true" start="2026-09-24" duration="0" complete="100" expand="true">
+            <depend id="156" type="2" difference="0" hardness="Strong"/>
+        </task>
+        <task id="27" uid="93ff84b2e613424696e4337f4da93121" name="Derive System Design" color="#009966" meeting="false" start="2026-09-06" duration="19" complete="100" expand="true">
+            <depend id="28" type="2" difference="0" hardness="Strong"/>
+            <task id="36" uid="b37f670b35a04df9b9ac0b99607bb567" name="Derive Architectural Design" color="#ffff99" meeting="false" start="2026-09-06" duration="7" complete="100" expand="true"/>
+            <task id="37" uid="3974686a6730499ca755a2344f347805" name="Design High-Level Design Components" color="#33cc00" meeting="false" start="2026-09-06" duration="7" complete="100" expand="true">
+                <task id="39" uid="f3fb9ac8b88449538ec96d562217f64a" name="Design Entity-Relationship Diagram (ERD)" color="#ffff99" meeting="false" start="2026-09-06" duration="7" complete="100" expand="true"/>
+                <task id="41" uid="8a5f7216bae94944b212f4825e5efd05" name="Design Site-Map" color="#ffff99" meeting="false" start="2026-09-06" duration="4" complete="100" expand="true">
+                    <depend id="38" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="40" uid="6009598bdfc14d7690303a82818e2327" name="Design Database - Create Data Dictionary" color="#ffff99" meeting="false" start="2026-09-06" duration="7" complete="100" expand="true"/>
+            </task>
+            <task id="38" uid="aa04f1c8063c41d2b148f7edaa006f2d" name="Design High-Fidelity Wireframe" color="#33cc00" meeting="false" start="2026-09-10" duration="15" complete="100" expand="true">
+                <task id="42" uid="1cfe31d5f4e142bf892fbfdf9f104bd7" name="Use Case 1: Manage Student and Volunteer Profiles" color="#ffff99" meeting="false" start="2026-09-10" duration="15" complete="100" expand="true"/>
+                <task id="43" uid="6ad08bdee14a4e4288426ec3a7e8b4e5" name="Use Case 2: Support Request &amp; Volunteer Matching" color="#ffff99" meeting="false" start="2026-09-10" duration="15" complete="100" expand="true"/>
+                <task id="44" uid="4f47534048b742ffa393a778b58cf285" name="Use Case 3: Manage Support Sessions &amp; Feedback" color="#ffff99" meeting="false" start="2026-09-10" duration="15" complete="100" expand="true"/>
+            </task>
+        </task>
+        <task id="28" uid="e8e63df3df4c46ac8d590a704863dcf9" name="Design Specifications Document (Task 2 (2/2) Assignment 1)" color="#00ffcc" meeting="true" start="2026-09-25" duration="0" complete="0" expand="true"/>
+        <task id="29" uid="3149d94ad9f7499d83ea6ba3930248ac" name="Github Repository" color="#009966" meeting="false" start="2026-09-27" duration="1" complete="100" expand="true">
+            <task id="30" uid="6cc40116ca7b43c49140199f70abe888" name="Setup Github Repository" color="#33cc00" meeting="false" start="2026-09-27" duration="1" complete="100" expand="true">
+                <depend id="35" type="2" difference="0" hardness="Strong"/>
+                <task id="31" uid="4c5c7ade606a4389a89409ae806afef4" name="Start New Repository" color="#ffff99" meeting="false" start="2026-09-27" duration="1" complete="100" expand="true"/>
+                <task id="32" uid="35ed2b1ab37649c69350f732486ca918" name="Add Collaborators &amp; Individual Branches" meeting="false" start="2026-09-27" duration="1" complete="100" expand="true"/>
+                <task id="33" uid="9e4548c565db4cd68828d6a715c33696" name="Initialise Project &amp; Upload into Git" meeting="false" start="2026-09-27" duration="1" complete="100" expand="true"/>
+                <task id="34" uid="9a4ade4fd84842a0a705bb0fc9e36fa6" name="Clone Repository into Personal Devices" meeting="false" start="2026-09-27" duration="1" complete="100" expand="true"/>
+            </task>
+            <task id="35" uid="2a41b546c7014cac88900d5905c956e8" name="Ready-to-use Github Repository" color="#00ffcc" meeting="true" start="2026-09-28" duration="0" complete="0" expand="true"/>
+        </task>
+        <task id="45" uid="7f902ecdd0914101bd5791b9d285af1b" name="Iteration 1" color="#009966" meeting="false" start="2026-09-28" duration="23" complete="100" expand="true">
+            <task id="52" uid="699da6a28bf141e8b112813df5e7cfe7" name="Front-end Development &amp; Unit Testing" color="#33cc00" meeting="false" start="2026-09-28" duration="13" complete="100" expand="true">
+                <depend id="81" type="2" difference="0" hardness="Strong"/>
+                <task id="53" uid="5333b7f2a78841c99ceeb42bfa7a6869" name="Front-end Coding &amp; Unit Testing for Student &amp; Volunteer Management (Use Case 1)" color="#a6ea79" meeting="false" start="2026-09-28" duration="11" complete="100" expand="true">
+                    <task id="54" uid="f83f6584596c465cb80ce27f911a055e" name="Registration Page" color="#ffff99" meeting="false" start="2026-09-28" duration="7" complete="100" expand="true"/>
+                    <task id="55" uid="99c99553ef6f4f46a7a0d24f2766ed9a" name="Login Page" meeting="false" start="2026-09-29" duration="4" complete="100" expand="true"/>
+                    <task id="56" uid="5fcd35a705c941359772150a240affd2" name="User Settings" meeting="false" start="2026-10-01" duration="8" complete="100" expand="true">
+                        <depend id="68" type="2" difference="0" hardness="Strong"/>
+                    </task>
+                    <task id="68" uid="243d166c40014bbdb247a52479c89882" name="Completed Front-end Coding for Student &amp; Volunteer Management (Use Case 1)" color="#66ffcc" meeting="true" start="2026-10-09" duration="0" complete="0" expand="true">
+                        <depend id="67" type="2" difference="0" hardness="Strong"/>
+                    </task>
+                </task>
+                <task id="57" uid="1d1031b214b64b2eb1bf29fca0b84d42" name="Front-end Coding &amp; Unit Testing for Support Request &amp; Volunteer Matching (Use Case 2)" color="#a6ea79" meeting="false" start="2026-09-28" duration="11" complete="100" expand="true">
+                    <task id="58" uid="0f11aa6a031f4d8d95bd4c1523eb6639" name="Student and Volunteer Dashboard Layout" color="#ffff99" meeting="false" start="2026-09-28" duration="5" complete="100" expand="true"/>
+                    <task id="59" uid="596e3d7c7c0c42a384c2e0bf1c6eb668" name="Support Request Form" color="#ffff99" meeting="false" start="2026-09-28" duration="7" complete="100" expand="true"/>
+                    <task id="60" uid="bd1cbfe689f54e2986877bb80cb5d13e" name="Support Request (Student View)" color="#ffff99" meeting="false" start="2026-09-30" duration="9" complete="100" expand="true"/>
+                    <task id="61" uid="9a721025914e4ba3aabdc88db807a975" name="Support Request (Volunteer View)" color="#ffff99" meeting="false" start="2026-09-30" duration="9" complete="100" expand="true">
+                        <depend id="69" type="2" difference="0" hardness="Strong"/>
+                    </task>
+                    <task id="69" uid="25ec7bd7955d43b68c1f7bcda3add70c" name="Completed Front-end Coding for Student &amp; Volunteer Management (Use Case 2)" color="#66ffcc" meeting="true" start="2026-10-09" duration="0" complete="0" expand="true">
+                        <depend id="67" type="2" difference="0" hardness="Strong"/>
+                    </task>
+                </task>
+                <task id="62" uid="1797d7ec14fc40268f6c7b57a4dcc6ad" name="Front-end Coding &amp; Unit Testing for Support Sessions &amp; Feedback Management (Use Case 3)" color="#a6ea79" meeting="false" start="2026-09-28" duration="12" complete="100" expand="true">
+                    <task id="63" uid="64d16080e434440ca665b6e1f0e5cc7a" name="Support Session Availability Form" color="#ffff99" meeting="false" start="2026-09-28" duration="4" complete="100" expand="true"/>
+                    <task id="64" uid="d5da308022284c1387d27d1829876a34" name="Support Session View" color="#ffff99" meeting="false" start="2026-09-29" duration="7" complete="100" expand="true"/>
+                    <task id="65" uid="8bbd621dfa6f4ff3a57d718651d685dc" name="Session Feedback Form" color="#ffff99" meeting="false" start="2026-10-03" duration="5" complete="100" expand="true"/>
+                    <task id="66" uid="cc16bba8badf44129f1af9fe8e8f7f09" name="Support History Page" color="#ffff99" meeting="false" start="2026-10-06" duration="4" complete="100" expand="true">
+                        <depend id="70" type="2" difference="0" hardness="Strong"/>
+                    </task>
+                    <task id="70" uid="84467df864d6429fa4da00698662a289" name="Completed Front-End Coding for Support Sessions &amp; Feedback Management (Use Case 3)" color="#66ffcc" meeting="true" start="2026-10-10" duration="0" complete="0" expand="true">
+                        <depend id="67" type="2" difference="0" hardness="Strong"/>
+                    </task>
+                </task>
+                <task id="67" uid="4032efb83958480c92e2275645c0893d" name="Completed Front-end for Pear2pear's Pages" color="#66ffcc" meeting="true" start="2026-10-10" duration="0" complete="0" expand="true"/>
+                <task id="71" uid="fbbe7b28602a4076aa34a7a87983a835" name="Firestore Setup &amp; Web Hosting" meeting="false" start="2026-10-10" duration="1" complete="100" expand="true">
+                    <depend id="72" type="2" difference="0" hardness="Strong"/>
+                </task>
+            </task>
+            <task id="72" uid="e2d19bd0ea98415491a25d3b86daa0d0" name="Live Front-end Prototype" color="#66ffcc" meeting="true" start="2026-10-11" duration="0" complete="0" expand="true"/>
+            <task id="73" uid="b0d169a31eb84eacbc03ce005821657c" name="Database Setup" color="#33cc00" meeting="false" start="2026-09-28" duration="5" complete="100" expand="true">
+                <depend id="81" type="2" difference="0" hardness="Strong"/>
+                <task id="74" uid="c7870e0fb3de44508bd99c24ac6ad46c" name="Firebase Setup" meeting="false" start="2026-09-28" duration="2" complete="100" expand="true">
+                    <depend id="76" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="75" uid="971e0a861e5b43498c711b0eb2c65749" name="Table Creations" meeting="false" start="2026-09-29" duration="3" complete="100" expand="true">
+                    <depend id="76" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="77" uid="8a10ca35ffc94a0d82345ed71068e9d5" name="Entering Seed Mock Data" meeting="false" start="2026-09-29" duration="4" complete="100" expand="true"/>
+                <task id="76" uid="670a472d3d6f426792b06f3dfe973b21" name="Functioning Database" color="#66ffcc" meeting="true" start="2026-10-02" duration="0" complete="0" expand="true"/>
+            </task>
+            <task id="78" uid="6fb36252ac4841e9b1114f22cbe2d2af" name="Backend Coding &amp; Unit Testing" color="#33cc00" meeting="false" start="2026-10-12" duration="5" complete="100" expand="true">
+                <depend id="79" type="2" difference="0" hardness="Strong"/>
+                <task id="81" uid="07afd0c7bf3f44a7a2b455eedd9f79d7" name="Backend Coding &amp; Unit Testing for Student &amp; Volunteer Management (Use Case 1)" color="#a6ea79" meeting="false" start="2026-10-12" duration="3" complete="100" expand="true">
+                    <task id="84" uid="7d09329401d64dcc868893705922cce8" name="Implement User Login" meeting="false" start="2026-10-12" duration="3" complete="100" expand="true"/>
+                    <task id="85" uid="939e49d200a5475291cacdb18ca95a70" name="Implement User Registration" color="#ffff99" meeting="false" start="2026-10-12" duration="3" complete="100" expand="true"/>
+                    <task id="86" uid="a079d482046540b1b61297dd6e3611ff" name="Implement 2FA Access" color="#ffff99" meeting="false" start="2026-10-12" duration="3" complete="100" expand="true"/>
+                </task>
+                <task id="87" uid="ddb30a7d870d4d6991534cddb851140e" name="Backend Coding &amp; Unit Testing for Support Request &amp; Volunteer Matching (Use Case 2)" color="#a6ea79" meeting="false" start="2026-10-12" duration="3" complete="100" expand="false">
+                    <task id="88" uid="fd96e1f8591144098ca85752181eb38b" name="Implement Support Request Creation &amp; Management" color="#ffff99" meeting="false" start="2026-10-12" duration="3" complete="100" expand="true"/>
+                    <task id="89" uid="b01db86eb8eb4f3da0a9e4931222430a" name="Implement Volunteer Matching" color="#ffff99" meeting="false" start="2026-10-12" duration="3" complete="100" expand="true"/>
+                </task>
+                <task id="91" uid="9596807c678e4a08ae496dcc2b2be2da" name="Backend Coding &amp; Unit Testing for Support Sessions &amp; Feedback Management (Use Case 3)" color="#a6ea79" meeting="false" start="2026-10-12" duration="5" complete="100" expand="true">
+                    <task id="92" uid="e2e3ead39cd24828a92f08baa9c790a3" name="Implement Support Session Creation &amp; Management" color="#ffff99" meeting="false" start="2026-10-12" duration="4" complete="100" expand="true"/>
+                    <task id="93" uid="e1f5d5dbbc5d4a27a37d055aae929deb" name="Implement Session Status Management" color="#ffff99" meeting="false" start="2026-10-12" duration="4" complete="100" expand="true"/>
+                    <task id="94" uid="9bb5e524291e4c32b3b0064cc292ad0d" name="Implement Session History" color="#ffff99" meeting="false" start="2026-10-14" duration="3" complete="100" expand="true"/>
+                </task>
+            </task>
+            <task id="79" uid="1781687a69524d588ebbc22e8dec87ea" name="Frontend + Backend Integration &amp; Integration Testing for Iteration 1" color="#33cc00" meeting="false" start="2026-10-17" duration="3" complete="100" expand="true">
+                <depend id="80" type="2" difference="0" hardness="Strong"/>
+                <task id="95" uid="c113c234927d464c864dd4e4e7b65227" name="Integrate Use Case 1 Increment" meeting="false" start="2026-10-17" duration="3" complete="100" expand="true"/>
+                <task id="97" uid="5db0166663754533869ee25690f22cdb" name="Integrate Use Case 2 Increment" color="#ffff99" meeting="false" start="2026-10-17" duration="3" complete="100" expand="true"/>
+                <task id="96" uid="49dbb3af538f462f8ed7ec555fa67e42" name="Integrate Use Case 3 Increment" color="#ffff99" meeting="false" start="2026-10-17" duration="3" complete="100" expand="true"/>
+            </task>
+            <task id="80" uid="a917d1336f83498c8285f145a9cb1065" name="Functional Requirements &amp; Non-Functional Requirements Testing" color="#33cc00" meeting="false" start="2026-10-20" duration="1" complete="100" expand="true">
+                <depend id="108" type="2" difference="0" hardness="Strong"/>
+                <task id="98" uid="56eee8c19cd64ac1af3b95e63a481eca" name="Testing for Student &amp; Volunteer Management (Use Case 1)" color="#ffff99" meeting="false" start="2026-10-20" duration="1" complete="100" expand="true">
+                    <depend id="99" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="99" uid="a5f77493d0ab495ba8f4e4474457ad1d" name="Working User Registration &amp; Login" color="#66ffcc" meeting="true" start="2026-10-21" duration="0" complete="0" expand="true"/>
+                <task id="106" uid="03bf3ff473f443159add6623bebcd512" name="Testing for Support Request &amp; Volunteer Matchmaking Management (Use Case 2)" color="#ffff99" meeting="false" start="2026-10-20" duration="1" complete="100" expand="true">
+                    <depend id="107" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="107" uid="c6dd6b6a14f0489f87907f37e17bd7ea" name="Working Support Request" color="#66ffcc" meeting="true" start="2026-10-21" duration="0" complete="0" expand="true"/>
+                <task id="104" uid="4cc1a1c5d4384aff8254d2ddb428e014" name="Testing for Support Sessions &amp; Feedback Management (Use Case 3)" color="#ffff99" meeting="false" start="2026-10-20" duration="1" complete="100" expand="true">
+                    <depend id="105" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="105" uid="bf2266798eca423981b2f9361f79003a" name="Working Support Session" color="#66ffcc" meeting="true" start="2026-10-21" duration="0" complete="0" expand="true"/>
+            </task>
+            <task id="108" uid="11d9eb1bf0d94d8ab50ffe473bd2925e" name="Prototype I" color="#66ffcc" meeting="true" start="2026-10-21" duration="0" complete="0" expand="true"/>
+        </task>
+        <task id="46" uid="4ba92805396a4c42bb4845957c9e63ff" name="Presentation 1" color="#009966" meeting="false" start="2026-10-16" duration="3" complete="100" expand="true">
+            <task id="109" uid="dbe4d31b6b704d318ff9e7d44617200e" name="Prepare Presentation Slides" color="#33cc00" meeting="false" start="2026-10-16" duration="3" complete="100" expand="true">
+                <depend id="114" type="2" difference="0" hardness="Strong"/>
+                <task id="110" uid="184ee0c627cf4be5947473fedd2f0a24" name="Prepare Section 1: Prototype Development Progress" color="#ffff99" meeting="false" start="2026-10-16" duration="3" complete="100" expand="true"/>
+                <task id="112" uid="912575da05c14c089bf13ca818cb2e35" name="Prepare Section 2: Git Development Evidence" color="#ffff99" meeting="false" start="2026-10-16" duration="3" complete="100" expand="true"/>
+                <task id="111" uid="0fb4de764d4745d9afe0054b8e57112f" name="Prepare Section 3: Progress Agaisnt Project Plan" color="#ffff99" meeting="false" start="2026-10-16" duration="3" complete="100" expand="true"/>
+            </task>
+            <task id="114" uid="e16423513cba441ca8f67a86daad5715" name="Presentation I" color="#66ffcc" meeting="true" start="2026-10-19" duration="0" complete="0" expand="true"/>
+        </task>
+        <task id="47" uid="9771962e0b1d4593bed8cf9bcbe992cc" name="Iteration 2" color="#009966" meeting="false" start="2026-10-18" duration="28" complete="100" expand="true">
+            <depend id="48" type="2" difference="0" hardness="Strong"/>
+            <depend id="188" type="2" difference="0" hardness="Strong"/>
+            <task id="115" uid="c708585e03754a6aa8f60e2cbe4fe81f" name="Backend Coding &amp; Unit Testing" color="#33cc00" meeting="false" start="2026-10-18" duration="4" complete="100" expand="true">
+                <task id="123" uid="9c1e2c4ab5444883a0151cb95235589d" name="Backend Coding &amp; Unit Testing for Student &amp; Volunteer Management (Use Case 1)" color="#a6ea79" meeting="false" start="2026-10-18" duration="4" complete="100" expand="true">
+                    <task id="127" uid="25f2c61cd75b4cc7995b8ccd9b4135d1" name="Implement Forgot Password" color="#ffff99" meeting="false" start="2026-10-18" duration="3" complete="100" expand="true"/>
+                    <task id="126" uid="e8a13bcf28fb45b691b3bb4e9c6b95c2" name="Implement User Profile Management" meeting="false" start="2026-10-19" duration="3" complete="100" expand="true"/>
+                </task>
+                <task id="124" uid="4863d205abe64476b06fc593ff3fd126" name="Backend Coding &amp; Unit Testing for Support Request &amp; Volunteer Matching (Use Case 2)" color="#a6ea79" meeting="false" start="2026-10-18" duration="3" complete="100" expand="true">
+                    <task id="128" uid="787c2fcb3b594ff99ca6e30a39b05978" name="Implement Support Request Status Management" color="#ffff99" meeting="false" start="2026-10-18" duration="3" complete="100" expand="true"/>
+                </task>
+                <task id="125" uid="4c08e49b30b84911a10b01d02d51477f" name="Backend Coding &amp; Unit Testing for Support Sessions &amp; Feedback Management (Use Case 3)" color="#a6ea79" meeting="false" start="2026-10-18" duration="3" complete="100" expand="true">
+                    <task id="129" uid="45e75a06910e4f74895f60f830057cb8" name="Implement Feedback Submission" color="#ffff99" meeting="false" start="2026-10-18" duration="3" complete="100" expand="true"/>
+                    <task id="130" uid="da77c5e97a3248a1b3e01ac4cf18814e" name="Implement Feedback Retrieval &amp; Management" color="#ffff99" meeting="false" start="2026-10-18" duration="3" complete="100" expand="true"/>
+                </task>
+            </task>
+            <task id="122" uid="36fb998233384e1f8a3679aa2dcb9e14" name="Frontend + Backend Integration &amp; Integration Testing for Iteration 2" color="#33cc00" meeting="false" start="2026-10-21" duration="3" complete="100" expand="true">
+                <task id="131" uid="f628ace3144f46748305de5566f14076" name="Integrate Use Case 1 Increment" color="#ffff99" meeting="false" start="2026-10-21" duration="3" complete="100" expand="true">
+                    <depend id="132" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="132" uid="6517354cd47e414a9cdc5ce3189c2859" name="Working User Account Management" color="#66ffcc" meeting="true" start="2026-10-24" duration="0" complete="0" expand="true"/>
+                <task id="133" uid="0764ee37a63f44239ce83c732278c792" name="Integrate Use Case 2 Increment" color="#ffff99" meeting="false" start="2026-10-21" duration="3" complete="100" expand="true">
+                    <depend id="134" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="134" uid="47e98be79c1a489187e56ebc43937510" name="Working Support Request Status Management" color="#66ffcc" meeting="true" start="2026-10-24" duration="0" complete="0" expand="true"/>
+                <task id="135" uid="ccebbfeaeda7411db38a58b893701cda" name="Integrate Use Case 3 Increment" color="#ffff99" meeting="false" start="2026-10-21" duration="3" complete="100" expand="true">
+                    <depend id="136" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="136" uid="db9185af34e249f5abc53bab0607aa9e" name="Working Support Session" color="#66ffcc" meeting="true" start="2026-10-24" duration="0" complete="0" expand="true"/>
+            </task>
+            <task id="121" uid="112edca73d9a4b179458fc7c6ff170f0" name="Completed Backend Coding" color="#66ffcc" meeting="true" start="2026-10-24" duration="0" complete="0" expand="true"/>
+            <task id="120" uid="d10e33a6c0414c0997617452a6e45f39" name="Front-End (FE) &amp; Back-end (BE) Integration" color="#33cc00" meeting="false" start="2026-10-25" duration="4" complete="100" expand="true">
+                <task id="137" uid="e3773c0316504124b9c7a10b7a0304ad" name="Integrate Use Case 1 Increment" color="#ffff99" meeting="false" start="2026-10-25" duration="4" complete="100" expand="true"/>
+                <task id="140" uid="1ce7e094cbc94578afbc5fb58add2caf" name="Integrate Use Case 2 Increment" color="#ffff99" meeting="false" start="2026-10-25" duration="4" complete="100" expand="true"/>
+                <task id="139" uid="720a5c843595419d83e95c8b6d461db3" name="Integrate Use Case 3 Increment" color="#ffff99" meeting="false" start="2026-10-25" duration="4" complete="100" expand="true"/>
+            </task>
+            <task id="138" uid="4aa5244bd2824aea8e0f421b41dd1075" name="Handling Error States and Loading States" color="#ffff99" meeting="false" start="2026-10-27" duration="10" complete="100" expand="true"/>
+            <task id="118" uid="dd2688fae97c412ba6d83b38ffb2a431" name="System Testing" color="#33cc00" meeting="false" start="2026-10-31" duration="14" complete="100" expand="true">
+                <task id="141" uid="3ccb1862ae4741e4a6760bc9c23bdff9" name="Functional Requirements &amp; Non-Functional Requirements Testing" color="#bce2a9" meeting="false" start="2026-10-31" duration="14" complete="100" expand="true">
+                    <task id="142" uid="762093ec41cd4eefb25c66c071771e88" name="Testing for Student &amp; Volunteer Management (Use Case 1)" meeting="false" start="2026-10-31" duration="13" complete="100" expand="true"/>
+                    <task id="144" uid="8d8d318fe7884697b9e5c6feeab661bc" name="Testing for Support Request &amp; Volunteer Matchmaking Management (Use Case 2)" color="#ffff99" meeting="false" start="2026-10-31" duration="14" complete="100" expand="true"/>
+                    <task id="143" uid="fca71e7e275b42778309244adc20ed91" name="Testing for Support Sessions &amp; Feedback Management (Use Case 3)" color="#ffff99" meeting="false" start="2026-10-31" duration="7" complete="100" expand="true"/>
+                </task>
+            </task>
+            <task id="116" uid="4e24e993057b4f22ae62a8a4e7e8dfef" name="Make Necessary Refinements &amp; Fixes based on Testing Review" color="#33cc00" meeting="false" start="2026-11-01" duration="14" complete="100" expand="true">
+                <task id="146" uid="f5c8498b7c5842e28f2970d985aaef8c" name="Refinements for Student &amp; Volunteer Management (Use Case 1)" color="#ffff99" meeting="false" start="2026-11-01" duration="14" complete="100" expand="true">
+                    <depend id="149" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="149" uid="bf5971b6710c42c09e7a90af07ec5f3b" name="Fully Functioning FE + BE Student &amp; Volunteer Management (Use Case 1)" color="#66ffcc" meeting="true" start="2026-11-15" duration="0" complete="0" expand="true"/>
+                <task id="154" uid="67996e2b83de4528943aa649e855c011" name="Refinements for Support Request &amp; Volunteer Matchmaking Management (Use Case 2)" color="#ffff99" meeting="false" start="2026-11-01" duration="14" complete="100" expand="true">
+                    <depend id="155" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="155" uid="0d91c2114e124f188394ef18f26988ee" name="Fully Functioning FE + BE Support Request &amp; Volunteer Matchmaking Management (Use Case 2)" color="#66ffcc" meeting="true" start="2026-11-15" duration="0" complete="0" expand="true"/>
+                <task id="152" uid="312ddc0610f94e94adee43b70c9b28a3" name="Refinements for Support Sessions &amp; Feedback Management (Use Case 3)" color="#ffff99" meeting="false" start="2026-11-01" duration="7" complete="100" expand="true">
+                    <depend id="153" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="153" uid="66cd6338833a4bd1b5a177faae8e9fde" name="Fully Functioning FE + BE Support Sessions &amp; Feedback Management (Use Case 3)" color="#66ffcc" meeting="true" start="2026-11-08" duration="0" complete="0" expand="true"/>
+            </task>
+        </task>
+        <task id="48" uid="783a3f4f8e784f8eafaa3b34f078a160" name="Fully Functioning Website (Prototype II)" color="#00ffcc" meeting="true" start="2026-11-15" duration="0" complete="0" expand="true"/>
+        <task id="49" uid="15a7486bb24445bfa61b0b24946de407" name="Writing Final Project Report" color="#009966" meeting="false" start="2026-11-07" duration="13" complete="100" expand="true">
+            <depend id="50" type="2" difference="0" hardness="Strong"/>
+            <task id="156" uid="948982acdb7b4422b16d0a34df22a4f8" name="Compile Finalised System Design" color="#33cc00" meeting="false" start="2026-11-07" duration="1" complete="100" expand="true">
+                <task id="160" uid="04b222632bcf4000848b8d213e7e5bed" name="System Architecture/Design" color="#ffff99" meeting="false" start="2026-11-07" duration="1" complete="100" expand="true"/>
+                <task id="159" uid="c166af1559604434a81eea222b549d5a" name="ERD" color="#ffff99" meeting="false" start="2026-11-07" duration="1" complete="100" expand="true"/>
+                <task id="158" uid="51121da3626a48119d9282f990a85443" name="Data Dictionary" color="#ffff99" meeting="false" start="2026-11-07" duration="1" complete="100" expand="true"/>
+                <task id="157" uid="f1f312780f0c4b1ea3ce63741bf970e6" name="Site Map" color="#ffff99" meeting="false" start="2026-11-07" duration="1" complete="100" expand="true"/>
+                <task id="161" uid="d82df0d2cfec4570af84d9f56573bdf2" name="Screenshots of Implemented Prototype" color="#ffff99" meeting="false" start="2026-11-07" duration="1" complete="100" expand="true"/>
+            </task>
+            <task id="162" uid="7ea781cb1e6b492c80f3de1d31f49427" name="Collaboration Evidence" color="#33cc00" meeting="false" project="true" start="2026-11-07" duration="7" complete="100" expand="true">
+                <task id="163" uid="32867eb385b04fd9868c095f1e38c0ab" name="Individual Evidence of Collaboration Work on Github" color="#a6ea79" meeting="false" start="2026-11-07" duration="7" complete="100" expand="true">
+                    <task id="164" uid="34ec43fd9b71444ab7a77de465f12a7b" name="Student 1's Contribution (Natasha)" meeting="false" start="2026-11-13" duration="1" complete="100" expand="true"/>
+                    <task id="166" uid="3f96772fd3eb4a2eae90e2b4b292c77b" name="Student 2's Contribution (Adrinn)" color="#ffff99" meeting="false" start="2026-11-13" duration="1" complete="100" expand="true"/>
+                    <task id="165" uid="d030bb026943436ca46a9df037da48bd" name="Student 3's Contribution (Puteri)" color="#ffff99" meeting="false" start="2026-11-07" duration="1" complete="100" expand="true"/>
+                </task>
+            </task>
+            <task id="167" uid="f8b599f606564ba9be3bf3c4209ab7e1" name="Compile Project Testing Documentation" color="#33cc00" meeting="false" start="2026-11-07" duration="13" complete="100" expand="true">
+                <task id="168" uid="7be604de3a7446688b5ce720128a3a2e" name="Test Overview" color="#a6ea79" meeting="false" start="2026-11-07" duration="9" complete="100" expand="true">
+                    <task id="169" uid="acdc9d07db6240d1aadbb0e5706992a5" name="Write Testing Objectives" meeting="false" start="2026-11-11" duration="4" complete="100" expand="true"/>
+                    <task id="171" uid="d07826bd7be349a992f389c03883d267" name="Write Testing Strategy" color="#ffff99" meeting="false" start="2026-11-11" duration="5" complete="100" expand="true"/>
+                    <task id="170" uid="fc68623359654545a75c452fc03114ab" name="Write Testing Approach" color="#ffff99" meeting="false" start="2026-11-07" duration="6" complete="100" expand="true"/>
+                </task>
+                <task id="172" uid="0abba5e0ee674792ae25539b8335b385" name="Compile Test Data" color="#a6ea79" meeting="false" start="2026-11-17" duration="3" complete="100" expand="true">
+                    <task id="173" uid="cf5ce2b86b6c44b6958ad4056587c89f" name="Unit Testing Data" color="#ffff99" meeting="false" start="2026-11-17" duration="3" complete="100" expand="true"/>
+                    <task id="177" uid="d6c033273606444b8164011179d76d2d" name="Functional Testing Data" color="#ffff99" meeting="false" start="2026-11-17" duration="3" complete="100" expand="true"/>
+                </task>
+                <task id="178" uid="d2198b1b8fee4ed5a16c0b4b135b12de" name="Overall Test Results and Analysis" color="#a6ea79" meeting="false" start="2026-11-10" duration="1" complete="100" expand="true">
+                    <task id="196" uid="dfe7903d8e4a47bfbbda2bd8cb7cfec5" name="Write Testing Summary for Use Case 1" meeting="false" start="2026-11-10" duration="1" complete="100" expand="true"/>
+                    <task id="198" uid="f0de2e34c673406f8444937718b007f4" name="Write Testing Summary for Use Case 2" color="#ffff99" meeting="false" start="2026-11-10" duration="1" complete="100" expand="true"/>
+                    <task id="197" uid="63c8cb113cd04be49cc09a5bb641933f" name="Write Testing Summary for Use Case 3" color="#ffff99" meeting="false" start="2026-11-10" duration="1" complete="100" expand="true"/>
+                </task>
+            </task>
+        </task>
+        <task id="50" uid="dd2ee0f50cb344e2b797f50a0acff1c3" name="Final Project Report Document" color="#00ffcc" meeting="true" start="2026-11-20" duration="0" complete="0" expand="true"/>
+        <task id="51" uid="e87f1c2f4f614ceabf7e5a1a10e7f971" name="Presentation II" color="#009966" meeting="false" start="2026-11-12" duration="8" complete="100" expand="true">
+            <task id="186" uid="a33fa17335514e3d9b70b6f914ec4341" name="Prepare Presentation Slides" color="#33cc00" meeting="false" start="2026-11-12" duration="8" complete="100" expand="true">
+                <depend id="187" type="2" difference="0" hardness="Strong"/>
+                <task id="188" uid="00065dd7c9f5425cb12e5ee473c0a7f9" name="Prepare Section 1: Final Working Prototype Demonstration" color="#a6ea79" meeting="false" start="2026-11-17" duration="3" complete="100" expand="true">
+                    <task id="192" uid="c20d31fbfded452c8a5ddd39164cc318" name="Student &amp; Volunteer Management Flow (Use Case 1)" meeting="false" start="2026-11-17" duration="3" complete="100" expand="true"/>
+                    <task id="194" uid="f6666d5a7c094f52b7460e508bc7660f" name="Support Request &amp; Volunteer Matchmaking Management Flow (Use Case 2)" color="#ffff99" meeting="false" start="2026-11-17" duration="3" complete="100" expand="true"/>
+                    <task id="195" uid="ca63c1ff9dd9472d8aeb954196244ada" name="Support Sessions &amp; Feedback Management Flow (Use Case 3)" color="#ffff99" meeting="false" start="2026-11-17" duration="3" complete="100" expand="true"/>
+                </task>
+                <task id="191" uid="ea50973fa5ea452aaf97212a75227565" name="Prepare Section 2: Implementation of User Stories" color="#ffff99" meeting="false" start="2026-11-12" duration="4" complete="100" expand="true"/>
+                <task id="190" uid="6c2689af3cc649ef837fe8d424b57f28" name="Prepare Section 3: Git Development Evidence" color="#ffff99" meeting="false" start="2026-11-12" duration="4" complete="100" expand="true"/>
+            </task>
+            <task id="187" uid="e81004b9542544debe63e870ee92b972" name="Presentation II" color="#00ffcc" meeting="true" start="2026-11-20" duration="0" complete="0" expand="true"/>
+        </task>
+    </tasks>
+    <resources>
+        <resource id="0" name="Puteri Aisyah" function="Default:1" contacts="puteri.chii@gmail.com" phone="60196565401"/>
+        <resource id="1" name="Adrinn Goo" function="1" contacts="gmadrinn@gmail.com" phone="6010 866 8339"/>
+        <resource id="2" name="Sophea Natasha" function="1" contacts="" phone="60 19-699 8804"/>
+    </resources>
+    <allocations>
+        <allocation task-id="1" resource-id="0" function="Default:1" responsible="false" load="100.0"/>
+        <allocation task-id="2" resource-id="0" function="Default:1" responsible="false" load="100.0"/>
+        <allocation task-id="3" resource-id="0" function="Default:1" responsible="false" load="100.0"/>
+        <allocation task-id="4" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="10" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="11" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="19" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="21" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="36" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="39" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="44" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="34" resource-id="0" function="Default:1" responsible="false" load="100.0"/>
+        <allocation task-id="63" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="64" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="65" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="66" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="92" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="93" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="94" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="129" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="130" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="135" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="152" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="160" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="159" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="165" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="195" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="33" resource-id="0" function="Default:1" responsible="false" load="100.0"/>
+        <allocation task-id="196" resource-id="0" function="Default:1" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="2" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="4" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="5" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="8" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="20" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="21" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="41" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="43" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="30" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="31" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="32" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="34" resource-id="1" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="58" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="59" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="60" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="61" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="71" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="74" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="75" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="77" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="89" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="88" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="106" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="128" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="133" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="154" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="157" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="161" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="166" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="177" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="173" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="190" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="194" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="198" resource-id="1" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="2" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="2" resource-id="2" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="3" resource-id="2" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="4" resource-id="2" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="12" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="16" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="21" resource-id="2" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="40" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="42" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="34" resource-id="2" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="54" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="55" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="56" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="84" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="85" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="86" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="98" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="104" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="126" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="127" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="131" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="146" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="158" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="164" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="169" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="171" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="170" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="191" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="192" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="197" resource-id="2" function="1" responsible="true" load="100.0"/>
+    </allocations>
+    <vacations/>
+    <previous>
+        <previous-tasks name="Basline 1 (Initial Basline)">
+            <previous-task id="0" start="2026-08-24" duration="18" meeting="false" super="true"/>
+            <previous-task id="1" start="2026-08-24" duration="1" meeting="false" super="false"/>
+            <previous-task id="2" start="2026-08-24" duration="2" meeting="false" super="false"/>
+            <previous-task id="3" start="2026-08-24" duration="3" meeting="false" super="false"/>
+            <previous-task id="4" start="2026-08-24" duration="4" meeting="false" super="false"/>
+            <previous-task id="6" start="2026-08-26" duration="16" meeting="false" super="true"/>
+            <previous-task id="5" start="2026-08-26" duration="14" meeting="false" super="false"/>
+            <previous-task id="8" start="2026-09-09" duration="2" meeting="false" super="false"/>
+            <previous-task id="7" start="2026-09-11" duration="0" meeting="true" super="false"/>
+            <previous-task id="9" start="2026-08-24" duration="3" meeting="false" super="true"/>
+            <previous-task id="10" start="2026-08-24" duration="3" meeting="false" super="false"/>
+            <previous-task id="11" start="2026-08-24" duration="3" meeting="false" super="false"/>
+            <previous-task id="12" start="2026-08-24" duration="7" meeting="false" super="false"/>
+            <previous-task id="13" start="2026-09-11" duration="0" meeting="true" super="false"/>
+            <previous-task id="14" start="2026-08-31" duration="14" meeting="false" super="true"/>
+            <previous-task id="15" start="2026-08-31" duration="12" meeting="false" super="true"/>
+            <previous-task id="16" start="2026-08-31" duration="12" meeting="false" super="false"/>
+            <previous-task id="20" start="2026-08-31" duration="12" meeting="false" super="false"/>
+            <previous-task id="19" start="2026-08-31" duration="12" meeting="false" super="false"/>
+            <previous-task id="21" start="2026-09-12" duration="2" meeting="false" super="false"/>
+            <previous-task id="26" start="2026-09-14" duration="0" meeting="true" super="false"/>
+            <previous-task id="27" start="2026-09-06" duration="14" meeting="false" super="true"/>
+            <previous-task id="36" start="2026-09-06" duration="7" meeting="false" super="false"/>
+            <previous-task id="37" start="2026-09-06" duration="7" meeting="false" super="true"/>
+            <previous-task id="39" start="2026-09-06" duration="7" meeting="false" super="false"/>
+            <previous-task id="41" start="2026-09-06" duration="4" meeting="false" super="false"/>
+            <previous-task id="40" start="2026-09-06" duration="7" meeting="false" super="false"/>
+            <previous-task id="38" start="2026-09-10" duration="10" meeting="false" super="true"/>
+            <previous-task id="42" start="2026-09-10" duration="10" meeting="false" super="false"/>
+            <previous-task id="43" start="2026-09-10" duration="10" meeting="false" super="false"/>
+            <previous-task id="44" start="2026-09-10" duration="10" meeting="false" super="false"/>
+            <previous-task id="28" start="2026-09-20" duration="0" meeting="true" super="false"/>
+            <previous-task id="29" start="2026-09-19" duration="1" meeting="false" super="true"/>
+            <previous-task id="30" start="2026-09-19" duration="1" meeting="false" super="true"/>
+            <previous-task id="31" start="2026-09-19" duration="1" meeting="false" super="false"/>
+            <previous-task id="32" start="2026-09-19" duration="1" meeting="false" super="false"/>
+            <previous-task id="33" start="2026-09-19" duration="1" meeting="false" super="false"/>
+            <previous-task id="34" start="2026-09-19" duration="1" meeting="false" super="false"/>
+            <previous-task id="35" start="2026-09-20" duration="0" meeting="true" super="false"/>
+            <previous-task id="45" start="2026-09-20" duration="27" meeting="false" super="true"/>
+            <previous-task id="52" start="2026-09-20" duration="13" meeting="false" super="true"/>
+            <previous-task id="53" start="2026-09-20" duration="13" meeting="false" super="true"/>
+            <previous-task id="54" start="2026-09-20" duration="7" meeting="false" super="false"/>
+            <previous-task id="55" start="2026-09-26" duration="4" meeting="false" super="false"/>
+            <previous-task id="56" start="2026-09-24" duration="9" meeting="false" super="false"/>
+            <previous-task id="68" start="2026-10-03" duration="0" meeting="true" super="false"/>
+            <previous-task id="57" start="2026-09-20" duration="13" meeting="false" super="true"/>
+            <previous-task id="58" start="2026-09-20" duration="5" meeting="false" super="false"/>
+            <previous-task id="59" start="2026-09-21" duration="7" meeting="false" super="false"/>
+            <previous-task id="60" start="2026-09-24" duration="9" meeting="false" super="false"/>
+            <previous-task id="61" start="2026-09-24" duration="9" meeting="false" super="false"/>
+            <previous-task id="69" start="2026-10-03" duration="0" meeting="true" super="false"/>
+            <previous-task id="62" start="2026-09-20" duration="13" meeting="false" super="true"/>
+            <previous-task id="63" start="2026-09-20" duration="4" meeting="false" super="false"/>
+            <previous-task id="64" start="2026-09-23" duration="7" meeting="false" super="false"/>
+            <previous-task id="65" start="2026-09-27" duration="5" meeting="false" super="false"/>
+            <previous-task id="66" start="2026-09-29" duration="4" meeting="false" super="false"/>
+            <previous-task id="70" start="2026-10-03" duration="0" meeting="true" super="false"/>
+            <previous-task id="67" start="2026-10-03" duration="0" meeting="true" super="false"/>
+            <previous-task id="71" start="2026-10-02" duration="1" meeting="false" super="false"/>
+            <previous-task id="72" start="2026-10-03" duration="0" meeting="true" super="false"/>
+            <previous-task id="73" start="2026-09-28" duration="5" meeting="false" super="true"/>
+            <previous-task id="74" start="2026-09-28" duration="2" meeting="false" super="false"/>
+            <previous-task id="75" start="2026-09-29" duration="3" meeting="false" super="false"/>
+            <previous-task id="77" start="2026-09-29" duration="4" meeting="false" super="false"/>
+            <previous-task id="76" start="2026-10-02" duration="0" meeting="true" super="false"/>
+            <previous-task id="78" start="2026-10-04" duration="7" meeting="false" super="true"/>
+            <previous-task id="81" start="2026-10-04" duration="7" meeting="false" super="true"/>
+            <previous-task id="84" start="2026-10-04" duration="3" meeting="false" super="false"/>
+            <previous-task id="85" start="2026-10-05" duration="4" meeting="false" super="false"/>
+            <previous-task id="86" start="2026-10-06" duration="5" meeting="false" super="false"/>
+            <previous-task id="87" start="2026-10-04" duration="7" meeting="false" super="true"/>
+            <previous-task id="88" start="2026-10-04" duration="4" meeting="false" super="false"/>
+            <previous-task id="89" start="2026-10-06" duration="5" meeting="false" super="false"/>
+            <previous-task id="91" start="2026-10-04" duration="7" meeting="false" super="true"/>
+            <previous-task id="92" start="2026-10-04" duration="4" meeting="false" super="false"/>
+            <previous-task id="93" start="2026-10-05" duration="4" meeting="false" super="false"/>
+            <previous-task id="94" start="2026-10-08" duration="3" meeting="false" super="false"/>
+            <previous-task id="79" start="2026-10-11" duration="3" meeting="false" super="true"/>
+            <previous-task id="95" start="2026-10-11" duration="3" meeting="false" super="false"/>
+            <previous-task id="97" start="2026-10-11" duration="3" meeting="false" super="false"/>
+            <previous-task id="96" start="2026-10-11" duration="3" meeting="false" super="false"/>
+            <previous-task id="80" start="2026-10-14" duration="3" meeting="false" super="true"/>
+            <previous-task id="98" start="2026-10-14" duration="3" meeting="false" super="false"/>
+            <previous-task id="99" start="2026-10-17" duration="0" meeting="true" super="false"/>
+            <previous-task id="106" start="2026-10-14" duration="3" meeting="false" super="false"/>
+            <previous-task id="107" start="2026-10-17" duration="0" meeting="true" super="false"/>
+            <previous-task id="104" start="2026-10-14" duration="3" meeting="false" super="false"/>
+            <previous-task id="105" start="2026-10-17" duration="0" meeting="true" super="false"/>
+            <previous-task id="108" start="2026-10-17" duration="0" meeting="true" super="false"/>
+            <previous-task id="46" start="2026-10-16" duration="3" meeting="false" super="true"/>
+            <previous-task id="109" start="2026-10-16" duration="3" meeting="false" super="true"/>
+            <previous-task id="110" start="2026-10-16" duration="3" meeting="false" super="false"/>
+            <previous-task id="112" start="2026-10-16" duration="3" meeting="false" super="false"/>
+            <previous-task id="111" start="2026-10-16" duration="3" meeting="false" super="false"/>
+            <previous-task id="114" start="2026-10-19" duration="0" meeting="true" super="false"/>
+            <previous-task id="47" start="2026-09-11" duration="58" meeting="false" super="true"/>
+            <previous-task id="115" start="2026-09-11" duration="40" meeting="false" super="true"/>
+            <previous-task id="123" start="2026-09-11" duration="40" meeting="false" super="true"/>
+            <previous-task id="126" start="2026-09-11" duration="3" meeting="false" super="false"/>
+            <previous-task id="127" start="2026-10-18" duration="3" meeting="false" super="false"/>
+            <previous-task id="124" start="2026-10-18" duration="3" meeting="false" super="true"/>
+            <previous-task id="128" start="2026-10-18" duration="3" meeting="false" super="false"/>
+            <previous-task id="125" start="2026-10-18" duration="3" meeting="false" super="true"/>
+            <previous-task id="129" start="2026-10-18" duration="3" meeting="false" super="false"/>
+            <previous-task id="130" start="2026-10-18" duration="3" meeting="false" super="false"/>
+            <previous-task id="122" start="2026-10-21" duration="3" meeting="false" super="true"/>
+            <previous-task id="131" start="2026-10-21" duration="3" meeting="false" super="false"/>
+            <previous-task id="132" start="2026-10-24" duration="0" meeting="true" super="false"/>
+            <previous-task id="133" start="2026-10-21" duration="3" meeting="false" super="false"/>
+            <previous-task id="134" start="2026-10-24" duration="0" meeting="true" super="false"/>
+            <previous-task id="135" start="2026-10-21" duration="3" meeting="false" super="false"/>
+            <previous-task id="136" start="2026-10-24" duration="0" meeting="true" super="false"/>
+            <previous-task id="121" start="2026-10-24" duration="0" meeting="true" super="false"/>
+            <previous-task id="120" start="2026-10-25" duration="4" meeting="false" super="true"/>
+            <previous-task id="137" start="2026-10-25" duration="4" meeting="false" super="false"/>
+            <previous-task id="140" start="2026-10-25" duration="4" meeting="false" super="false"/>
+            <previous-task id="139" start="2026-10-25" duration="4" meeting="false" super="false"/>
+            <previous-task id="138" start="2026-10-27" duration="4" meeting="false" super="false"/>
+            <previous-task id="118" start="2026-10-31" duration="2" meeting="false" super="true"/>
+            <previous-task id="141" start="2026-10-31" duration="2" meeting="false" super="true"/>
+            <previous-task id="142" start="2026-10-31" duration="2" meeting="false" super="false"/>
+            <previous-task id="144" start="2026-10-31" duration="2" meeting="false" super="false"/>
+            <previous-task id="143" start="2026-10-31" duration="2" meeting="false" super="false"/>
+            <previous-task id="117" start="2026-11-02" duration="3" meeting="false" super="false"/>
+            <previous-task id="116" start="2026-11-01" duration="7" meeting="false" super="true"/>
+            <previous-task id="146" start="2026-11-01" duration="7" meeting="false" super="false"/>
+            <previous-task id="149" start="2026-11-08" duration="0" meeting="true" super="false"/>
+            <previous-task id="154" start="2026-11-01" duration="7" meeting="false" super="false"/>
+            <previous-task id="155" start="2026-11-08" duration="0" meeting="true" super="false"/>
+            <previous-task id="152" start="2026-11-01" duration="7" meeting="false" super="false"/>
+            <previous-task id="153" start="2026-11-08" duration="0" meeting="true" super="false"/>
+            <previous-task id="48" start="2026-11-08" duration="0" meeting="true" super="false"/>
+            <previous-task id="49" start="2026-09-11" duration="64" meeting="false" super="true"/>
+            <previous-task id="156" start="2026-11-07" duration="1" meeting="false" super="true"/>
+            <previous-task id="160" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="159" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="158" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="157" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="161" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="162" start="2026-11-07" duration="1" meeting="false" super="true"/>
+            <previous-task id="163" start="2026-11-07" duration="1" meeting="false" super="true"/>
+            <previous-task id="164" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="166" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="165" start="2026-11-07" duration="1" meeting="false" super="false"/>
+            <previous-task id="167" start="2026-09-11" duration="64" meeting="false" super="true"/>
+            <previous-task id="168" start="2026-11-07" duration="6" meeting="false" super="true"/>
+            <previous-task id="169" start="2026-11-07" duration="4" meeting="false" super="false"/>
+            <previous-task id="171" start="2026-11-07" duration="5" meeting="false" super="false"/>
+            <previous-task id="170" start="2026-11-07" duration="6" meeting="false" super="false"/>
+            <previous-task id="172" start="2026-11-07" duration="3" meeting="false" super="true"/>
+            <previous-task id="173" start="2026-11-07" duration="3" meeting="false" super="false"/>
+            <previous-task id="177" start="2026-11-07" duration="3" meeting="false" super="false"/>
+            <previous-task id="176" start="2026-11-07" duration="3" meeting="false" super="false"/>
+            <previous-task id="178" start="2026-09-11" duration="64" meeting="false" super="true"/>
+            <previous-task id="179" start="2026-11-09" duration="5" meeting="false" super="false"/>
+            <previous-task id="185" start="2026-09-11" duration="5" meeting="false" super="false"/>
+            <previous-task id="184" start="2026-11-09" duration="5" meeting="false" super="false"/>
+            <previous-task id="183" start="2026-11-09" duration="5" meeting="false" super="false"/>
+            <previous-task id="50" start="2026-11-14" duration="0" meeting="true" super="false"/>
+            <previous-task id="51" start="2026-11-08" duration="8" meeting="false" super="true"/>
+            <previous-task id="186" start="2026-11-08" duration="8" meeting="false" super="true"/>
+            <previous-task id="188" start="2026-11-08" duration="3" meeting="false" super="true"/>
+            <previous-task id="192" start="2026-11-08" duration="3" meeting="false" super="false"/>
+            <previous-task id="194" start="2026-11-08" duration="3" meeting="false" super="false"/>
+            <previous-task id="195" start="2026-11-08" duration="3" meeting="false" super="false"/>
+            <previous-task id="191" start="2026-11-12" duration="4" meeting="false" super="false"/>
+            <previous-task id="190" start="2026-11-12" duration="4" meeting="false" super="false"/>
+            <previous-task id="189" start="2026-11-12" duration="4" meeting="false" super="false"/>
+            <previous-task id="187" start="2026-11-16" duration="0" meeting="true" super="false"/>
+        </previous-tasks>
+    </previous>
+    <roles roleset-name="Default"/>
+    <roles>
+        <role id="1" name="project member"/>
+        <role id="2" name=""/>
+    </roles>
+</project>
